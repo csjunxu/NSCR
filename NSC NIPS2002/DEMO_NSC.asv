@@ -4,7 +4,7 @@ Dataset = 'USPS';
 
 % -------------------------------------------------------------------------
 % parameter setting
-for lambda = [2]
+for lambda = [0.02 0.04 0.005 0.01]
     if strcmp(Dataset, 'USPS')==1
         %             lambda1 = 0.023; % 0.92576
         %--------------------------------------------------------------------------
@@ -15,8 +15,6 @@ for lambda = [2]
         trls     =   gnd(1:7291)';
         Tt_DAT   =   double(fea(7292:end, :)');
         ttls     =   gnd(7292:end)';
-        Tr_DAT  =  Tr_DAT./( repmat(sqrt(sum(Tr_DAT.*Tr_DAT)), [size(Tr_DAT, 1), 1]) );
-        Tt_DAT  =  Tt_DAT./( repmat(sqrt(sum(Tt_DAT.*Tt_DAT)), [size(Tt_DAT, 1), 1]) );
         clear fea gnd
         %-------------------------------------------------------------------------
         %projection matrix computing for each class
@@ -38,7 +36,7 @@ for lambda = [2]
         fprintf(['The lambda = ' num2str(lambda) ', recogniton rate is ' num2str(Rec) '.\n']);
         
     elseif strcmp(Dataset, 'AR_DAT')==1
-        %         lambda1 = 0.015; % 0.91559
+%         lambda1 = 0.015; % 0.91559
         %--------------------------------------------------------------------------
         %data loading (here we use the AR dataset as an example)
         load(['../AR_DAT']);
@@ -61,7 +59,7 @@ for lambda = [2]
         A = cell(max(trls),1);
         for c = 1:max(trls)
             Xc = tr_dat(:, trls==c);
-            A{c} = Xc/(Xc'*Xc+lambda*eye(size(Xc, 2)))*Xc';
+             A{c} = Xc/(Xc'*Xc+lambda*eye(size(Xc, 2)))*Xc';
         end
         
         %-------------------------------------------------------------------------
