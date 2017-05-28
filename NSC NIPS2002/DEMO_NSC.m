@@ -1,6 +1,6 @@
 clear all;
 
-Dataset = 'USPS';
+Dataset = 'AR_DAT';
 
 % -------------------------------------------------------------------------
 % parameter setting
