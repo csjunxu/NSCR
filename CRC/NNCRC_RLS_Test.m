@@ -28,9 +28,9 @@ tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [par.nDim,1]) );
 
 %% Subspace segmentation methods
 % SegmentationMethod = 'CRC' ; % baseline method
-SegmentationMethod = 'NNCRC' ; % non-negative CRC
+% SegmentationMethod = 'NNCRC' ; % non-negative CRC
 % SegmentationMethod = 'NPCRC' ; % non-positive CRC
-% SegmentationMethod = 'ANNCRC' ; % affine and non-negative CRC
+SegmentationMethod = 'ANNCRC' ; % affine and non-negative CRC
 % SegmentationMethod = 'ANPCRC' ; % affine and non-positive CRC
 
 if strcmp(SegmentationMethod, 'CRC')==1
@@ -41,9 +41,9 @@ end
 
 %-------------------------------------------------------------------------
 % tuning the parameters
-for maxIter = [5]
+for maxIter = [1]
     Par.maxIter  = maxIter;
-    for rho = [1:1:9]
+    for rho = [1:2:9]
         Par.rho = rho*10^(-2);
         for lambda = [0]
             Par.lambda = lambda * 10^(-3);
@@ -53,7 +53,6 @@ for maxIter = [5]
             for indTest = 1:size(tt_dat,2)
                 switch SegmentationMethod
                     case 'CRC'
-                        
                         [id]    = CRC_RLS(tr_dat,Proj_M,tt_dat(:,indTest),trls);
                     case 'NNCRC'                   % non-negative
                         [id]    = NNCRC(tt_dat(:,indTest), tr_dat, Par, trls);
