@@ -3,19 +3,32 @@ clear;
 
 % -------------------------------------------------------------------------
 % parameter setting
-par.nClass        =   100;                 % the number of classes in the subset of AR database
-par.nDim          =   54;                 % the eigenfaces dimension
-
 dataset = 'AR_DAT';
+% 'AR_DAT'
+% 'MNIST2k2k'
 writefilepath = '';
 %--------------------------------------------------------------------------
 %data loading (here we use the AR dataset as an example)
-load(['AR_DAT']);
-Tr_DAT   =   double(NewTrain_DAT(:,trainlabels<=par.nClass));
-trls     =   trainlabels(trainlabels<=par.nClass);
-Tt_DAT   =   double(NewTest_DAT(:,testlabels<=par.nClass));
-ttls     =   testlabels(testlabels<=par.nClass);
-clear NewTest_DAT NewTrain_DAT testlabels trainlabels
+if strcmp(dataset, 'AR_DAT') == 1
+    load(['Dataset/AR_DAT']);
+    par.nClass        =   max(trainlabels);                 % the number of classes in the subset of AR database
+    par.nDim          =   54;                 % the eigenfaces dimension
+    Tr_DAT   =   double(NewTrain_DAT(:,trainlabels<=par.nClass));
+    trls     =   trainlabels(trainlabels<=par.nClass);
+    Tt_DAT   =   double(NewTest_DAT(:,testlabels<=par.nClass));
+    ttls     =   testlabels(testlabels<=par.nClass);
+    clear NewTest_DAT NewTrain_DAT testlabels trainlabels
+elseif strcmp(dataset, 'MNIST2k2k') == 1
+    load(['Dataset/MNIST2k2k']);
+    gnd = gnd + 1;
+    par.nClass        =   max(gnd);                 % the number of classes in the subset of AR database
+    par.nDim          =   100;                 % the eigenfaces dimension
+    Tr_DAT   =   double(fea(trainIdx, :))';
+    trls     =   gnd(trainIdx, 1)';
+    Tt_DAT   =   double(fea(testIdx, :))';
+    ttls     =   gnd(testIdx, 1)';
+    clear fea gnd trainIdx testIdx
+end
 
 %--------------------------------------------------------------------------
 %eigenface extracting
@@ -25,35 +38,25 @@ tt_dat  =  disc_set'*Tt_DAT;
 tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [par.nDim,1]) );
 tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [par.nDim,1]) );
 
-
 %% Subspace segmentation methods
-% SegmentationMethod = 'CRC' ; % baseline method
 % SegmentationMethod = 'NNCRC' ; % non-negative CRC
 % SegmentationMethod = 'NPCRC' ; % non-positive CRC
 SegmentationMethod = 'ANNCRC' ; % affine and non-negative CRC
 % SegmentationMethod = 'ANPCRC' ; % affine and non-positive CRC
 
-if strcmp(SegmentationMethod, 'CRC')==1
-    %projection matrix computing
-    kappa             =   [0.001];             % l2 regularized parameter value
-    Proj_M = inv(tr_dat'*tr_dat+kappa*eye(size(tr_dat,2)))*tr_dat';
-end
-
 %-------------------------------------------------------------------------
 % tuning the parameters
-for maxIter = [1]
+for maxIter = [1:1:10]
     Par.maxIter  = maxIter;
-    for rho = [1:2:9]
+    for rho = [1:1:10]
         Par.rho = rho*10^(-2);
-        for lambda = [0]
+        for lambda = [0 .1 1 10]
             Par.lambda = lambda * 10^(-3);
             %-------------------------------------------------------------------------
             %testing
             ID = [];
             for indTest = 1:size(tt_dat,2)
                 switch SegmentationMethod
-                    case 'CRC'
-                        [id]    = CRC_RLS(tr_dat,Proj_M,tt_dat(:,indTest),trls);
                     case 'NNCRC'                   % non-negative
                         [id]    = NNCRC(tt_dat(:,indTest), tr_dat, Par, trls);
                     case 'NPCRC'               % non-negative, sum to 1
