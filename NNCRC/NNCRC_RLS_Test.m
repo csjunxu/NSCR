@@ -95,7 +95,7 @@ for nDim = [150 300]
         cornum      =   sum(ID==ttls);
         Rec         =   [cornum/length(ttls)]; % recognition rate
         fprintf(['recogniton rate is ' num2str(Rec) '.\n']);
-        matname = sprintf([writefilepath '_' ClassificationMethod '_DR' num2str(par.nDim) '.mat']);
+        matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(par.nDim) '.mat']);
         save(matname,'Rec');
     else
         %-------------------------------------------------------------------------
@@ -125,7 +125,7 @@ for nDim = [150 300]
                     cornum      =   sum(ID==ttls);
                     Rec         =   [cornum/length(ttls)]; % recognition rate
                     fprintf(['Accuracy is ' num2str(Rec) '.\n']);
-                    matname = sprintf([writefilepath '_' ClassificationMethod '_DR' num2str(par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
+                    matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
                     save(matname,'Rec');
                 end
             end
