@@ -64,14 +64,14 @@ elseif strcmp(dataset, 'MNIST2k2k') == 1
 end
 
 %% choosing classification methods
-ClassificationMethod = 'CRC';
-%     ClassificationMethod = 'NNCRC' ; % non-negative CRC
+% ClassificationMethod = 'CRC';
+    ClassificationMethod = 'NNCRC' ; % non-negative CRC
 % ClassificationMethod = 'NPCRC' ; % non-positive CRC
 % ClassificationMethod = 'ANNCRC' ; % affine and non-negative CRC
 % ClassificationMethod = 'ANPCRC' ; % affine and non-positive CRC
 
 
-for nDim = [150 300]
+for nDim = [84]
     par.nDim = nDim;
     %--------------------------------------------------------------------------
     %% eigenface extracting
@@ -100,10 +100,10 @@ for nDim = [150 300]
     else
         %-------------------------------------------------------------------------
         %% tuning the parameters
-        for maxIter = [1:1:5]
+        for maxIter = [5]
             Par.maxIter  = maxIter;
-            for rho = [1:1:9]
-                Par.rho = rho*10^(-1);
+            for rho = [10:1:15]
+                Par.rho = rho*10^(-2);
                 for lambda = [0]
                     Par.lambda = lambda * 10^(-4);
                     %-------------------------------------------------------------------------
