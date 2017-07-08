@@ -71,7 +71,7 @@ end
 % ClassificationMethod = 'ANPCRC' ; % affine and non-positive CRC
 
 
-for nDim = [84]
+for nDim = [300]
     par.nDim = nDim;
     %--------------------------------------------------------------------------
     %% eigenface extracting
@@ -87,7 +87,7 @@ for nDim = [84]
         Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
         %-------------------------------------------------------------------------
         %% testing
-        ID = [];
+        ID = []; 
         for indTest = 1:size(tt_dat,2)
             [id]    = CRC_RLS(tr_dat,Proj_M,tt_dat(:,indTest),trls);
             ID      =   [ID id];
@@ -100,9 +100,9 @@ for nDim = [84]
     else
         %-------------------------------------------------------------------------
         %% tuning the parameters
-        for maxIter = [5]
+        for maxIter = [1:1:5]
             Par.maxIter  = maxIter;
-            for rho = [10:1:15]
+            for rho = [1:1:15]
                 Par.rho = rho*10^(-2);
                 for lambda = [0]
                     Par.lambda = lambda * 10^(-4);
