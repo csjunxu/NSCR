@@ -12,7 +12,7 @@ writefilepath  = ['C:\Users\csjunxu\Desktop\Classification\Results\' dataset '\'
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
-
+NNLS
 %--------------------------------------------------------------------------
 %% data loading
 if strcmp(dataset, 'AR_DAT') == 1
