@@ -3,12 +3,12 @@ clear;
 
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'ExtendedYaleB';
+dataset = 'MNIST2k2k';
 % 'AR_DAT'
 % 'ExtendedYaleB'
 % 'MNIST2k2k'
 
-writefilepath  = dataset;
+writefilepath  = ['C:\Users\csjunxu\Desktop\Classification\Results\' dataset '\'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
@@ -16,9 +16,9 @@ end
 %--------------------------------------------------------------------------
 %% data loading
 if strcmp(dataset, 'AR_DAT') == 1
-    load(['Dataset/AR_DAT']);
+    load(['C:/Users/csjunxu/Desktop/Classification/Dataset/AR_DAT']);
     par.nClass        =   max(trainlabels);                 % the number of classes in the subset of AR database
-    par.nDim          =   120; % 54 120 300  the eigenfaces dimension
+    par.nDim          =   54; % 54 120 300  the eigenfaces dimension
     Tr_DAT   =   double(NewTrain_DAT(:,trainlabels<=par.nClass));
     trls     =   trainlabels(trainlabels<=par.nClass);
     Tt_DAT   =   double(NewTest_DAT(:,testlabels<=par.nClass));
@@ -26,8 +26,8 @@ if strcmp(dataset, 'AR_DAT') == 1
     clear NewTest_DAT NewTrain_DAT testlabels trainlabels
 elseif strcmp(dataset, 'ExtendedYaleB') == 1
     par.nDim          =   84; % 84 150 300 the eigenfaces dimension
-    if exist('Dataset/YaleB_Classification.mat', 'file') ~= 2
-        load(['Dataset/YaleBCrop025']);
+    if exist('C:/Users/csjunxu/Desktop/Classification/Dataset/Dataset/YaleB_Classification.mat', 'file') ~= 2
+        load(['C:/Users/csjunxu/Desktop/Classification/Dataset/Dataset/YaleBCrop025']);
         % randomly select half of the samples as training data;
         [dim, nSample, nClass] = size(Y);
         par.nClass        =   nClass; % the number of classes in the subset of AR database
@@ -44,15 +44,15 @@ elseif strcmp(dataset, 'ExtendedYaleB') == 1
             trls     =   [trls i*ones(1, nTr)];
             Tt_DAT   =   [Tt_DAT double(Y(:, RanCi(nTr+1:end), i))];
             ttls     =   [ttls i*ones(1, nTt)];
-            save Dataset/YaleB_Classification.mat Tr_DAT Tt_DAT trls ttls;
+            save C:/Users/csjunxu/Desktop/Classification/Dataset/Dataset/YaleB_Classification.mat Tr_DAT Tt_DAT trls ttls;
         end
         clear Y I Ind s
     else
-        load(['Dataset/YaleB_Classification.mat']);
+        load(['C:/Users/csjunxu/Desktop/Classification/Dataset/Dataset/YaleB_Classification.mat']);
         par.nClass        =   max(ttls); % the number of classes in the subset of AR database
     end
 elseif strcmp(dataset, 'MNIST2k2k') == 1
-    load(['Dataset/MNIST2k2k']);
+    load(['C:/Users/csjunxu/Desktop/Classification/Dataset/Dataset/MNIST2k2k']);
     gnd = gnd + 1;
     par.nClass        =   max(gnd); % the number of classes in the subset of AR database
     par.nDim          =   100; % the eigenfaces dimension
