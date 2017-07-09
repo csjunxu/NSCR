@@ -29,7 +29,7 @@ for nDim = [84 150 300]
     par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1 2]
+    for s = [0.5 1 2]
         Par.s = s;
         for maxIter = [1:1:5]
             Par.maxIter  = maxIter;

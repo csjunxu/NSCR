@@ -7,7 +7,7 @@ function c = ANPLSR( y, X , Par )
 
 % Objective function:
 %      min_{A}  ||y - X * a||_{2}^{2} + lambda * ||a||_{2}^{2}
-%      s.t.  1'*a = 1', a>=0
+%      s.t.  1'*a = -1', a<=0
 
 % Notation: L
 % y ... (D x 1) input data vector, where D is the dimension of the features
@@ -45,8 +45,7 @@ while  ( ~terminate )
     
     %% update C the data term matrix
     q = (Par.rho*a - Delta)/(2*Par.lambda+Par.rho);
-    nc  = solver_BCLS_closedForm(-q);
-    c = -nc;
+    c = -solver_BCLS_closedForm(-q);
     
     %% update Deltas the lagrange multiplier matrix
     Delta = Delta + Par.rho * ( c - a);
@@ -59,23 +58,13 @@ while  ( ~terminate )
     err2(iter+1) = errorLinSys(y, X, a);
     if (  (err1(iter+1) <=tol && err2(iter+1)<=tol) ||  iter >= Par.maxIter  )
         terminate = true;
-        fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
-    else
-        if (mod(iter, Par.maxIter)==0)
-            fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
-        end
+%         fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
+%     else
+%         if (mod(iter, Par.maxIter)==0)
+%             fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
+%         end
     end
-    
-    %         %% convergence conditions
-    %     objErr(iter) = norm( X - X*C, 'fro' ) + Par.lambda * norm(C, Par.p);
-    %     fprintf('[%d] : objErr: %f \n', iter, objErr(iter));
-    %     if ( iter>=2 && mod(iter, 10) == 0 || stopCC < tol)
-    %         stopCC = max(max(abs(objErr(iter) - objErr(iter-1))));
-    %         disp(['iter ' num2str(iter) ',stopADMM=' num2str(stopCC,'%2.6e')]);
-    %         if stopCC < tol
-    %             break;
-    %         end
-    %     end
+
     %% next iteration number
     iter = iter + 1;
 end

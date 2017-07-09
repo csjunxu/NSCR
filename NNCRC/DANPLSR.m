@@ -1,29 +1,30 @@
-function c = NPLSR( y , X, Par )
+function c = DANPLSR( y, X , Par )
 
 % Input
-% y           Testing data vector
-% X           Training Data matrix, dim * num
-% Par         parameters
+% y          input test data point
+% X          Data matrix, dim * num
+% Par        parameters
 
 % Objective function:
-%      min_{a}  ||y - X * a||_{2}^{2} s.t.  a<=0
+%      min_{A}  ||y - X * a||_{2}^{2} + lambda * ||a||_{2}^{2}
+%      s.t.  1'*a = -s*1', a<=0
 
 % Notation: L
-% y ... (D x 1) the testing data vector where D is the dimension of input
-% data
-% X ... (D x N) the training data matrix, where D is the dimension of features, and
-%           N is the number of training samples.
+% y ... (D x 1) input data vector, where D is the dimension of the features
+%
+% X ... (D x N) data matrix, where L is the dimension of features, and
+%           N is the number of samples.
 % a ... (N x 1) is a column vector used to select
-%           the most representive and informative samples to represent the
-%           input sample y
-% Par ...  struture of regularization parameters
+%           the most representive and informative samples
+% Par ...  structure of the regularization parameters
 
-[D, N] = size (X);
+[D , N] = size (X);
 
 %% initialization
-% A       = eye (N);    % satisfy ANN consttraint
+
+% A       = eye (N);
 % A   = rand (N);
-a       = zeros (N, 1); % satisfy NN constraint
+a       = zeros (N, 1);
 c       = a;
 Delta = c - a;
 
@@ -43,8 +44,8 @@ while  ( ~terminate )
     a = XTXinv * (X' * y + Par.rho/2 * c + 0.5 * Delta);
     
     %% update C the data term matrix
-    q = (a - Delta/Par.rho)/(2*Par.lambda/Par.rho+1);
-    c = min(0, q);
+    q = (Par.rho*a - Delta)/( Par.s*(2*Par.lambda+Par.rho) );
+    c = -Par.s*solver_BCLS_closedForm(-q);
     
     %% update Deltas the lagrange multiplier matrix
     Delta = Delta + Par.rho * ( c - a);
@@ -55,7 +56,7 @@ while  ( ~terminate )
     %% computing errors
     err1(iter+1) = errorCoef(c, a);
     err2(iter+1) = errorLinSys(y, X, a);
-    if (  (err1(iter+1) <= tol && err2(iter+1) <= tol) ||  iter >= Par.maxIter  )
+    if (  (err1(iter+1) <=tol && err2(iter+1)<=tol) ||  iter >= Par.maxIter  )
         terminate = true;
 %         fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
 %     else
@@ -63,7 +64,7 @@ while  ( ~terminate )
 %             fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
 %         end
     end
-    
+
     %% next iteration number
     iter = iter + 1;
 end
