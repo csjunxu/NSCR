@@ -23,7 +23,7 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [84 150 300]
+for nDim = [150 300]
     par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters 
@@ -40,14 +40,14 @@ for nDim = [84 150 300]
                     if strcmp(dataset, 'AR_DAT') == 1
                         load(['C:/Users/csjunxu/Desktop/Classification/Dataset/AR_DAT']);
                         par.nClass        =   max(trainlabels);                 % the number of classes in the subset of AR database
-                        par.nDim          =   54; % 54 120 300  the eigenfaces dimension
+%                         par.nDim          =   54; % 54 120 300  the eigenfaces dimension
                         Tr_DAT   =   double(NewTrain_DAT(:,trainlabels<=par.nClass));
                         trls     =   trainlabels(trainlabels<=par.nClass);
                         Tt_DAT   =   double(NewTest_DAT(:,testlabels<=par.nClass));
                         ttls     =   testlabels(testlabels<=par.nClass);
                         clear NewTest_DAT NewTrain_DAT testlabels trainlabels
                     elseif strcmp(dataset, 'ExtendedYaleB') == 1
-                        par.nDim          =   84; % 84 150 300 the eigenfaces dimension
+%                         par.nDim          =   84; % 84 150 300 the eigenfaces dimension
                         load(['C:/Users/csjunxu/Desktop/Classification/Dataset/YaleBCrop025']);
                         % randomly select half of the samples as training data;
                         [dim, nSample, nClass] = size(Y);
@@ -71,7 +71,7 @@ for nDim = [84 150 300]
                         load(['C:/Users/csjunxu/Desktop/Classification/Dataset/MNIST2k2k']);
                         gnd = gnd + 1;
                         par.nClass        =   max(gnd); % the number of classes in the subset of AR database
-                        par.nDim          =   100; % the eigenfaces dimension
+%                         par.nDim          =   100; % the eigenfaces dimension
                         Tr_DAT   =   double(fea(trainIdx, :))';
                         trls     =   gnd(trainIdx, 1)';
                         Tt_DAT   =   double(fea(testIdx, :))';
@@ -115,6 +115,7 @@ for nDim = [84 150 300]
                 % -------------------------------------------------------------------------
                 %% save the results
                 avgacc = mean(accuracy);
+                fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
                 if strcmp(ClassificationMethod, 'CRC') == 1
                     matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(par.nDim) '.mat']);
                     save(matname, 'accuracy', 'avgacc');
