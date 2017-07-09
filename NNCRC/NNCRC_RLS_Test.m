@@ -102,8 +102,8 @@ for nDim = [300]
         %% tuning the parameters
         for maxIter = [1:1:5]
             Par.maxIter  = maxIter;
-            for rho = [1:1:15]
-                Par.rho = rho*10^(-2);
+            for rho = [9:-1:1]
+                Par.rho = rho*10^(-3);
                 for lambda = [0]
                     Par.lambda = lambda * 10^(-4);
                     %-------------------------------------------------------------------------
