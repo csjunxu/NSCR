@@ -110,7 +110,7 @@ for nDim = [84 150 300]
                                 case 'ANPLSR'             % affine, non-negative, sum to -1
                                     coef = ANPLSR( tt_dat(:,indTest), tr_dat, Par );
                                 case 'DANNLSR'                 % affine, non-negative, sum to a scalar s
-                                    coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );  
+                                    coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par ); 
                                 case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
                                     coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
                             end
