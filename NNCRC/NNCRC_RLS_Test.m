@@ -10,11 +10,13 @@ dataset = 'ExtendedYaleB';
 nExperiment = 10;
 % -------------------------------------------------------------------------
 %% choosing classification methods
-ClassificationMethod = 'CRC';
-% ClassificationMethod = 'NNCRC' ; % non-negative CRC
-% ClassificationMethod = 'NPCRC' ; % non-positive CRC
-% ClassificationMethod = 'ANNCRC' ; % affine and non-negative CRC
-% ClassificationMethod = 'ANPCRC' ; % affine and non-positive CRC
+% ClassificationMethod = 'CRC';
+% ClassificationMethod = 'NNLSR' ; % non-negative LSR
+% ClassificationMethod = 'NPLSR' ; % non-positive LSR
+% ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
+% ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
+ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
+% ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 % -------------------------------------------------------------------------
 %% directory to save the results
 writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
@@ -27,7 +29,7 @@ for nDim = [84 150 300]
     par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = 1
+    for s = [1 2]
         Par.s = s;
         for maxIter = [1:1:5]
             Par.maxIter  = maxIter;
@@ -98,21 +100,22 @@ for nDim = [84 150 300]
                                     Par.lambda = .001 * size(Tr_DAT,2)/700;
                                     %projection matrix computing
                                     Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
-                                    [id]    = CRC_RLS(tr_dat,Proj_M,tt_dat(:,indTest),trls);
+                                    coef         =  Proj_M*tt_dat(:,indTest);
                                 case 'NNLSR'                   % non-negative
                                     coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                 case 'NPLSR'               % non-positive
                                     coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
                                 case 'ANNLSR'                 % affine, non-negative, sum to 1
                                     coef = ANNLSR( tt_dat(:,indTest), tr_dat, Par );
-                                case 'ANPCRC'             % affine, non-negative, sum to -1
-                                    coef = ANNLSR( tt_dat(:,indTest), tr_dat, Par );
-                                case 'DANNCRC'                 % affine, non-negative, sum to a scalar s
-                                    [id]    = DANNCRC(tt_dat(:,indTest), tr_dat, Par, trls);
-                                case 'DANPCRC'             % affine, non-positive, sum to a scalar -s
-                                    [id]    = DANPCRC(tt_dat(:,indTest), tr_dat, Par, trls);
+                                case 'ANPLSR'             % affine, non-negative, sum to -1
+                                    coef = ANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                case 'DANNLSR'                 % affine, non-negative, sum to a scalar s
+                                    coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
+                                    coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
                             end
-                            
+                            % -------------------------------------------------------------------------
+                            %% assign the class  index
                             for ci = 1:max(trls)
                                 coef_c   =  coef(trls==ci);
                                 Dc       =  tr_dat(:,trls==ci);

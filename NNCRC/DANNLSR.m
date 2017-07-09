@@ -1,4 +1,4 @@
- function c = ANNLSR( y, X , Par )
+ function c = DANNLSR( y, X , Par )
 
 % Input
 % y          input test data point
@@ -49,8 +49,11 @@ while  ( ~terminate )
     a = XTXinv * (X' * y + Par.rho/2 * c + 0.5 * Delta);
     
     %% update C the data term matrix
-    q = (Par.rho*a - Delta)/(2*Par.lambda+Par.rho);
-    c  = solver_BCLS_closedForm(q);
+    q = (Par.rho*a - Delta)/( (2*Par.lambda+Par.rho)*Par.s );
+    c  = Par.s*solver_BCLS_closedForm(q);
+    
+    q1 = (Par.rho*a - Delta)/(2*Par.lambda+Par.rho);
+    c1  = solver_BCLS_closedForm(q1);
     
     %% update Deltas the lagrange multiplier matrix
     Delta = Delta + Par.rho * ( c - a);
