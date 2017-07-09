@@ -7,7 +7,7 @@
 
 % Objective function:
 %      min_{A}  ||y - X * a||_{2}^{2} + lambda * ||a||_{2}^{2}
-%      s.t.  1'*a = 1', a>=0
+%      s.t.  1'*a = s', a>=0
 
 % Notation: L
 % y ... (D x 1) input data vector, where D is the dimension of the features
@@ -16,14 +16,11 @@
 %           N is the number of samples.
 % a ... (N x 1) is a column vector used to select
 %           the most representive and informative samples
+% s ... a non-negative scale, default s=1
 % Par ...  structure of the regularization parameters
 
-if ~isfield(Par, 'lambda')
-    Par.lambda = 0;
-end
-
-if ~isfield(Par, 'rho')
-    Par.rho = .1;
+if ~isfield(Par, 's')
+    Par.s = 1;
 end
 
 [D , N] = size (X);
@@ -86,4 +83,6 @@ while  ( ~terminate )
     %% next iteration number
     iter = iter + 1;
 end
+a = Par.s*a;
+c = Par.s*c;
 end
