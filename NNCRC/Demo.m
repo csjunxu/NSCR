@@ -43,19 +43,19 @@ for nDim = [84 150 300]
                         %% data loading
                         if strcmp(dataset, 'AR_DAT') == 1
                             load(['C:/Users/csjunxu/Desktop/Classification/Dataset/AR_DAT']);
-                            par.nClass        =   max(trainlabels);                 % the number of classes in the subset of AR database
-                            %                         par.nDim          =   54; % 54 120 300  the eigenfaces dimension
-                            Tr_DAT   =   double(NewTrain_DAT(:,trainlabels<=par.nClass));
-                            trls     =   trainlabels(trainlabels<=par.nClass);
-                            Tt_DAT   =   double(NewTest_DAT(:,testlabels<=par.nClass));
-                            ttls     =   testlabels(testlabels<=par.nClass);
+                            Par.nClass        =   max(trainlabels);                 % the number of classes in the subset of AR database
+                            %                         Par.nDim          =   54; % 54 120 300  the eigenfaces dimension
+                            Tr_DAT   =   double(NewTrain_DAT(:,trainlabels<=Par.nClass));
+                            trls     =   trainlabels(trainlabels<=Par.nClass);
+                            Tt_DAT   =   double(NewTest_DAT(:,testlabels<=Par.nClass));
+                            ttls     =   testlabels(testlabels<=Par.nClass);
                             clear NewTest_DAT NewTrain_DAT testlabels trainlabels
                         elseif strcmp(dataset, 'ExtendedYaleB') == 1
-                            %                         par.nDim          =   84; % 84 150 300 the eigenfaces dimension
+                            %                         Par.nDim          =   84; % 84 150 300 the eigenfaces dimension
                             load(['C:/Users/csjunxu/Desktop/Classification/Dataset/YaleBCrop025']);
                             % randomly select half of the samples as training data;
                             [dim, nSample, nClass] = size(Y);
-                            par.nClass        =   nClass; % the number of classes in the subset of AR database
+                            Par.nClass        =   nClass; % the number of classes in the subset of AR database
                             Tr_DAT = [];
                             Tt_DAT = [];
                             trls = [];
@@ -74,8 +74,8 @@ for nDim = [84 150 300]
                         elseif strcmp(dataset, 'MNIST2k2k') == 1
                             load(['C:/Users/csjunxu/Desktop/Classification/Dataset/MNIST2k2k']);
                             gnd = gnd + 1;
-                            par.nClass        =   max(gnd); % the number of classes in the subset of AR database
-                            %                         par.nDim          =   100; % the eigenfaces dimension
+                            Par.nClass        =   max(gnd); % the number of classes in the subset of AR database
+                            %                         Par.nDim          =   100; % the eigenfaces dimension
                             Tr_DAT   =   double(fea(trainIdx, :))';
                             trls     =   gnd(trainIdx, 1)';
                             Tt_DAT   =   double(fea(testIdx, :))';
@@ -85,11 +85,11 @@ for nDim = [84 150 300]
                         
                         %--------------------------------------------------------------------------
                         %% eigenface extracting
-                        [disc_set,disc_value,Mean_Image]  =  Eigenface_f(Tr_DAT,par.nDim);
+                        [disc_set,disc_value,Mean_Image]  =  Eigenface_f(Tr_DAT,Par.nDim);
                         tr_dat  =  disc_set'*Tr_DAT;
                         tt_dat  =  disc_set'*Tt_DAT;
-                        tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [par.nDim,1]) );
-                        tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [par.nDim,1]) );
+                        tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [Par.nDim,1]) );
+                        tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
                         
                         %-------------------------------------------------------------------------
                         %% testing
