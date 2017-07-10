@@ -29,11 +29,11 @@ for nDim = [84 150 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1.5 2 3]
+    for s = [2 3]
         Par.s = s;
         for maxIter = [1:1:5]
             Par.maxIter  = maxIter;
-            for rho = [1 5 10 50 100]
+            for rho = [1 10]
                 Par.rho = rho*10^(-3);
                 for lambda = [0]
                     Par.lambda = lambda * 10^(-4);
