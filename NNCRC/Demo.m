@@ -11,11 +11,11 @@ nExperiment = 10;
 % -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'CRC';
-ClassificationMethod = 'NNLSR' ; % non-negative LSR
+% ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
-% ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
+ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 % -------------------------------------------------------------------------
 %% directory to save the results
@@ -29,11 +29,11 @@ for nDim = [84 150 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1]
+    for s = [1.2:.2:2.8]
         Par.s = s;
         for maxIter = [1:1:5]
             Par.maxIter  = maxIter;
-            for rho = [1 10 100 1000]
+            for rho = [1 10 100]
                 Par.rho = rho*10^(-3);
                 for lambda = [0]
                     Par.lambda = lambda * 10^(-4);
