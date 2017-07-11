@@ -23,8 +23,8 @@ for nDim = [84 150 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for lambda = [2:1:6]
-        Par.lambda = 10^(-lambda);
+    for lambda = [1:2:19]
+        Par.lambda = lambda*10^(-2);
         accuracy = zeros(nExperiment, 1) ;
         for n = 1:nExperiment
             %--------------------------------------------------------------------------
@@ -104,7 +104,7 @@ for nDim = [84 150 300]
                 ID      =   [ID id];
             end
             cornum      =   sum(ID==ttls);
-            Rec         =   [cornum/length(ttls)]; % recognition rate
+            accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
             fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
         end
         % -------------------------------------------------------------------------
