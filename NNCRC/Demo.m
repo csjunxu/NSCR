@@ -10,12 +10,13 @@ dataset = 'ExtendedYaleB';
 nExperiment = 10;
 % -------------------------------------------------------------------------
 %% choosing classification methods
-% ClassificationMethod = 'CRC';
+ClassificationMethod = 'NSC'; % NIPS2002
+% ClassificationMethod = 'CRC'; % ICCV 2011
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
-ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
+% ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 % -------------------------------------------------------------------------
 %% directory to save the results
@@ -29,14 +30,14 @@ for nDim = [84 150 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1.2:.2:2.8]
+    for s = [1]
         Par.s = s;
-        for maxIter = [1:1:5]
+        for maxIter = [1]
             Par.maxIter  = maxIter;
-            for rho = [1 10 100]
+            for rho = [1]
                 Par.rho = rho*10^(-3);
-                for lambda = [0]
-                    Par.lambda = lambda * 10^(-4);
+                for lambda = [0:.1:1]
+                    Par.lambda = lambda * 10^(0);
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
                         %--------------------------------------------------------------------------
@@ -94,46 +95,65 @@ for nDim = [84 150 300]
                         %-------------------------------------------------------------------------
                         %% testing
                         ID = [];
-                        for indTest = 1:size(tt_dat,2)
-                            switch ClassificationMethod
-                                case 'CRC'
-                                    Par.lambda = .001 * size(Tr_DAT,2)/700;
-                                    %projection matrix computing
-                                    Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
-                                    coef         =  Proj_M*tt_dat(:,indTest);
-                                case 'NNLSR'                   % non-negative
-                                    coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
-                                case 'NPLSR'               % non-positive
-                                    coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
-                                case 'ANNLSR'                 % affine, non-negative, sum to 1
-                                    coef = ANNLSR( tt_dat(:,indTest), tr_dat, Par );
-                                case 'ANPLSR'             % affine, non-negative, sum to -1
-                                    coef = ANPLSR( tt_dat(:,indTest), tr_dat, Par );
-                                case 'DANNLSR'                 % affine, non-negative, sum to a scalar s
-                                    coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );  
-                                case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
-                                    coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                        if strcmp(ClassificationMethod, 'NSC') == 1
+                            Par.lambda = lambda;
+                            %projection matrix computing for each class
+                            A = cell(max(trls),1);
+                            for c = 1:max(trls)
+                                Xc = tr_dat(:, trls==c);
+                                A{c} = Xc/(Xc'*Xc+Par.lambda*eye(size(Xc, 2)))*Xc';
                             end
-                            % -------------------------------------------------------------------------
-                            %% assign the class  index
-                            for ci = 1:max(trls)
-                                coef_c   =  coef(trls==ci);
-                                Dc       =  tr_dat(:,trls==ci);
-                                error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
+                            for indTest = 1:size(tt_dat,2)
+                                for c = 1:max(trls)
+                                    coef_c = A{c}*tt_dat(:,indTest);
+                                    error(c) = norm(tt_dat(:,indTest)-coef_c,2)^2/sum(coef_c.*coef_c);
+                                end
+                                index      =  find(error==min(error));
+                                id         =  index(1);
+                                ID      =   [ID id];
                             end
-                            index      =  find(error==min(error));
-                            id         =  index(1);
-                            ID      =   [ID id];
+                        else
+                            for indTest = 1:size(tt_dat,2)
+                                switch ClassificationMethod
+                                    case 'CRC'
+                                        Par.lambda = .001 * size(Tr_DAT,2)/700;
+                                        %projection matrix computing
+                                        Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
+                                        coef         =  Proj_M*tt_dat(:,indTest);
+                                    case 'NNLSR'                   % non-negative
+                                        coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    case 'NPLSR'               % non-positive
+                                        coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    case 'ANNLSR'                 % affine, non-negative, sum to 1
+                                        coef = ANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    case 'ANPLSR'             % affine, non-negative, sum to -1
+                                        coef = ANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    case 'DANNLSR'                 % affine, non-negative, sum to a scalar s
+                                        coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
+                                        coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                end
+                                % -------------------------------------------------------------------------
+                                %% assign the class  index
+                                for ci = 1:max(trls)
+                                    coef_c   =  coef(trls==ci);
+                                    Dc       =  tr_dat(:,trls==ci);
+                                    error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
+                                end
+                                index      =  find(error==min(error));
+                                id         =  index(1);
+                                ID      =   [ID id];
+                            end
+                            cornum      =   sum(ID==ttls);
+                            accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
+                            fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
                         end
-                        cornum      =   sum(ID==ttls);
-                        accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
-                        fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
                     end
                     % -------------------------------------------------------------------------
                     %% save the results
                     avgacc = mean(accuracy);
                     fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                    if strcmp(ClassificationMethod, 'CRC') == 1
+                    if strcmp(ClassificationMethod, 'NSC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
                         matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '.mat']);
                         save(matname, 'accuracy', 'avgacc');
                     else
