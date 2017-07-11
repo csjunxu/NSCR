@@ -1,5 +1,4 @@
 clear;
-clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
 dataset = 'ExtendedYaleB';
@@ -24,7 +23,7 @@ for nDim = [84 150 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for lambda = [1:1:6]
+    for lambda = [2:1:6]
         Par.lambda = 10^(-lambda);
         accuracy = zeros(nExperiment, 1) ;
         for n = 1:nExperiment
@@ -83,7 +82,6 @@ for nDim = [84 150 300]
                 Tt_DAT  =  Tt_DAT./( repmat(sqrt(sum(Tt_DAT.*Tt_DAT)), [size(Tt_DAT, 1), 1]) );
                 clear fea gnd
             end
-            
             %--------------------------------------------------------------------------
             %% eigenface extracting
             [disc_set,disc_value,Mean_Image]  =  Eigenface_f(Tr_DAT,Par.nDim);
@@ -91,7 +89,6 @@ for nDim = [84 150 300]
             tt_dat  =  disc_set'*Tt_DAT;
             tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [Par.nDim,1]) );
             tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
-            
             %-------------------------------------------------------------------------
             %projection matrix computing for each class
             A = cell(max(trls),1);
@@ -99,7 +96,6 @@ for nDim = [84 150 300]
                 Xc = tr_dat(:, trls==c);
                 A{c} = Xc/(Xc'*Xc+lambda*eye(size(Xc, 2)))*Xc';
             end
-            
             %-------------------------------------------------------------------------
             %% testing
             ID = [];
@@ -110,20 +106,13 @@ for nDim = [84 150 300]
             cornum      =   sum(ID==ttls);
             Rec         =   [cornum/length(ttls)]; % recognition rate
             fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
-            
-            
         end
-        
         % -------------------------------------------------------------------------
         %% save the results
         avgacc = mean(accuracy);
         fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-        if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
-            matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '.mat']);
-            save(matname, 'accuracy', 'avgacc');
-        else
-            matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
-            save(matname,'accuracy', 'avgacc');
-        end
+        matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '.mat']);
+        save(matname, 'accuracy', 'avgacc');
+        
     end
 end
