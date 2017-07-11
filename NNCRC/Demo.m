@@ -7,11 +7,17 @@ dataset = 'ExtendedYaleB';
 % 'MNIST2k2k'
 % -------------------------------------------------------------------------
 %% number of repeations
-nExperiment = 10;
+if strcmp(dataset, 'ExtendedYaleB') == 1
+    nExperiment = 10;
+elseif strcmp(dataset, 'AR_DAT') == 1
+    nExperiment = 1;
+elseif strcmp(dataset, 'MNIST2k2k') == 1
+    nExperiment = 1;
+end
 % -------------------------------------------------------------------------
 %% choosing classification methods
-ClassificationMethod = 'SRC'; % PAMI2009
-% ClassificationMethod = 'CRC'; % ICCV 2011
+% ClassificationMethod = 'SRC'; % PAMI2009
+ClassificationMethod = 'CRC'; % ICCV 2011
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
