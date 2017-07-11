@@ -1,13 +1,19 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'ExtendedYaleB';
+dataset = 'AR_DAT';
 % 'AR_DAT'
 % 'ExtendedYaleB'
 % 'MNIST2k2k'
 % -------------------------------------------------------------------------
 %% number of repeations
-nExperiment = 10;
+if strcmp(dataset, 'ExtendedYaleB') == 1
+    nExperiment = 10;
+elseif strcmp(dataset, 'AR_DAT') == 1
+    nExperiment = 1;
+elseif strcmp(dataset, 'MNIST2k2k') == 1
+    nExperiment = 1;
+end
 % -------------------------------------------------------------------------
 %% choosing classification methods
 ClassificationMethod = 'NSC'; % NIPS2002
@@ -19,11 +25,11 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [150 300]
+for nDim = [54 120 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for lambda = [2 1 0]
+    for lambda = [-1 0 1 2]
         Par.lambda = 10^(-lambda);
         accuracy = zeros(nExperiment, 1) ;
         for n = 1:nExperiment
