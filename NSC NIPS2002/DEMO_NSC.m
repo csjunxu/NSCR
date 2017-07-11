@@ -19,7 +19,7 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [84 150 300]
+for nDim = [84]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
@@ -111,7 +111,7 @@ for nDim = [84 150 300]
         %% save the results
         avgacc = mean(accuracy);
         fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-        matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '.mat']);
+        matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '.mat']);
         save(matname, 'accuracy', 'avgacc');
         
     end
