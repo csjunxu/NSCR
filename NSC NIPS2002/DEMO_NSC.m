@@ -88,6 +88,7 @@ for nDim = [54 120 300]
                 Tt_DAT  =  Tt_DAT./( repmat(sqrt(sum(Tt_DAT.*Tt_DAT)), [size(Tt_DAT, 1), 1]) );
                 clear fea gnd
             end
+            
             %--------------------------------------------------------------------------
             %% eigenface extracting
             [disc_set,disc_value,Mean_Image]  =  Eigenface_f(Tr_DAT,Par.nDim);
