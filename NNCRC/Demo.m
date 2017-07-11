@@ -37,7 +37,7 @@ for nDim = [84 150 300]
             for rho = [2.6]
                 Par.rho = rho*10^(-3);
                 for lambda = [0]
-                    Par.lambda = lambda * 10^(4);
+                    Par.lambda = lambda * 10^(-4);
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
                         %--------------------------------------------------------------------------
@@ -82,6 +82,16 @@ for nDim = [84 150 300]
                             Tt_DAT   =   double(fea(testIdx, :))';
                             ttls     =   gnd(testIdx, 1)';
                             clear fea gnd trainIdx testIdx
+                        elseif strcmp(Dataset, 'USPS')==1
+                            load('../USPS');
+                            par.nClass        =  length(unique(gnd));
+                            Tr_DAT   =   double(fea(1:7291, :)');
+                            trls     =   gnd(1:7291)';
+                            Tt_DAT   =   double(fea(7292:end, :)');
+                            ttls     =   gnd(7292:end)';
+                            Tr_DAT  =  Tr_DAT./( repmat(sqrt(sum(Tr_DAT.*Tr_DAT)), [size(Tr_DAT, 1), 1]) );
+                            Tt_DAT  =  Tt_DAT./( repmat(sqrt(sum(Tt_DAT.*Tt_DAT)), [size(Tt_DAT, 1), 1]) );
+                            clear fea gnd
                         end
                         
                         %--------------------------------------------------------------------------
