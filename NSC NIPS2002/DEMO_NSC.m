@@ -24,7 +24,7 @@ for nDim = [84]
     %-------------------------------------------------------------------------
     %% tuning the parameters
     for lambda = [1:2:19]
-        Par.lambda = lambda*10^(-2);
+        Par.lambda = lambda*10^(-3);
         accuracy = zeros(nExperiment, 1) ;
         for n = 1:nExperiment
             %--------------------------------------------------------------------------
