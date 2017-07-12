@@ -113,11 +113,11 @@ normg   = 0; prelres = 0; dxu =  zeros(2*n,1);
 % diagxtx = diag(At*A);
 diagxtx = 2*ones(n,1);
 
-if (~quiet) disp(sprintf('\nSolving a problem of size (m=%d, n=%d), with lambda=%.5e',...
-            m,n,lambda)); end
-if (~quiet) disp('-----------------------------------------------------------------------------');end
-if (~quiet) disp(sprintf('%5s %9s %15s %15s %13s %11s',...
-            'iter','gap','primobj','dualobj','step len','pcg iters')); end
+% if (~quiet) disp(sprintf('\nSolving a problem of size (m=%d, n=%d), with lambda=%.5e',...
+%             m,n,lambda)); end
+% if (~quiet) disp('-----------------------------------------------------------------------------');end
+% if (~quiet) disp(sprintf('%5s %9s %15s %15s %13s %11s',...
+%             'iter','gap','primobj','dualobj','step len','pcg iters')); end
 
 %------------------------------------------------------------
 %               MAIN LOOP
