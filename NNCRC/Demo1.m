@@ -10,6 +10,11 @@ dataset = 'MNIST2k2k';
 % MNIST2k2k
 % USPS
 %% object recognition
+% Texture25
+% Caltech 256
+%% event recognition
+% Scene 15
+% UIUC Sports
 
 % -------------------------------------------------------------------------
 %% number of repeations
