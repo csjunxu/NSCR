@@ -2,9 +2,10 @@ clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
 dataset = 'MNIST2k2k';
-% 'AR_DAT'
-% 'ExtendedYaleB'
-% 'MNIST2k2k'
+% AR_DAT
+% ExtendedYaleB
+% MNIST2k2k
+% USPS
 % -------------------------------------------------------------------------
 %% number of repeations
 if strcmp(dataset, 'ExtendedYaleB') == 1
@@ -12,6 +13,8 @@ if strcmp(dataset, 'ExtendedYaleB') == 1
 elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
 elseif strcmp(dataset, 'MNIST2k2k') == 1
+    nExperiment = 1;
+elseif strcmp(dataset, 'USPS') == 1
     nExperiment = 1;
 end
 % -------------------------------------------------------------------------
