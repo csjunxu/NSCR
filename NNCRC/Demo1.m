@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'ExtendedYaleB';
+dataset = 'MNIST2k2k';
 % 'AR_DAT'
 % 'ExtendedYaleB'
 % 'MNIST2k2k'
@@ -17,12 +17,12 @@ end
 % -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'SRC'; % PAMI2009
-% ClassificationMethod = 'CRC'; % ICCV 2011
+ClassificationMethod = 'CRC'; % ICCV 2011
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
-ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
+% ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 % -------------------------------------------------------------------------
 %% directory to save the results
@@ -32,13 +32,13 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = 150 %[84 150 300]
+for nDim = [50 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1.6 1.8]
+    for s = [1]
         Par.s = s;
-        for maxIter = [3 4 5]
+        for maxIter = [5]
             Par.maxIter  = maxIter;
             for rho = [1]
                 Par.rho = rho*10^(-1);
