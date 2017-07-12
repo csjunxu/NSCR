@@ -40,11 +40,11 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [50 150 300]
+for nDim = [150 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1.1:.1:2]
+    for s = [1:.1:1.5]
         Par.s = s;
         for maxIter = [3 4 5]
             Par.maxIter  = maxIter;
