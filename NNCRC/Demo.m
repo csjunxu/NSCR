@@ -16,8 +16,8 @@ elseif strcmp(dataset, 'MNIST2k2k') == 1
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
-% ClassificationMethod = 'SRC'; % PAMI2009
-% ClassificationMethod = 'CRC'; % ICCV 2011
+% ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab')); 
+% ClassificationMethod = 'CRC'; 
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
@@ -113,6 +113,10 @@ for nDim = 300 %[84 150 300]
                         ID = [];
                         for indTest = 1:size(tt_dat,2)
                             switch ClassificationMethod
+                                case 'SRC'
+                                    
+                                    rel_tol = 0.01;     % relative target duality gap
+                                    [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
                                 case 'CRC'
                                     Par.lambda = .001 * size(Tr_DAT,2)/700;
                                     %projection matrix computing

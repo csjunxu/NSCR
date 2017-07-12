@@ -1,16 +1,10 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'MNIST2k2k';
-%% face recognition
-% AR_DAT
-% ExtendedYaleB
-% LFW
-%% digit recognition
-% MNIST2k2k
-% USPS
-%% object recognition
-
+dataset = 'ExtendedYaleB';
+% 'AR_DAT'
+% 'ExtendedYaleB'
+% 'MNIST2k2k'
 % -------------------------------------------------------------------------
 %% number of repeations
 if strcmp(dataset, 'ExtendedYaleB') == 1
@@ -19,18 +13,16 @@ elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
 elseif strcmp(dataset, 'MNIST2k2k') == 1
     nExperiment = 1;
-elseif strcmp(dataset, 'USPS') == 1
-    nExperiment = 1;
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
-% ClassificationMethod = 'SRC'; % PAMI2009
-% ClassificationMethod = 'CRC'; % ICCV 2011
+ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab')); 
+% ClassificationMethod = 'CRC'; 
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
-ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
+% ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 % -------------------------------------------------------------------------
 %% directory to save the results
@@ -40,18 +32,18 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [50 150 300]
+for nDim = [84 150 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1.1:.1:2]
+    for s = [1]
         Par.s = s;
-        for maxIter = [3 4 5]
+        for maxIter = [5]
             Par.maxIter  = maxIter;
             for rho = [1]
                 Par.rho = rho*10^(-1);
-                for lambda = [0]
-                    Par.lambda = lambda * 10^(-4);
+                for lambda = [1:1:10]
+                    Par.lambda = 10^(-lambda);
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
                         %--------------------------------------------------------------------------
@@ -121,6 +113,9 @@ for nDim = [50 150 300]
                         ID = [];
                         for indTest = 1:size(tt_dat,2)
                             switch ClassificationMethod
+                                case 'SRC'
+                                    rel_tol = 0.01;     % relative target duality gap
+                                    [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
                                 case 'CRC'
                                     Par.lambda = .001 * size(Tr_DAT,2)/700;
                                     %projection matrix computing
