@@ -25,7 +25,7 @@ end
 % -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'SRC'; % PAMI2009
-% ClassificationMethod = 'CRC'; % ICCV 2011
+ClassificationMethod = 'CRC'; % ICCV 2011
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
@@ -40,13 +40,13 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [150 300]
+for nDim = [100]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1:.1:1.5]
+    for s = [1]
         Par.s = s;
-        for maxIter = [3 4 5]
+        for maxIter = [5]
             Par.maxIter  = maxIter;
             for rho = [1]
                 Par.rho = rho*10^(-1);
@@ -121,6 +121,9 @@ for nDim = [150 300]
                         ID = [];
                         for indTest = 1:size(tt_dat,2)
                             switch ClassificationMethod
+                                case 'SRC'
+                                    rel_tol = 0.01;     % relative target duality gap
+                                    [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
                                 case 'CRC'
                                     Par.lambda = .001 * size(Tr_DAT,2)/700;
                                     %projection matrix computing

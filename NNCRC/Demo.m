@@ -114,7 +114,6 @@ for nDim = 300 %[84 150 300]
                         for indTest = 1:size(tt_dat,2)
                             switch ClassificationMethod
                                 case 'SRC'
-                                    
                                     rel_tol = 0.01;     % relative target duality gap
                                     [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
                                 case 'CRC'
