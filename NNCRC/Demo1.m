@@ -17,7 +17,7 @@ end
 % -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'SRC'; % PAMI2009
-ClassificationMethod = 'CRC'; % ICCV 2011
+% ClassificationMethod = 'CRC'; % ICCV 2011
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
@@ -32,16 +32,16 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [50 300]
+for nDim = [50 150 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1]
+    for s = [1:.1:2]
         Par.s = s;
-        for maxIter = [5]
+        for maxIter = [3 4 5]
             Par.maxIter  = maxIter;
-            for rho = [1]
-                Par.rho = rho*10^(-1);
+            for rho = [1 10 100]
+                Par.rho = rho*10^(-3);
                 for lambda = [0]
                     Par.lambda = lambda * 10^(-4);
                     accuracy = zeros(nExperiment, 1) ;
