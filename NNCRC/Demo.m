@@ -18,6 +18,7 @@ end
 %% choosing classification methods
 % ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
+% ClassificationMethod = 'ProCRC';
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
@@ -121,6 +122,16 @@ for nDim = [120 300]% [84 150 300]
                                     %projection matrix computing
                                     Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                     coef         =  Proj_M*tt_dat(:,indTest);
+                                case 'ProCRC'
+                                    params.dataset_name      =      'Extended Yale B';
+                                    params.model_type        =      'R-ProCRC';
+                                    params.gamma             =      [1e-2];
+                                    params.lambda            =      [1e-0];
+                                    params.class_num         =      class_num;
+                                    
+                                    data.tr_descr = tr_dat;
+                                    data.tt_descr = tt_dat(:,indTest);
+                                    coef = ProCRC(data, params);
                                 case 'NNLSR'                   % non-negative
                                     coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                 case 'NPLSR'               % non-positive
