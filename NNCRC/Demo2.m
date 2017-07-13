@@ -42,8 +42,8 @@ for nDim = [84 150 300]
             Par.maxIter  = maxIter;
             for rho = [1]
                 Par.rho = rho*10^(-1);
-                for lambda = [1:1:10]
-                    Par.lambda = 10^(-lambda);
+                for lambda = [.1 1 10]
+                    Par.lambda = lambda*10^(-1);
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
                         %--------------------------------------------------------------------------
@@ -154,7 +154,7 @@ for nDim = [84 150 300]
                     %% save the results
                     avgacc = mean(accuracy);
                     fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                    if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
+                    if strcmp(ClassificationMethod, 'CRC') == 1 % strcmp(ClassificationMethod, 'SRC') == 1 ||
                         matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '.mat']);
                         save(matname, 'accuracy', 'avgacc');
                     else
