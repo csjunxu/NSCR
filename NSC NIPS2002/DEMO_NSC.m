@@ -1,10 +1,11 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'AR_DAT';
-% 'AR_DAT'
-% 'ExtendedYaleB'
-% 'MNIST2k2k'
+dataset = 'USPS';
+% AR_DAT
+% ExtendedYaleB
+% MNIST2k2k
+% USPS
 % -------------------------------------------------------------------------
 %% number of repeations
 if strcmp(dataset, 'ExtendedYaleB') == 1
@@ -12,6 +13,8 @@ if strcmp(dataset, 'ExtendedYaleB') == 1
 elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
 elseif strcmp(dataset, 'MNIST2k2k') == 1
+    nExperiment = 1;
+elseif strcmp(dataset, 'USPS') == 1
     nExperiment = 1;
 end
 % -------------------------------------------------------------------------
@@ -29,7 +32,7 @@ for nDim = [54]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for lambda = [0.001:.001:.02]
+    for lambda = [0.023]
         Par.lambda = lambda;
         accuracy = zeros(nExperiment, 1) ;
         for n = 1:nExperiment
@@ -76,16 +79,14 @@ for nDim = [54]
                 Tt_DAT   =   double(fea(testIdx, :))';
                 ttls     =   gnd(testIdx, 1)';
                 clear fea gnd trainIdx testIdx
-            elseif strcmp(Dataset, 'USPS')==1
+            elseif strcmp(dataset, 'USPS')==1
                 %             lambda1 = 0.023; % 0.92576
-                load('../USPS');
+                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/USPS']);
                 par.nClass        =  length(unique(gnd));
                 Tr_DAT   =   double(fea(1:7291, :)');
                 trls     =   gnd(1:7291)';
                 Tt_DAT   =   double(fea(7292:end, :)');
                 ttls     =   gnd(7292:end)';
-                Tr_DAT  =  Tr_DAT./( repmat(sqrt(sum(Tr_DAT.*Tr_DAT)), [size(Tr_DAT, 1), 1]) );
-                Tt_DAT  =  Tt_DAT./( repmat(sqrt(sum(Tt_DAT.*Tt_DAT)), [size(Tt_DAT, 1), 1]) );
                 clear fea gnd
             end
             

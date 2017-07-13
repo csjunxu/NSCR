@@ -169,7 +169,7 @@ for nDim = [50 100]
                     %% save the results
                     avgacc = mean(accuracy);
                     fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                    if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
+                    if strcmp(ClassificationMethod, 'CRC') == 1 %  strcmp(ClassificationMethod, 'SRC') == 1 ||
                         matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '.mat']);
                         save(matname, 'accuracy', 'avgacc');
                     else
