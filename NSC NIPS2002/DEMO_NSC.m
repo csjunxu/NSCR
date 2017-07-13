@@ -28,11 +28,11 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [120]
+for nDim = [120 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for lambda = [0.023]
+    for lambda = [0.015]
         Par.lambda = lambda;
         accuracy = zeros(nExperiment, 1) ;
         for n = 1:nExperiment
