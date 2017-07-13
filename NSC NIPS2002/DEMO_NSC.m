@@ -28,7 +28,7 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [54]
+for nDim = [120]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
@@ -87,6 +87,8 @@ for nDim = [54]
                 trls     =   gnd(1:7291)';
                 Tt_DAT   =   double(fea(7292:end, :)');
                 ttls     =   gnd(7292:end)';
+                Tr_DAT  =  Tr_DAT./( repmat(sqrt(sum(Tr_DAT.*Tr_DAT)), [size(Tr_DAT, 1), 1]) );
+                Tt_DAT  =  Tt_DAT./( repmat(sqrt(sum(Tt_DAT.*Tt_DAT)), [size(Tt_DAT, 1), 1]) );
                 clear fea gnd
             end
             

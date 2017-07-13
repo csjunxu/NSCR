@@ -16,8 +16,8 @@ elseif strcmp(dataset, 'MNIST2k2k') == 1
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
-% ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab')); 
-% ClassificationMethod = 'CRC'; 
+% ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
+% ClassificationMethod = 'CRC';
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
