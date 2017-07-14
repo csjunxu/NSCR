@@ -3,7 +3,7 @@ addpath('C:\Users\csjunxu\Desktop\SC\Datasets\MNISThelpcode');
 addpath('C:\Users\csjunxu\Desktop\SC\SSCOMP_Code\scatnet-0.2');
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'MNIST';
+dataset = 'USPS';
 % MNIST
 % USPS
 % -------------------------------------------------------------------------
@@ -16,8 +16,8 @@ end
 % -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
-ClassificationMethod = 'CRC';
-% ClassificationMethod = 'NNLSR' ; % non-negative LSR
+% ClassificationMethod = 'CRC';
+ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
@@ -31,11 +31,12 @@ if ~isdir(writefilepath)
 end
 
 %% Settings
-Par.nDim = 500;
 if strcmp(dataset, 'MNIST') == 1
     SampleArray = [50 100 300 500];
+    Par.nDim = 500;
 elseif strcmp(dataset, 'USPS') == 1
     SampleArray = [50 100 200 300];
+    Par.nDim = 256;
 end
 
 
@@ -45,7 +46,7 @@ for nSample = SampleArray % number of images for each digit
     %% tuning the parameters
     for s = [1]
         Par.s = s;
-        for maxIter = [5]
+        for maxIter = [3 4 5]
             Par.maxIter  = maxIter;
             for rho = [.1 1 10]
                 Par.rho = rho*10^(-1);
@@ -85,34 +86,6 @@ for nSample = SampleArray % number of images for each digit
                             tr_LABEL = tr_MNIST_LABEL'+1;
                             tt_DATA = tt_MNIST_DATA;
                             tt_LABEL = tt_MNIST_LABEL'+1;
-                            
-                            %                             nCluster = 10;
-                            %                             % set of digits to test on, e.g. [2, 0]. Pick randomly if empty.
-                            %                             digit_set = 0:9;
-                            %                             % prepare data
-                            %                             if isempty(digit_set)
-                            %                                 rng(i); Digits = randperm(10, nCluster) - 1;
-                            %                             else
-                            %                                 Digits = digit_set;
-                            %                             end
-                            %                             if length(nSample) == 1
-                            %                                 nSample = ones(1, nCluster) * nSample;
-                            %                             end
-                            %                             mask = zeros(1, sum(nSample));
-                            %                             label = zeros(1, sum(nSample));
-                            %                             nSample_cum = [0, cumsum(nSample)];
-                            %                             for iK = 1:nCluster % randomly take data for each digit.
-                            %                                 allpos = find( tr_LABEL == Digits(iK) );
-                            %                                 rng( (i-1) * nCluster + iK );
-                            %                                 selpos = allpos( randperm(length(allpos), nSample(iK)) );
-                            %                                 mask( nSample_cum(iK) + 1 : nSample_cum(iK+1) ) = selpos;
-                            %                                 label( nSample_cum(iK) + 1 : nSample_cum(iK+1) ) = iK * ones(1, nSample(iK));
-                            %                             end
-                            %                             % N = length(gnd);
-                            %                             Tr_DAT = tr_MNIST_DATA(:, mask);
-                            %                             trls = label;
-                            %                             Tt_DAT   =   tt_MNIST_DATA;
-                            %                             ttls     =   tt_MNIST_LABEL' + 1;
                         elseif strcmp(dataset, 'USPS')==1
                             load('C:\Users\csjunxu\Desktop\SC\Datasets\USPS');
                             tr_DATA = double(fea(1:7291, :)');
