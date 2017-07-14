@@ -1,7 +1,5 @@
 clear;
-addpath('C:/Users/csjunxu/Desktop/SC/Datasets/MNISThelpcode');
-addpath('C:\Users\csjunxu\Documents\GitHub\SubspaceCluteringCode\SSCOMP_Code\scatnet-0.2');
-
+addpath('C:\Users/csjunxu/Desktop/SC/Datasets/MNISThelpcode');
 % -------------------------------------------------------------------------
 %% choosing the dataset
 dataset = 'MNIST';
@@ -38,6 +36,7 @@ end
 Par.nDim = 500;
 
 for nSample = [50 100 300 600] % number of images for each digit
+    
     %-------------------------------------------------------------------------
     %% tuning the parameters
     for s = [1]
@@ -66,7 +65,7 @@ for nSample = [50 100 300 600] % number of images for each digit
                         elseif strcmp(dataset, 'MNIST') == 1
                             %% Load data
                             addpath('C:\Users\csjunxu\Desktop\SC\Datasets\MNIST\')
-                            if ~exist('tr_MNIST_DATA', 'var') || ~exist('tt_MNIST_DATA', 'var')
+                            if ~exist('MNIST_DATA', 'var')
                                 try
                                     % MNIST_SC_DATA is a D by N matrix. Each column contains a feature
                                     % vector of a digit image and N = 60,000.
@@ -113,7 +112,7 @@ for nSample = [50 100 300 600] % number of images for each digit
                             end
                             Tr_DAT = tr_MNIST_DATA(:, mask);
                             N = length(gnd);
-                            
+        
                             trls = gnd;
                             Tt_DAT   =   double(fea(testIdx, :))';
                             ttls     =   gnd(testIdx, 1)';
