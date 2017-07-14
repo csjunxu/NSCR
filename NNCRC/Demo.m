@@ -18,8 +18,8 @@ elseif strcmp(dataset, 'MNIST2k2k') == 1
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
-ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
-% ClassificationMethod = 'CRC';
+% ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
+ClassificationMethod = 'CRC';
 % ClassificationMethod = 'ProCRC';
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
@@ -45,7 +45,7 @@ for nDim = [54 120 300]% [84 150 300]
             Par.maxIter  = maxIter;
             for rho = [1]
                 Par.rho = rho*10^(-1);
-                for lambda = [0:1:5]
+                for lambda = [5]
                     Par.lambda = 10^(-lambda);
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
