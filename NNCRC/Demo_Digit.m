@@ -1,6 +1,6 @@
 clear;
-addpath('C:/Users/csjunxu/Desktop/SC/Datasets/MNISThelpcode');
-addpath('C:\Users\csjunxu\Documents\GitHub\SubspaceCluteringCode\SSCOMP_Code\scatnet-0.2');
+addpath('C:\Users\csjunxu\Desktop\SC\Datasets\MNISThelpcode');
+addpath(genpath('C:\Users\csjunxu\Documents\GitHub\SubspaceCluteringCode\SSCOMP_Code\scatnet-0.2'));
 
 % -------------------------------------------------------------------------
 %% choosing the dataset
