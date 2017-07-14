@@ -1,11 +1,10 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'AR_DAT';
+dataset = 'USPS';
 % AR_DAT
 % ExtendedYaleB
 % MNIST2k2k
-% MNIST
 % USPS
 % -------------------------------------------------------------------------
 %% number of repeations
@@ -15,12 +14,13 @@ elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
 elseif strcmp(dataset, 'MNIST2k2k') == 1
     nExperiment = 1;
+elseif strcmp(dataset, 'USPS') == 1
+    nExperiment = 1;
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
 ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
-% ClassificationMethod = 'ProCRC';
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
@@ -35,7 +35,7 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [54 120 300]% [84 150 300]
+for nDim = [84 150 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
@@ -45,8 +45,8 @@ for nDim = [54 120 300]% [84 150 300]
             Par.maxIter  = maxIter;
             for rho = [1]
                 Par.rho = rho*10^(-1);
-                for lambda = [0:1:5]
-                    Par.lambda = 10^(-lambda);
+                for lambda = [.1 1 10]
+                    Par.lambda = lambda*10^(-1);
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
                         %--------------------------------------------------------------------------
@@ -124,16 +124,6 @@ for nDim = [54 120 300]% [84 150 300]
                                     %projection matrix computing
                                     Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                     coef         =  Proj_M*tt_dat(:,indTest);
-                                case 'ProCRC'
-                                    params.dataset_name      =      'Extended Yale B';
-                                    params.model_type        =      'R-ProCRC';
-                                    params.gamma             =      [1e-2];
-                                    params.lambda            =      [1e-0];
-                                    params.class_num         =      class_num;
-                                    
-                                    data.tr_descr = tr_dat;
-                                    data.tt_descr = tt_dat(:,indTest);
-                                    coef = ProCRC(data, params);
                                 case 'NNLSR'                   % non-negative
                                     coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                 case 'NPLSR'               % non-positive
@@ -167,7 +157,7 @@ for nDim = [54 120 300]% [84 150 300]
                     %% save the results
                     avgacc = mean(accuracy);
                     fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                    if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
+                    if strcmp(ClassificationMethod, 'CRC') == 1 % strcmp(ClassificationMethod, 'SRC') == 1 ||
                         matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '.mat']);
                         save(matname, 'accuracy', 'avgacc');
                     else
