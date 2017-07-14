@@ -6,15 +6,12 @@ dataset = 'ExtendedYaleB';
 % AR_DAT
 % ExtendedYaleB
 % -------------------------------------------------------------------------
-%% specify corruption type
-corruption_type = 'RC';
-% RC: random_corruption
-% BO: block_occlusion
-% -------------------------------------------------------------------------
 %% choosing classification methods
-% ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
+% ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
-ClassificationMethod = 'NNLSR' ; % non-negative LSR
+ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
+
+% ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
@@ -83,41 +80,6 @@ for nDim = [0]
                                 end
                                 clear Y I Ind s
                             end
-                            if ratio~=0
-                                %--------------------------------------------------------------------------
-                                %% corruption settings
-                                if strcmp(dataset, 'AR_DAT') == 1
-                                    imh = 32; imw = 32; % ???
-                                elseif strcmp(dataset, 'ExtendedYaleB') == 1
-                                    imh = 48; imw = 42;
-                                end
-                                switch corruption_type
-                                    case 'RC'
-                                        cor_ratio = ratio;
-                                        [~, samp_num] = size(Tt_DAT);
-                                        for i_t = 1 : samp_num
-                                            xt = Tt_DAT(:, i_t);
-                                            xt = reshape(xt, [imh, imw]);
-                                            xc = Random_Pixel_Crop(uint8(255 * xt), cor_ratio);
-                                            Tt_DAT(:, i_t) = double(xc(:))/255;
-                                        end
-                                    case 'BO'
-                                        cor_ratio = ratio;
-                                        height  = floor(sqrt(imh * imw * cor_ratio));
-                                        width   = height;
-                                        [~, samp_num] = size(Tt_DAT);
-                                        r_h = round(rand(1, samp_num) * (imh - height -1)) + 1;
-                                        r_w = round(rand(1, samp_num) * (imw - width -1)) + 1;
-                                        for i_t = 1 : samp_num
-                                            xt = Tt_DAT(:, i_t);
-                                            xt = reshape(xt, [imh, imw]);
-                                            xc = Random_Block_Occlu(uint8(255 * xt), r_h(i_t), r_w(i_t), height, width);
-                                            Tt_DAT(:, i_t) = double(xc(:))/255;
-                                        end
-                                    otherwise
-                                        error(['\nUnknown corruption type: ' corruption_type]);
-                                end
-                            end
                             %--------------------------------------------------------------------------
                             %% eigenface extracting
                             if Par.nDim ==0
@@ -144,6 +106,19 @@ for nDim = [0]
                                         %projection matrix computing
                                         Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                         coef         =  Proj_M*tt_dat(:,indTest);
+                                    case 'ProCRC'
+                                        
+                                        params.dataset_name      =      'Extended Yale B';
+                                        params.model_type        =      'ProCRC';
+                                        params.gamma             =      [1e-2];
+                                        params.lambda            =      [1e-0];
+                                        params.class_num         =      max(trls);
+                                        
+                                        data.tr_descr = tr_dat;
+                                        data.tt_descr = tt_dat(:,indTest);
+                                        data.tr_label = trls;
+                                        data.tt_label = ttls;
+                                        coef = ProCRC(data, params);
                                     case 'NNLSR'                   % non-negative
                                         coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                     case 'NPLSR'               % non-positive
@@ -176,11 +151,11 @@ for nDim = [0]
                         %% save the results
                         avgacc = mean(accuracy);
                         fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                        if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
-                            matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_Ctype' corruption_type '_ratio' num2str(ratio) '_lambda' num2str(Par.lambda) '.mat']);
+                        if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1 || strcmp(ClassificationMethod, 'ProCRC') == 1
+                            matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '.mat']);
                             save(matname, 'accuracy', 'avgacc');
                         else
-                            matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_Ctype' corruption_type '_ratio' num2str(ratio) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
+                            matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
                             save(matname,'accuracy', 'avgacc');
                         end
                     end
