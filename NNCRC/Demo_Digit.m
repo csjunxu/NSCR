@@ -1,7 +1,6 @@
 clear;
 addpath('C:\Users\csjunxu\Desktop\SC\Datasets\MNISThelpcode');
-addpath(genpath('C:\Users\csjunxu\Documents\GitHub\SubspaceCluteringCode\SSCOMP_Code\scatnet-0.2'));
-
+addpath('C:\Users\csjunxu\Desktop\SC\SSCOMP_Code\scatnet-0.2');
 % -------------------------------------------------------------------------
 %% choosing the dataset
 dataset = 'MNIST';
@@ -66,26 +65,27 @@ for nSample = [50 100 300 600] % number of images for each digit
                         elseif strcmp(dataset, 'MNIST') == 1
                             %% Load data
                             addpath('C:\Users\csjunxu\Desktop\SC\Datasets\MNIST\')
-                            if ~exist('tr_MNIST_DATA', 'var') || ~exist('tt_MNIST_DATA', 'var')
+                            if ~exist('MNIST_DATA', 'var') || ~exist('tt_MNIST_DATA', 'var')
                                 try
                                     % MNIST_SC_DATA is a D by N matrix. Each column contains a feature
                                     % vector of a digit image and N = 60,000.
                                     % MNIST_LABEL is a 1 by N vector. Each entry is the label for the
                                     % corresponding column in MNIST_SC_DATA.
-                                    load tr_MNIST_C.mat tr_MNIST_C_DATA tr_MNIST_LABEL;
+                                    load MNIST_C.mat MNIST_SC_DATA MNIST_LABEL;
                                 catch
-                                    % training data
-                                    tr_MNIST_DATA = loadMNISTImages('train-images.idx3-ubyte');
-                                    tr_MNIST_LABEL = loadMNISTLabels('train-labels.idx1-ubyte');
-                                    tr_MNIST_C_DATA = SCofDigits(tr_MNIST_DATA);
-                                    save C:\Users\csjunxu\Desktop\SC\Datasets\tr_MNIST_C.mat tr_MNIST_C_DATA tr_MNIST_LABEL;
+                                    %                                     % training data
+                                    %                                     tr_MNIST_DATA = loadMNISTImages('train-images.idx3-ubyte');
+                                    %                                     tr_MNIST_LABEL = loadMNISTLabels('train-labels.idx1-ubyte');
+                                    %                                     tr_MNIST_C_DATA = SCofDigits(tr_MNIST_DATA);
+                                    %                                     save C:\Users\csjunxu\Desktop\SC\Datasets\tr_MNIST_C.mat tr_MNIST_C_DATA tr_MNIST_LABEL;
                                     % testing data
                                     tt_MNIST_DATA = loadMNISTImages('t10k-images.idx3-ubyte');
                                     tt_MNIST_LABEL = loadMNISTLabels('t10k-labels.idx1-ubyte');
                                     tt_MNIST_C_DATA = SCofDigits(tt_MNIST_DATA);
                                     save C:\Users\csjunxu\Desktop\SC\Datasets\tt_MNIST_C.mat tt_MNIST_C_DATA tt_MNIST_LABEL;
                                 end
-                                tr_MNIST_DATA = tr_MNIST_C_DATA;
+                                tr_MNIST_DATA = MNIST_SC_DATA ;% tr_MNIST_C_DATA;
+                                tr_MNIST_LABEL = MNIST_LABEL;
                                 tt_MNIST_DATA = tt_MNIST_C_DATA;
                             end
                             nCluster = 10;
@@ -111,12 +111,11 @@ for nSample = [50 100 300 600] % number of images for each digit
                                 mask( nSample_cum(iK) + 1 : nSample_cum(iK+1) ) = selpos;
                                 gnd( nSample_cum(iK) + 1 : nSample_cum(iK+1) ) = iK * ones(1, nSample(iK));
                             end
+                            % N = length(gnd);
                             Tr_DAT = tr_MNIST_DATA(:, mask);
-                            N = length(gnd);
-                            
                             trls = gnd;
-                            Tt_DAT   =   double(fea(testIdx, :))';
-                            ttls     =   gnd(testIdx, 1)';
+                            Tt_DAT   =   tt_MNIST_DATA;
+                            ttls     =   tt_MNIST_LABEL;
                         elseif strcmp(dataset, 'USPS')==1
                             load('../USPS');
                             par.nClass        =  length(unique(gnd));
