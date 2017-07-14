@@ -1,4 +1,5 @@
 clear;
+addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 % -------------------------------------------------------------------------
 %% choosing the dataset
 dataset = 'ExtendedYaleB';
@@ -6,7 +7,9 @@ dataset = 'ExtendedYaleB';
 % ExtendedYaleB
 % -------------------------------------------------------------------------
 %% specify corruption type
-corruption_type = 'random_corruption'; % {random_corruption; block_occlusion}
+corruption_type = 'RC';
+% RC: random_corruption
+% BO: block_occlusion
 % -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
@@ -32,18 +35,18 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [100]
+for nDim = [0]
     Par.nDim = nDim;
-    for ratio = [0.1 0.2 0.4 0.6]
-        %-------------------------------------------------------------------------
-        %% tuning the parameters
-        for s = [1]
-            Par.s = s;
-            for maxIter = [5]
-                Par.maxIter  = maxIter;
-                for rho = [1]
-                    Par.rho = rho*10^(-1);
-                    for lambda = [.1 1 10]
+    %-------------------------------------------------------------------------
+    %% tuning the parameters
+    for s = [1]
+        Par.s = s;
+        for maxIter = [5]
+            Par.maxIter  = maxIter;
+            for rho = [-2:1:3]
+                Par.rho = 10^(-rho);
+                for ratio = [0 0.1 0.2 0.4 0.6]
+                    for lambda = [0]
                         Par.lambda = lambda*10^(-1);
                         accuracy = zeros(nExperiment, 1) ;
                         for n = 1:nExperiment
@@ -80,48 +83,53 @@ for nDim = [100]
                                 end
                                 clear Y I Ind s
                             end
-                            %--------------------------------------------------------------------------
-                            %% corruption settings
-                            if strcmp(dataset, 'AR_DAT') == 1
-                                imh = 32; imw = 32; % ???
-                            elseif strcmp(dataset, 'ExtendedYaleB') == 1
-                                imh = 48; imw = 42;
+                            if ratio~=0
+                                %--------------------------------------------------------------------------
+                                %% corruption settings
+                                if strcmp(dataset, 'AR_DAT') == 1
+                                    imh = 32; imw = 32; % ???
+                                elseif strcmp(dataset, 'ExtendedYaleB') == 1
+                                    imh = 48; imw = 42;
+                                end
+                                switch corruption_type
+                                    case 'RC'
+                                        cor_ratio = ratio;
+                                        [~, samp_num] = size(Tt_DAT);
+                                        for i_t = 1 : samp_num
+                                            xt = Tt_DAT(:, i_t);
+                                            xt = reshape(xt, [imh, imw]);
+                                            xc = Random_Pixel_Crop(uint8(255 * xt), cor_ratio);
+                                            Tt_DAT(:, i_t) = double(xc(:))/255;
+                                        end
+                                    case 'BO'
+                                        cor_ratio = ratio;
+                                        height  = floor(sqrt(imh * imw * cor_ratio));
+                                        width   = height;
+                                        [~, samp_num] = size(Tt_DAT);
+                                        r_h = round(rand(1, samp_num) * (imh - height -1)) + 1;
+                                        r_w = round(rand(1, samp_num) * (imw - width -1)) + 1;
+                                        for i_t = 1 : samp_num
+                                            xt = Tt_DAT(:, i_t);
+                                            xt = reshape(xt, [imh, imw]);
+                                            xc = Random_Block_Occlu(uint8(255 * xt), r_h(i_t), r_w(i_t), height, width);
+                                            Tt_DAT(:, i_t) = double(xc(:))/255;
+                                        end
+                                    otherwise
+                                        error(['\nUnknown corruption type: ' corruption_type]);
+                                end
                             end
-                            switch corruption_type
-                                case 'random_corruption'
-                                    cor_ratio = ratio;
-                                    [~, samp_num] = size(Tt_DAT);
-                                    for i_t = 1 : samp_num
-                                        xt = Tt_DAT(:, i_t);
-                                        xt = reshape(xt, [imh, imw]);
-                                        xc = Random_Pixel_Crop(uint8(255 * xt), cor_ratio);
-                                        Tt_DAT(:, i_t) = double(xc(:))/255;
-                                    end
-                                case 'block_occlusion'
-                                    cor_ratio = ratio;
-                                    height  = floor(sqrt(imh * imw * cor_ratio));
-                                    width   = height;
-                                    [~, samp_num] = size(Tt_DAT);
-                                    r_h = round(rand(1, samp_num) * (imh - height -1)) + 1;
-                                    r_w = round(rand(1, samp_num) * (imw - width -1)) + 1;
-                                    
-                                    for i_t = 1 : samp_num
-                                        xt = Tt_DAT(:, i_t);
-                                        xt = reshape(xt, [imh, imw]);
-                                        xc = Random_Block_Occlu(uint8(255 * xt), r_h(i_t), r_w(i_t), height, width);
-                                        Tt_DAT(:, i_t) = double(xc(:))/255;
-                                    end
-                                otherwise
-                                    error(['\nUnknown corruption type: ' corruption_type])
-                            end
-                            
                             %--------------------------------------------------------------------------
                             %% eigenface extracting
-                            [disc_set,disc_value,Mean_Image]  =  Eigenface_f(Tr_DAT,Par.nDim);
-                            tr_dat  =  disc_set'*Tr_DAT;
-                            tt_dat  =  disc_set'*Tt_DAT;
-                            tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [Par.nDim,1]) );
-                            tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
+                            if Par.nDim ==0
+                                tr_dat  =  Tr_DAT./( repmat(sqrt(sum(Tr_DAT.*Tr_DAT)), [size(Tr_DAT,1), 1]) );
+                                tt_dat  =  Tt_DAT./( repmat(sqrt(sum(Tt_DAT.*Tt_DAT)), [size(Tt_DAT,1), 1]) );
+                            else
+                                [disc_set,disc_value,Mean_Image]  =  Eigenface_f(Tr_DAT,Par.nDim);
+                                tr_dat  =  disc_set'*Tr_DAT;
+                                tt_dat  =  disc_set'*Tt_DAT;
+                                tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [Par.nDim,1]) );
+                                tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
+                            end
                             
                             %-------------------------------------------------------------------------
                             %% testing
