@@ -32,7 +32,7 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [300]
+for nDim = [100]
     Par.nDim = nDim;
     for ratio = [0.1 0.2 0.4 0.6]
         %-------------------------------------------------------------------------
@@ -169,10 +169,10 @@ for nDim = [300]
                         avgacc = mean(accuracy);
                         fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
                         if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
-                            matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_ratio' num2str(ratio) '_lambda' num2str(Par.lambda) '.mat']);
+                            matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_Ctype' corruption_type '_ratio' num2str(ratio) '_lambda' num2str(Par.lambda) '.mat']);
                             save(matname, 'accuracy', 'avgacc');
                         else
-                            matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_ratio' num2str(ratio) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
+                            matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_Ctype' corruption_type '_ratio' num2str(ratio) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
                             save(matname,'accuracy', 'avgacc');
                         end
                     end
