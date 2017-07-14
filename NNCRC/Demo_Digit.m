@@ -4,14 +4,11 @@ addpath('C:\Users\csjunxu\Desktop\SC\SSCOMP_Code\scatnet-0.2');
 % -------------------------------------------------------------------------
 %% choosing the dataset
 dataset = 'MNIST';
-% MNIST2k2k
 % MNIST
 % USPS
 % -------------------------------------------------------------------------
 %% number of repeations
-if  strcmp(dataset, 'MNIST2k2k') == 1
-    nExperiment = 10;
-elseif strcmp(dataset, 'MNIST') == 1
+if  strcmp(dataset, 'MNIST') == 1
     nExperiment = 10;
 elseif strcmp(dataset, 'USPS') == 1
     nExperiment = 10;
@@ -19,8 +16,8 @@ end
 % -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
-% ClassificationMethod = 'CRC';
-ClassificationMethod = 'NNLSR' ; % non-negative LSR
+ClassificationMethod = 'CRC';
+% ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
@@ -35,8 +32,15 @@ end
 
 %% Settings
 Par.nDim = 500;
+if strcmp(dataset, 'MNIST') == 1
+    SampleArray = [50 100 300 500];
+elseif strcmp(dataset, 'USPS') == 1
+    SampleArray = [50 100 200 300];
+end
 
-for nSample = [50 100 300 500] % number of images for each digit
+
+
+for nSample = SampleArray % number of images for each digit
     %-------------------------------------------------------------------------
     %% tuning the parameters
     for s = [1]
@@ -63,11 +67,11 @@ for nSample = [50 100 300 500] % number of images for each digit
                                     load tr_MNIST_C.mat tr_MNIST_C_DATA tr_MNIST_LABEL;
                                     load tt_MNIST_C.mat tt_MNIST_C_DATA tt_MNIST_LABEL;
                                 catch
-                                    %                                     % training data
-                                    %                                     tr_MNIST_DATA = loadMNISTImages('train-images.idx3-ubyte');
-                                    %                                     tr_MNIST_LABEL = loadMNISTLabels('train-labels.idx1-ubyte');
-                                    %                                     tr_MNIST_C_DATA = SCofDigits(tr_MNIST_DATA);
-                                    %                                     save C:\Users\csjunxu\Desktop\SC\Datasets\MNIST\tr_MNIST_C.mat tr_MNIST_C_DATA tr_MNIST_LABEL;
+                                    % training data
+                                    tr_MNIST_DATA = loadMNISTImages('train-images.idx3-ubyte');
+                                    tr_MNIST_LABEL = loadMNISTLabels('train-labels.idx1-ubyte');
+                                    tr_MNIST_C_DATA = SCofDigits(tr_MNIST_DATA);
+                                    save C:\Users\csjunxu\Desktop\SC\Datasets\MNIST\tr_MNIST_C.mat tr_MNIST_C_DATA tr_MNIST_LABEL;
                                     % testing data
                                     tt_MNIST_DATA = loadMNISTImages('t10k-images.idx3-ubyte');
                                     tt_MNIST_LABEL = loadMNISTLabels('t10k-labels.idx1-ubyte');
@@ -77,41 +81,73 @@ for nSample = [50 100 300 500] % number of images for each digit
                                 tr_MNIST_DATA = tr_MNIST_C_DATA;
                                 tt_MNIST_DATA = tt_MNIST_C_DATA;
                             end
-                            nCluster = 10;
-                            % set of digits to test on, e.g. [2, 0]. Pick randomly if empty.
-                            digit_set = 0:9;
-                            % prepare data
-                            if isempty(digit_set)
-                                rng(i); Digits = randperm(10, nCluster) - 1;
-                            else
-                                Digits = digit_set;
-                            end
-                            if length(nSample) == 1
-                                nSample = ones(1, nCluster) * nSample;
-                            end
-                            mask = zeros(1, sum(nSample));
-                            gnd = zeros(1, sum(nSample));
-                            nSample_cum = [0, cumsum(nSample)];
-                            for iK = 1:nCluster % randomly take data for each digit.
-                                allpos = find( tr_MNIST_LABEL == Digits(iK) );
-                                rng( (i-1) * nCluster + iK );
-                                selpos = allpos( randperm(length(allpos), nSample(iK)) );
-                                mask( nSample_cum(iK) + 1 : nSample_cum(iK+1) ) = selpos;
-                                gnd( nSample_cum(iK) + 1 : nSample_cum(iK+1) ) = iK * ones(1, nSample(iK));
-                            end
-                            % N = length(gnd);
-                            Tr_DAT = tr_MNIST_DATA(:, mask);
-                            trls = gnd;
-                            Tt_DAT   =   tt_MNIST_DATA;
-                            ttls     =   tt_MNIST_LABEL' + 1;
+                            tr_DATA = tr_MNIST_DATA;
+                            tr_LABEL = tr_MNIST_LABEL'+1;
+                            tt_DATA = tt_MNIST_DATA;
+                            tt_LABEL = tt_MNIST_LABEL'+1;
+                            
+                            %                             nCluster = 10;
+                            %                             % set of digits to test on, e.g. [2, 0]. Pick randomly if empty.
+                            %                             digit_set = 0:9;
+                            %                             % prepare data
+                            %                             if isempty(digit_set)
+                            %                                 rng(i); Digits = randperm(10, nCluster) - 1;
+                            %                             else
+                            %                                 Digits = digit_set;
+                            %                             end
+                            %                             if length(nSample) == 1
+                            %                                 nSample = ones(1, nCluster) * nSample;
+                            %                             end
+                            %                             mask = zeros(1, sum(nSample));
+                            %                             label = zeros(1, sum(nSample));
+                            %                             nSample_cum = [0, cumsum(nSample)];
+                            %                             for iK = 1:nCluster % randomly take data for each digit.
+                            %                                 allpos = find( tr_LABEL == Digits(iK) );
+                            %                                 rng( (i-1) * nCluster + iK );
+                            %                                 selpos = allpos( randperm(length(allpos), nSample(iK)) );
+                            %                                 mask( nSample_cum(iK) + 1 : nSample_cum(iK+1) ) = selpos;
+                            %                                 label( nSample_cum(iK) + 1 : nSample_cum(iK+1) ) = iK * ones(1, nSample(iK));
+                            %                             end
+                            %                             % N = length(gnd);
+                            %                             Tr_DAT = tr_MNIST_DATA(:, mask);
+                            %                             trls = label;
+                            %                             Tt_DAT   =   tt_MNIST_DATA;
+                            %                             ttls     =   tt_MNIST_LABEL' + 1;
                         elseif strcmp(dataset, 'USPS')==1
                             load('C:\Users\csjunxu\Desktop\SC\Datasets\USPS');
-                            Tr_DAT   =   double(fea(1:7291, :)');
-                            trls     =   gnd(1:7291)';
-                            Tt_DAT   =   double(fea(7292:end, :)');
-                            ttls     =   gnd(7292:end)';
+                            tr_DATA = double(fea(1:7291, :)');
+                            tr_LABEL = gnd(1:7291)';
+                            tt_DATA = double(fea(7292:end, :)');
+                            tt_LABEL = gnd(7292:end)';
                             clear fea gnd
                         end
+                        nCluster = 10;
+                        % set of digits to test on, e.g. [2, 0]. Pick randomly if empty.
+                        digit_set = 0:9;
+                        % prepare data
+                        if isempty(digit_set)
+                            rng(i); Digits = randperm(10, nCluster) - 1;
+                        else
+                            Digits = digit_set;
+                        end
+                        if length(nSample) == 1
+                            nSample = ones(1, nCluster) * nSample;
+                        end
+                        mask = zeros(1, sum(nSample));
+                        label = zeros(1, sum(nSample));
+                        nSample_cum = [0, cumsum(nSample)];
+                        for iK = 1:nCluster % randomly take data for each digit.
+                            allpos = find( tr_LABEL == Digits(iK)+1 );
+                            rng( (i-1) * nCluster + iK );
+                            selpos = allpos( randperm(length(allpos), nSample(iK)) );
+                            mask( nSample_cum(iK) + 1 : nSample_cum(iK+1) ) = selpos;
+                            label( nSample_cum(iK) + 1 : nSample_cum(iK+1) ) = iK * ones(1, nSample(iK));
+                        end
+                        % N = length(label);
+                        Tr_DAT = tr_DATA(:, mask);
+                        trls = label;
+                        Tt_DAT   =   tt_DATA;
+                        ttls     =   tt_LABEL;
                         %--------------------------------------------------------------------------
                         %% eigenface extracting
                         [disc_set,disc_value,Mean_Image]  =  Eigenface_f(Tr_DAT, Par.nDim);
@@ -167,7 +203,10 @@ for nSample = [50 100 300 500] % number of images for each digit
                     if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
                         matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '.mat']);
                         save(matname, 'accuracy', 'avgacc');
-                    else
+                    elseif strcmp(ClassificationMethod, 'NNLSR') == 1 || strcmp(ClassificationMethod, 'NPLSR') == 1 || strcmp(ClassificationMethod, 'ANNLSR') == 1 || strcmp(ClassificationMethod, 'ANPLSR') == 1
+                        matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
+                        save(matname,'accuracy', 'avgacc');
+                    elseif strcmp(ClassificationMethod, 'DANNLSR') == 1 || strcmp(ClassificationMethod, 'DANPLSR') == 1
                         matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
                         save(matname,'accuracy', 'avgacc');
                     end

@@ -1,13 +1,13 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'MNIST2k2k';
+dataset = 'MNIST';
 %% face recognition
 % AR_DAT
 % ExtendedYaleB
 % LFW
 %% digit recognition
-% MNIST2k2k
+% MNIST
 % USPS
 %% object recognition
 % Texture25
