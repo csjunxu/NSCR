@@ -113,7 +113,6 @@ for nDim = [84 150 300]
                                     params.gamma             =      [1e-2];
                                     params.lambda            =      [1e-0];
                                     params.class_num         =      max(trls);
-                                    
                                     data.tr_descr = tr_dat;
                                     data.tt_descr = tt_dat(:,indTest);
                                     data.tr_label = trls;

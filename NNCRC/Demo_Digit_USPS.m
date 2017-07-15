@@ -36,7 +36,7 @@ if strcmp(dataset, 'MNIST') == 1
     Par.nDim = 500;
 elseif strcmp(dataset, 'USPS') == 1
     SampleArray = [50 100 200 300];
-    Par.nDim = 256;
+    Par.nDim = 100;
 end
 
 
@@ -94,6 +94,8 @@ for nSample = SampleArray % number of images for each digit
                             tt_LABEL = gnd(7292:end)';
                             clear fea gnd
                         end
+                        %-------------------------------------------------------------------------
+                        %% randomly select the training samples
                         nCluster = 10;
                         % set of digits to test on, e.g. [2, 0]. Pick randomly if empty.
                         digit_set = 0:9;

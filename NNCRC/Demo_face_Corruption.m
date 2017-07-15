@@ -12,9 +12,13 @@ corruption_type = 'RC';
 % BO: block_occlusion
 % -------------------------------------------------------------------------
 %% choosing classification methods
-% ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
+% ClassificationMethod = 'NSC';
+% ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
-ClassificationMethod = 'NNLSR' ; % non-negative LSR
+% ClassificationMethod = 'CROC';
+ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
+
+% ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
@@ -35,7 +39,7 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [0]
+for nDim = [500]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
@@ -144,6 +148,17 @@ for nDim = [0]
                                         %projection matrix computing
                                         Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                         coef         =  Proj_M*tt_dat(:,indTest);
+                                    case 'ProCRC'
+                                        params.dataset_name      =      'Extended Yale B';
+                                        params.model_type        =      'R-ProCRC';
+                                        params.gamma             =      [1e-2];
+                                        params.lambda            =      [1e-0];
+                                        params.class_num         =      max(trls);
+                                        data.tr_descr = tr_dat;
+                                        data.tt_descr = tt_dat(:,indTest);
+                                        data.tr_label = trls;
+                                        data.tt_label = ttls;
+                                        coef = ProCRC(data, params);
                                     case 'NNLSR'                   % non-negative
                                         coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                     case 'NPLSR'               % non-positive
