@@ -43,8 +43,8 @@ for nDim = [54 120 300]
             Par.maxIter  = maxIter;
             for rho = [0]
                 Par.rho = 10^(-rho);
-                for lambda = [0:1:4]
-                    Par.lambda = 10^(-lambda);
+                for lambda = [.01:.01:.09 .1:.1:.9 1:1:10]
+                    Par.lambda = lambda*10^(-4);
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
                         %--------------------------------------------------------------------------
@@ -137,8 +137,8 @@ for nDim = [54 120 300]
                             if strcmp(ClassificationMethod, 'NSC') == 1
                                 for ci = 1:max(trls)
                                     Xc = tr_dat(:, trls==ci);
-                                    A{ci} = Xc/(Xc'*Xc+Par.lambda*eye(size(Xc, 2)))*Xc';
-                                    coef_c = A{ci}*tt_dat(:,indTest);
+                                    Aci = Xc/(Xc'*Xc+Par.lambda*eye(size(Xc, 2)))*Xc';
+                                    coef_c = Aci*tt_dat(:,indTest);
                                     error(ci) = norm(tt_dat(:,indTest)-coef_c,2)^2/sum(coef_c.*coef_c);
                                 end
                             else
