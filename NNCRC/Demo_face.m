@@ -1,5 +1,4 @@
 clear;
-addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 % -------------------------------------------------------------------------
 %% choosing the dataset
 dataset = 'AR_DAT';

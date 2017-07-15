@@ -1,5 +1,4 @@
 clear;
-addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 % -------------------------------------------------------------------------
 %% choosing the dataset
 dataset = 'ExtendedYaleB';
@@ -88,6 +87,7 @@ for nDim = [500]
                                 clear Y I Ind s
                             end
                             if ratio~=0
+                                addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
                                 %--------------------------------------------------------------------------
                                 %% corruption settings
                                 if strcmp(dataset, 'AR_DAT') == 1
