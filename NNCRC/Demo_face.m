@@ -96,10 +96,9 @@ for nDim = [54 120 300]
                         %-------------------------------------------------------------------------
                         %% testing
                         if strcmp(ClassificationMethod, 'CROC') == 1
-                            gamma = Par.rho;
-                            weight  = Par.lambda;
-                            ID = croc_cvpr12(tt_dat, tr_dat, trls, gamma, weight);
-                            % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, gamma, weight);
+                            weight = Par.rho;
+                            ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
+                            % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, Par.lambda, weight);
                         else
                             ID = [];
                             for indTest = 1:size(tt_dat,2)
@@ -170,11 +169,8 @@ for nDim = [54 120 300]
                     if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
                         matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '.mat']);
                         save(matname, 'accuracy', 'avgacc');
-                    elseif strcmp(ClassificationMethod, 'ProCRC') == 1
-                        matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '_gamma' num2str(Par.rho) '.mat']);
-                        save(matname, 'accuracy', 'avgacc');
-                    elseif strcmp(ClassificationMethod, 'CROC') == 1
-                        matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_gamma' num2str(Par.rho) '_weight' num2str(Par.lambda) '.mat']);
+                    elseif strcmp(ClassificationMethod, 'ProCRC') == 1 || strcmp(ClassificationMethod, 'CROC') == 1
+                        matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '_weight' num2str(Par.rho) '.mat']);
                         save(matname, 'accuracy', 'avgacc');
                     else
                         matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
