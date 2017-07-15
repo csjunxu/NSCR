@@ -6,7 +6,7 @@ dataset = 'AR_DAT';
 % ExtendedYaleB
 % -------------------------------------------------------------------------
 %% choosing classification methods
-ClassificationMethod = 'NSC';
+% ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC';
@@ -16,7 +16,7 @@ ClassificationMethod = 'NSC';
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
-% ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
+ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 % -------------------------------------------------------------------------
 %% number of repeations
@@ -37,13 +37,13 @@ for nDim = [54 120 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1]
+    for s = [.8:.1:2]
         Par.s = s;
-        for maxIter = [5]
+        for maxIter = [3 4 5]
             Par.maxIter  = maxIter;
-            for rho = [0]
+            for rho = [-2:1:4]
                 Par.rho = 10^(-rho);
-                for lambda = [.01:.01:.09 .1:.1:.9 1:1:10]
+                for lambda = [0]
                     Par.lambda = lambda*10^(-4);
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
