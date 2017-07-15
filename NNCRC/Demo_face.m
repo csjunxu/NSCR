@@ -7,11 +7,11 @@ dataset = 'AR_DAT';
 % ExtendedYaleB
 % -------------------------------------------------------------------------
 %% choosing classification methods
-% ClassificationMethod = 'NSC';
+ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
-% ClassificationMethod = 'CORC';
-ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
+% ClassificationMethod = 'CROC';
+% ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
@@ -42,7 +42,7 @@ for nDim = [54 120 300]
         Par.s = s;
         for maxIter = [5]
             Par.maxIter  = maxIter;
-            for rho = [0:1:4]
+            for rho = [0]
                 Par.rho = 10^(-rho);
                 for lambda = [0:1:4]
                     Par.lambda = 10^(-lambda);
@@ -104,9 +104,11 @@ for nDim = [54 120 300]
                                     [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
                                 case 'CRC'
                                     Par.lambda = .001 * size(Tr_DAT,2)/700;
-                                    %projection matrix computing
+                                    % projection matrix computing
                                     Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                     coef         =  Proj_M*tt_dat(:,indTest);
+                                    %                                 case 'CROC'
+                                    %                                     [min_idx] = croc_cvpr12(testFea, tr_dat, trainGnd, lambda, weight);
                                 case 'ProCRC'
                                     params.dataset_name      =      'Extended Yale B';
                                     params.model_type        =      'ProCRC';
@@ -133,10 +135,19 @@ for nDim = [54 120 300]
                             end
                             % -------------------------------------------------------------------------
                             %% assign the class  index
-                            for ci = 1:max(trls)
-                                coef_c   =  coef(trls==ci);
-                                Dc       =  tr_dat(:,trls==ci);
-                                error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
+                            if strcmp(ClassificationMethod, 'NSC') == 1
+                                for ci = 1:max(trls)
+                                    Xc = tr_dat(:, trls==ci);
+                                    A{ci} = Xc/(Xc'*Xc+Par.lambda*eye(size(Xc, 2)))*Xc';
+                                    coef_c = A{ci}*tt_dat(:,indTest);
+                                    error(ci) = norm(tt_dat(:,indTest)-coef_c,2)^2/sum(coef_c.*coef_c);
+                                end
+                            else
+                                for ci = 1:max(trls)
+                                    coef_c   =  coef(trls==ci);
+                                    Dc       =  tr_dat(:,trls==ci);
+                                    error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
+                                end
                             end
                             index      =  find(error==min(error));
                             id         =  index(1);

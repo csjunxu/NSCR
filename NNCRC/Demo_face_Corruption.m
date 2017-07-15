@@ -91,7 +91,7 @@ for nDim = [500]
                                 %--------------------------------------------------------------------------
                                 %% corruption settings
                                 if strcmp(dataset, 'AR_DAT') == 1
-                                    imh = 32; imw = 32; % ???
+                                    imh = 60; imw = 43;
                                 elseif strcmp(dataset, 'ExtendedYaleB') == 1
                                     imh = 48; imw = 42;
                                 end
