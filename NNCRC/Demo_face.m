@@ -42,10 +42,10 @@ for nDim = [84 150 300]
         Par.s = s;
         for maxIter = [5]
             Par.maxIter  = maxIter;
-            for rho = [0]
+            for rho = [0:1:4]
                 Par.rho = 10^(-rho);
-                for lambda = [0]
-                    Par.lambda = lambda*10^(-1);
+                for lambda = [0:1:4]
+                    Par.lambda = 10^(-lambda);
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
                         %--------------------------------------------------------------------------
@@ -110,8 +110,8 @@ for nDim = [84 150 300]
                                 case 'ProCRC'
                                     params.dataset_name      =      'Extended Yale B';
                                     params.model_type        =      'ProCRC';
-                                    params.gamma             =      [1e-2];
-                                    params.lambda            =      [1e-0];
+                                    params.gamma             =     Par.rho; % [1e-2];
+                                    params.lambda            =      Par.lambda; % [1e-0];
                                     params.class_num         =      max(trls);
                                     data.tr_descr = tr_dat;
                                     data.tt_descr = tt_dat(:,indTest);
@@ -150,8 +150,11 @@ for nDim = [84 150 300]
                     %% save the results
                     avgacc = mean(accuracy);
                     fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                    if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1 || strcmp(ClassificationMethod, 'ProCRC') == 1
-                        matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '.mat']);
+                    if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
+                        matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '.mat']);
+                        save(matname, 'accuracy', 'avgacc');
+                    elseif strcmp(ClassificationMethod, 'ProCRC') == 1
+                        matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '_gamma' num2str(Par.rho) '.mat']);
                         save(matname, 'accuracy', 'avgacc');
                     else
                         matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
