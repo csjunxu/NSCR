@@ -2,7 +2,7 @@ clear;
 addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'ExtendedYaleB';
+dataset = 'AR_DAT';
 % AR_DAT
 % ExtendedYaleB
 % -------------------------------------------------------------------------
