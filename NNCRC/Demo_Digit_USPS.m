@@ -52,10 +52,10 @@ for nSample = SampleArray % number of images for each digit
         Par.s = s;
         for maxIter = [5]
             Par.maxIter  = maxIter;
-            for rho = [25:5:100]
+            for rho = [1]
                 Par.rho = rho*10^(-1);
-                for lambda = [0]
-                    Par.lambda = lambda*10^(-2);
+                for lambda = [-3:1:3]
+                    Par.lambda = 10^(-lambda);
                     accuracy = zeros(nExperiment, 1) ;
                     for i = 1:nExperiment
                         %--------------------------------------------------------------------------
