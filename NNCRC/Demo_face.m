@@ -29,19 +29,19 @@ elseif strcmp(dataset, 'AR_DAT') == 1
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
-writefilepath  = ['C:\Users\csjunxu\Desktop\Classification\Results\' dataset '\'];
+writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = 54 % [54 120 300]
+for nDim = [120 300] %[54 120 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
     for s = [.8:.1:2]
         Par.s = s;
-        for maxIter = [6:1:10]
+        for maxIter = [1:1:2]
             Par.maxIter  = maxIter;
             for rho = [-2:1:4]
                 Par.rho = 10^(-rho);
