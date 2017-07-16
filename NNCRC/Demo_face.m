@@ -18,16 +18,18 @@ dataset = 'AR_DAT';
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
 ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
+% ClassificationMethod = 'ADANNLSR' ; % deformable, affine and non-negative LSR
+% ClassificationMethod = 'ADANPLSR' ; % deformable, affine and non-positive LSR
 % -------------------------------------------------------------------------
 %% number of repeations
 if strcmp(dataset, 'ExtendedYaleB') == 1
-    nExperiment = 10; 
+    nExperiment = 10;
 elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
-writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
+writefilepath  = ['C:\Users\csjunxu\Desktop\Classification\Results\' dataset '\'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
@@ -136,6 +138,10 @@ for nDim = 54 % [54 120 300]
                                         coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );
                                     case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
                                         coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    case 'ADANNLSR'                 % affine, non-negative, sum to a scalar s
+                                        coef = ADANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    case 'ADANPLSR'             % affine, non-positive, sum to a scalar -s
+                                        coef = ADANPLSR( tt_dat(:,indTest), tr_dat, Par );
                                 end
                                 % -------------------------------------------------------------------------
                                 %% assign the class  index

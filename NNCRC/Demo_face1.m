@@ -5,6 +5,19 @@ dataset = 'ExtendedYaleB';
 % AR_DAT
 % ExtendedYaleB
 % -------------------------------------------------------------------------
+%% number of repeations
+if strcmp(dataset, 'ExtendedYaleB') == 1
+    nExperiment = 10;
+elseif strcmp(dataset, 'AR_DAT') == 1
+    nExperiment = 1;
+end
+% -------------------------------------------------------------------------
+%% directory to save the results
+writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
+if ~isdir(writefilepath)
+    mkdir(writefilepath);
+end
+% -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
@@ -18,19 +31,6 @@ ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classif
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
 % ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
-% -------------------------------------------------------------------------
-%% number of repeations
-if strcmp(dataset, 'ExtendedYaleB') == 1
-    nExperiment = 10;
-elseif strcmp(dataset, 'AR_DAT') == 1
-    nExperiment = 1;
-end
-% -------------------------------------------------------------------------
-%% directory to save the results
-writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
-if ~isdir(writefilepath)
-    mkdir(writefilepath);
-end
 % -------------------------------------------------------------------------
 %% PCA dimension
 for nDim = [84 150 300]
