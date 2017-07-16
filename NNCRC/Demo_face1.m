@@ -33,7 +33,7 @@ ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classif
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [84 150 300]
+for nDim = 30 %[84 150 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
