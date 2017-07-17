@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'AR_DAT';
+dataset = 'ExtendedYaleB';
 % AR_DAT
 % ExtendedYaleB
 % -------------------------------------------------------------------------
@@ -24,8 +24,10 @@ ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 %% number of repeations
 if strcmp(dataset, 'ExtendedYaleB') == 1
     nExperiment = 10;
+    nDimArray = [84 150 300];
 elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
+    nDimArray = [54 120 300];
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
@@ -35,13 +37,13 @@ if ~isdir(writefilepath)
 end
 %-------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [300] %[54 120 300]
+for nDim = [54 120 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [2.1:.1:4]
+    for s = [.9:.1:2]
         Par.s = s;
-        for maxIter = [1:1:2]
+        for maxIter = [3 4 5 6]
             Par.maxIter  = maxIter;
             for rho = [-2:1:4]
                 Par.rho = 10^(-rho);
