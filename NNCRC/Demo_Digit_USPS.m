@@ -43,8 +43,6 @@ elseif strcmp(dataset, 'USPS') == 1
     Par.nDim = 100;
 end
 
-
-
 for nSample = SampleArray % number of images for each digit
     %-------------------------------------------------------------------------
     %% tuning the parameters
@@ -54,8 +52,8 @@ for nSample = SampleArray % number of images for each digit
             Par.maxIter  = maxIter;
             for rho = [1]
                 Par.rho = rho*10^(-1);
-                for lambda = [-3:1:3]
-                    Par.lambda = 10^(-lambda);
+                for lambda = [.2:.1:.9 .01:.01:.09]
+                    Par.lambda = lambda*10^(-0);
                     accuracy = zeros(nExperiment, 1) ;
                     for i = 1:nExperiment
                         %--------------------------------------------------------------------------
