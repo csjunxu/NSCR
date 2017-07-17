@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'ExtendedYaleB';
+dataset = 'AR_DAT';
 % AR_DAT
 % ExtendedYaleB
 % -------------------------------------------------------------------------
@@ -22,14 +22,14 @@ end
 % ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
-ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
+% ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
-% ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
+ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 % -------------------------------------------------------------------------
 %% PCA dimension
@@ -37,12 +37,12 @@ for nDim = 300 %[84 150 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1]
+    for s = [2.1:.1:4]
         Par.s = s;
-        for maxIter = [5]
+        for maxIter = [3:1:5]
             Par.maxIter  = maxIter;
-            for rho = [0:.1:1]
-                Par.rho = rho*10^(-0);
+            for rho = [0:1:3]
+                Par.rho = 10^(-rho);
                 for lambda = [0:1:6]
                     Par.lambda = 10^(-lambda);
                     accuracy = zeros(nExperiment, 1) ;
