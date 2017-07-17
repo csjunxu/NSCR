@@ -7,6 +7,12 @@ dataset = 'USPS';
 % MNIST
 % USPS
 % -------------------------------------------------------------------------
+%% directory to save the results
+writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
+if ~isdir(writefilepath)
+    mkdir(writefilepath);
+end
+% -------------------------------------------------------------------------
 %% number of repeations
 if  strcmp(dataset, 'MNIST') == 1
     nExperiment = 10;
@@ -27,12 +33,6 @@ ClassificationMethod = 'NSC';
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
 % ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
-% -------------------------------------------------------------------------
-%% directory to save the results
-writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
-if ~isdir(writefilepath)
-    mkdir(writefilepath);
-end
 
 %% Settings
 if strcmp(dataset, 'MNIST') == 1
@@ -205,7 +205,7 @@ for nSample = SampleArray % number of images for each digit
                     %% save the results
                     avgacc = mean(accuracy);
                     fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                    if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
+                    if strcmp(ClassificationMethod, 'NSC') == 1 || strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
                         matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '.mat']);
                         save(matname, 'accuracy', 'avgacc');
                     elseif strcmp(ClassificationMethod, 'ProCRC') == 1 || strcmp(ClassificationMethod, 'CROC') == 1
