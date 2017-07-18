@@ -35,7 +35,7 @@ if strcmp(dataset, 'MNIST') == 1
     SampleArray = [50 100 300 500];
     Par.nDim = 500;
 elseif strcmp(dataset, 'USPS') == 1
-    SampleArray = [100 200 300];% [50 100 200 300];
+    SampleArray = [200 300];% [50 100 200 300];
     Par.nDim = 100;
 end
 
