@@ -2,12 +2,8 @@ clear;
 addpath('C:\Users\csjunxu\Desktop\SC\Datasets\MNISThelpcode');
 addpath('C:\Users\csjunxu\Desktop\SC\SSCOMP_Code\scatnet-0.2');
 % -------------------------------------------------------------------------
-%% choosing the dataset
-dataset = 'USPS';
-% MNIST
-% USPS
-% -------------------------------------------------------------------------
 %% directory to save the results
+dataset = 'USPS';
 writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
@@ -43,7 +39,7 @@ elseif strcmp(dataset, 'USPS') == 1
     Par.nDim = 100;
 end
 
-for nSample = 300%SampleArray % number of images for each digit
+for nSample = SampleArray % number of images for each digit
     %-------------------------------------------------------------------------
     %% tuning the parameters
     for s = [1]
