@@ -7,7 +7,7 @@ dataset = 'USPS';
 writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
-end
+end 
 % -------------------------------------------------------------------------
 %% number of repeations
 if  strcmp(dataset, 'MNIST') == 1
