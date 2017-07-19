@@ -20,8 +20,8 @@ end
 % ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
-ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
-% ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
+% ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
+ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
@@ -35,7 +35,7 @@ if strcmp(dataset, 'MNIST') == 1
     SampleArray = [50 100 300 500];
     Par.nDim = 500;
 elseif strcmp(dataset, 'USPS') == 1
-    SampleArray = [200 300];% [50 100 200 300];
+    SampleArray = [50 100 200 300];
     Par.nDim = 100;
 end
 
@@ -46,8 +46,8 @@ for nSample = SampleArray % number of images for each digit
         Par.s = s;
         for maxIter = [5]
             Par.maxIter  = maxIter;
-            for rho = [0:.1:1]
-                Par.rho = rho;
+            for rho = [-2:1:4]
+                Par.rho = 10^(-rho);
                 for lambda = [-2:1:4]
                     Par.lambda = 10^(-lambda);
                     accuracy = zeros(nExperiment, 1) ;
@@ -147,7 +147,7 @@ for nSample = SampleArray % number of images for each digit
                                         Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                         coef         =  Proj_M*tt_dat(:,indTest);
                                     case 'ProCRC'
-                                        params.dataset_name      =      'Extended Yale B';
+                                        params.dataset_name      =      dataset;
                                         params.model_type        =      'ProCRC';
                                         params.gamma             =     Par.rho;      % [1e-2];
                                         params.lambda            =      Par.lambda; % [1e-0];
@@ -202,8 +202,11 @@ for nSample = SampleArray % number of images for each digit
                     if strcmp(ClassificationMethod, 'NSC') == 1 || strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
                         matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '.mat']);
                         save(matname, 'accuracy', 'avgacc');
-                    elseif strcmp(ClassificationMethod, 'ProCRC') == 1 || strcmp(ClassificationMethod, 'CROC') == 1
+                    elseif strcmp(ClassificationMethod, 'CROC') == 1
                         matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '_weight' num2str(Par.rho) '.mat']);
+                        save(matname, 'accuracy', 'avgacc');
+                    elseif strcmp(ClassificationMethod, 'ProCRC') == 1
+                        matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '_gamma' num2str(Par.rho) '.mat']);
                         save(matname, 'accuracy', 'avgacc');
                     elseif strcmp(ClassificationMethod, 'NNLSR') == 1 || strcmp(ClassificationMethod, 'NPLSR') == 1 || strcmp(ClassificationMethod, 'ANNLSR') == 1 || strcmp(ClassificationMethod, 'ANPLSR') == 1
                         matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
