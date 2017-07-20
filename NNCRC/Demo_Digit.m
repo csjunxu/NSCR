@@ -10,7 +10,7 @@ dataset = 'MNIST';
 %% number of repeations
 if  strcmp(dataset, 'MNIST') == 1
     nExperiment = 10;
-elseif strcmp(d ataset, 'USPS') == 1
+elseif strcmp(dataset, 'USPS') == 1
     nExperiment = 10;
 end
 % -------------------------------------------------------------------------
@@ -47,7 +47,7 @@ for nSample = SampleArray % number of images for each digit
         Par.s = s;
         for maxIter = [5 10]
             Par.maxIter  = maxIter;
-            for rho = [1 5 10 50 100]
+            for rho = [4:-1:2 .8:-.2:.2]
                 Par.rho = rho*10^(-1);
                 for lambda = [0]
                     Par.lambda = lambda*10^(-2);
