@@ -45,9 +45,9 @@ for nSample = SampleArray % number of images for each digit
     %% tuning the parameters
     for s = [1]
         Par.s = s;
-        for maxIter = [510 20]
+        for maxIter = [5 10]
             Par.maxIter  = maxIter;
-            for rho = [1 5 10 100]
+            for rho = [1 5 10 50 100]
                 Par.rho = rho*10^(-1);
                 for lambda = [0]
                     Par.lambda = lambda*10^(-2);
