@@ -37,13 +37,13 @@ for nDim = 300 %[84 150 300]
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [.8:.1:4]
+    for s = [.9:.1:4]
         Par.s = s;
         for maxIter = [1:1:6]
             Par.maxIter  = maxIter;
-            for rho = [0:1:3]
+            for rho = [1:1:3]
                 Par.rho = 10^(-rho);
-                for lambda = [0:.01:.15]
+                for lambda = [0:.05:.5]
                     Par.lambda = lambda*10^(-0);
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
