@@ -10,7 +10,7 @@ dataset = 'MNIST';
 %% number of repeations
 if  strcmp(dataset, 'MNIST') == 1
     nExperiment = 10;
-elseif strcmp(dataset, 'USPS') == 1
+elseif strcmp(d ataset, 'USPS') == 1
     nExperiment = 10;
 end
 % -------------------------------------------------------------------------
