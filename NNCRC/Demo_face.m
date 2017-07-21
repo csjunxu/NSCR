@@ -37,7 +37,7 @@ if ~isdir(writefilepath)
 end
 %-------------------------------------------------------------------------
 %% PCA dimension
-for nDim = [54 120 300]
+for nDim = nDimArray
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
