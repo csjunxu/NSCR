@@ -161,7 +161,7 @@ for nSample = SampleArray % number of images for each digit
                                         data.tr_label = trls;
                                         data.tt_label = ttls;
                                         coef = ProCRC(data, params);
-                                    case 'NNLSR'                   % non-negative
+                                    case 'NNLSR'                    % non-negative
                                         coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                     case 'NPLSR'               % non-positive
                                         coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
