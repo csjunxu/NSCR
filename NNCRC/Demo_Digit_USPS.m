@@ -35,7 +35,7 @@ if strcmp(dataset, 'MNIST') == 1
     SampleArray = [50 100 300 500];
     Par.nDim = 500;
 elseif strcmp(dataset, 'USPS') == 1
-    SampleArray = [100 200 300];
+    SampleArray = 300;%[50 100 200 300];
     Par.nDim = 100;
 end
 
@@ -46,7 +46,7 @@ for nSample = SampleArray % number of images for each digit
         Par.s = s;
         for maxIter = [5]
             Par.maxIter  = maxIter;
-            for rho = [0:1:4]
+            for rho = [1:1:4]
                 Par.rho = 10^(-rho);
                 for lambda = [0:1:4]
                     Par.lambda = 10^(-lambda);
