@@ -17,7 +17,7 @@ elseif strcmp(dataset, 'Tongue') == 1
 end
 %% Settings
 if strcmp(dataset, 'Tongue') == 1
-    SampleArray = [50 100 200 400];
+    SampleArray = [440];
 elseif strcmp(dataset, 'USPS') == 1
     SampleArray = [50 100 200 300];
 end
