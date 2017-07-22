@@ -36,7 +36,7 @@ end
 
 %% Settings
 if strcmp(dataset, 'MNIST') == 1
-    SampleArray = [50 100 300 500];
+    SampleArray = [100 300 500];
     Par.nDim = 500;
 elseif strcmp(dataset, 'USPS') == 1
     SampleArray = [50 100 200 300];
@@ -54,7 +54,7 @@ for nSample = SampleArray % number of images for each digit
             Par.maxIter  = maxIter;
             for rho = [1]
                 Par.rho = rho*10^(-1);
-                for lambda = [0 .001 .01 .05 .1 .5 1]
+                for lambda = [0 .001 .01 .05 .1]
                     Par.lambda = lambda;
                     accuracy = zeros(nExperiment, 1) ;
                     for i = 1:nExperiment
