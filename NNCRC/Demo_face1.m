@@ -1,16 +1,19 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'AR_DAT';
+dataset = 'ExtendedYaleB';
 % AR_DAT
 % ExtendedYaleB
 % -------------------------------------------------------------------------
 %% number of repeations
 if strcmp(dataset, 'ExtendedYaleB') == 1
     nExperiment = 10;
+    nDimArray = [84 150 300];
 elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
+    nDimArray = [54 120 300];
 end
+
 % -------------------------------------------------------------------------
 %% directory to save the results
 writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
@@ -33,17 +36,17 @@ ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 % -------------------------------------------------------------------------
 %% PCA dimension
-for nDim = 300 %[84 150 300]
+for nDim = nDimArray
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [.9:.1:4]
+    for s = [.8:.1:2]
         Par.s = s;
         for maxIter = [1:1:6]
             Par.maxIter  = maxIter;
-            for rho = [2]
-                Par.rho = 10^(-rho);
-                for lambda = [.11:.01:.14]
+            for rho = [1:1:5]
+                Par.rho = rho*10^(-2);
+                for lambda = [.05:.02:.25]
                     Par.lambda = lambda*10^(-0);
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
