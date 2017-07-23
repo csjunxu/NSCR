@@ -13,7 +13,7 @@ end
 if  strcmp(dataset, 'MNIST') == 1
     nExperiment = 10;
 elseif strcmp(dataset, 'USPS') == 1
-    nExperiment = 10;
+    nExperiment = 10;clear
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
