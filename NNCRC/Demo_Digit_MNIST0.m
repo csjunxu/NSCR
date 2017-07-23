@@ -106,7 +106,7 @@ for nSample = SampleArray % number of images for each digit
                             rng(i); Digits = randperm(10, nCluster) - 1;
                         else
                             Digits = digit_set;
-                        end
+                        end  
                         if length(nSample) == 1
                             nSample = ones(1, nCluster) * nSample;
                         end
