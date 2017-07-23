@@ -15,13 +15,13 @@ elseif strcmp(dataset, 'USPS') == 1
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
-% ClassificationMethod = 'NSC';
+ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 
-ClassificationMethod = 'NNLSR' ; % non-negative LSR
+% ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
@@ -36,7 +36,7 @@ end
 
 %% Settings
 if strcmp(dataset, 'MNIST') == 1
-    SampleArray = [50 100 300 500];
+    SampleArray = [100 300 600];
     Par.nDim = 500;
 elseif strcmp(dataset, 'USPS') == 1
     SampleArray = [50 100 200 300];
@@ -52,10 +52,10 @@ for nSample = SampleArray % number of images for each digit
         Par.s = s;
         for maxIter = [5]
             Par.maxIter  = maxIter;
-            for rho = [.1 1 10]
+            for rho = [1]
                 Par.rho = rho*10^(-1);
-                for lambda = [0]
-                    Par.lambda = lambda*10^(-2);
+                for lambda = [0:1:10]
+                    Par.lambda = lambda*10^(-1);
                     accuracy = zeros(nExperiment, 1) ;
                     for i = 1:nExperiment
                         %--------------------------------------------------------------------------
@@ -106,7 +106,7 @@ for nSample = SampleArray % number of images for each digit
                             rng(i); Digits = randperm(10, nCluster) - 1;
                         else
                             Digits = digit_set;
-                        end  
+                        end
                         if length(nSample) == 1
                             nSample = ones(1, nCluster) * nSample;
                         end
@@ -203,7 +203,7 @@ for nSample = SampleArray % number of images for each digit
                     %% save the results
                     avgacc = mean(accuracy);
                     fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                    if strcmp(ClassificationMethod, 'NSC') == 1 || strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
+                    if strcmp(ClassificationMethod, 'NSC') == 1 || strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1 
                         matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '.mat']);
                         save(matname, 'accuracy', 'avgacc');
                     elseif strcmp(ClassificationMethod, 'CROC') == 1
