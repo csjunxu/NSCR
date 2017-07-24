@@ -6,7 +6,7 @@ dataset = 'Caltech-256_VGG';
 % CUB-200-2011_VGG
 % Standford-40_VGG
 % cifar-10
-% cifar-100 
+% cifar-100
 % Caltech-256_VGG
 % -------------------------------------------------------------------------
 %% number of repeations
@@ -23,11 +23,11 @@ elseif strcmp(dataset, 'Caltech-256_VGG') == 1
     nExperiment = 10;
     nDimArray = [500 1000 4096];
     SampleArray = [60 45 30 15];
-    elseif strcmp(dataset, 'cifar-100') == 1 || strcmp(dataset, 'cifar-10') == 1
+elseif strcmp(dataset, 'cifar-100') == 1 || strcmp(dataset, 'cifar-10') == 1
     nExperiment = 10;
     nDimArray = [500 1000 3072];
     SampleArray = [50 100 300 500];
-end  
+end
 % -------------------------------------------------------------------------
 %% directory to save the results
 writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
