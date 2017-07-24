@@ -40,13 +40,13 @@ for nDim = nDimArray
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [.8:.1:2]
+    for s = [.9:.1:2]
         Par.s = s;
-        for maxIter = [1:1:6]
+        for maxIter = [1:1:5]
             Par.maxIter  = maxIter;
-            for rho = [1:1:5]
+            for rho = [1:1:10]
                 Par.rho = rho*10^(-2);
-                for lambda = [.05:.02:.25]
+                for lambda = [0:.02:.2]
                     Par.lambda = lambda*10^(-0);
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
