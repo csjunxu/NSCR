@@ -6,7 +6,8 @@ dataset = 'Caltech-256_VGG';
 % CUB-200-2011_VGG
 % Standford-40_VGG
 % Caltech-256_VGG
-
+% Cifar-10 % Alex Krizhevsky, Vinod Nair, and Geoffrey Hinton
+% Cifar-100 % Alex Krizhevsky, Vinod Nair, and Geoffrey Hinton
 % -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
