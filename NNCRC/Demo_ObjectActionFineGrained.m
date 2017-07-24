@@ -6,8 +6,8 @@ dataset = 'Caltech-256_VGG';
 % CUB-200-2011_VGG
 % Standford-40_VGG
 % Caltech-256_VGG
-% Cifar-10 % Alex Krizhevsky, Vinod Nair, and Geoffrey Hinton
-% Cifar-100 % Alex Krizhevsky, Vinod Nair, and Geoffrey Hinton
+% cifar-10 % Alex Krizhevsky, Vinod Nair, and Geoffrey Hinton
+% cifar-100 % Alex Krizhevsky, Vinod Nair, and Geoffrey Hinton
 % -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
@@ -39,7 +39,11 @@ elseif strcmp(dataset, 'Caltech-256_VGG') == 1
     nExperiment = 10;
     nDimArray = [500 1000 4096];
     SampleArray = [60 45 30 15];
-end
+    elseif strcmp(dataset, 'cifar-100') == 1 || strcmp(dataset, 'cifar-10') == 1
+    nExperiment = 10;
+    nDimArray = [500 1000 3072];
+    SampleArray = [50 100 300 500];
+end  
 % -------------------------------------------------------------------------
 %% directory to save the results
 writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
@@ -66,7 +70,6 @@ for nDim = nDimArray
                             %--------------------------------------------------------------------------
                             %% data loading
                             if strcmp(dataset, 'Caltech-256_VGG') == 1
-                                load('C:/Users/csjunxu/Desktop/Classification/Dataset/Caltech-256_VGG');
                                 % randomly select half of the samples as training data;
                                 [dim, N] = size(descr);
                                 nClass = length(unique(label));
@@ -86,15 +89,42 @@ for nDim = nDimArray
                                     ttls     =   [ttls i*ones(1, Ni-nSample)];
                                 end
                                 clear descr label descri RpNi Ni
-                            else
-                                switch dataset
-                                    case 'CUB-200-2011_VGG'
-                                        load('C:/Users/csjunxu/Desktop/Classification/Dataset/CUB-200-2011_VGG');
-                                    case 'Flower-102_VGG'
-                                        load('C:/Users/csjunxu/Desktop/Classification/Dataset/Flower-102_VGG');
-                                    case 'Standford-40_VGG'
-                                        load('C:/Users/csjunxu/Desktop/Classification/Dataset/Standford-40_VGG');
+                            elseif strcmp(dataset, 'cifar-10') == 1
+                                % TBA
+                            elseif strcmp(dataset, 'cifar-100') == 1
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/train']);
+                                % randomly select half of the samples as training data;
+                                data = data';
+                                nClass = length(unique(fine_label));
+                                Tr_DAT = [];
+                                trls = [];
+                                for i=1:nClass
+                                    datai = data(:,fine_label==i-1);
+                                    Ni = size(datai, 2);
+                                    rng(n);
+                                    RpNi = randperm(Ni);
+                                    Tr_DAT   =   [Tr_DAT double(datai(:, RpNi(1:nSample)))];
+                                    trls     =   [trls i*ones(1, nSample)];
                                 end
+                                clear data datai fine_label Ni RpNi
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/test']);
+                                % randomly select half of the samples as training data;
+                                data = data';
+                                [dim, N] = size(data);
+                                nClass = length(unique(fine_label));
+                                Tt_DAT = [];
+                                ttls = [];
+                                for i=1:nClass
+                                    datai = data(:,fine_label==i-1);
+                                    Ni = size(datai, 2);
+                                    rng(n);
+                                    RpNi = randperm(Ni);
+                                    Tt_DAT   =   [Tt_DAT double(datai(:, RpNi(nSample+1:end)))];
+                                    ttls     =   [ttls i*ones(1, Ni-nSample)];
+                                end
+                                clear data datai fine_label Ni RpNi
+                            else
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                                 nClass        =   max(tr_label);
                                 Tr_DAT   =   double(tr_descr);
                                 trls     =   tr_labels;
@@ -104,7 +134,7 @@ for nDim = nDimArray
                             end
                             %--------------------------------------------------------------------------
                             %% eigenface extracting
-                            if Par.nDim == 0 || Par.nDim == size(Tt_DAT, 1)
+                            if Par.nDim == 0 || Par.nDim == dim
                                 tr_dat  =  Tr_DAT./( repmat(sqrt(sum(Tr_DAT.*Tr_DAT)), [size(Tr_DAT,1), 1]) );
                                 tt_dat  =  Tt_DAT./( repmat(sqrt(sum(Tt_DAT.*Tt_DAT)), [size(Tt_DAT,1), 1]) );
                             else

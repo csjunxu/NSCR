@@ -7,13 +7,6 @@ dataset = 'USPS';
 writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
-end 
-% -------------------------------------------------------------------------
-%% number of repeations
-if  strcmp(dataset, 'MNIST') == 1
-    nExperiment = 10;
-elseif strcmp(dataset, 'USPS') == 1
-    nExperiment = 10;
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
@@ -34,9 +27,11 @@ ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classifi
 if strcmp(dataset, 'MNIST') == 1
     SampleArray = [50 100 300 500];
     Par.nDim = 500;
+    nExperiment = 10;
 elseif strcmp(dataset, 'USPS') == 1
     SampleArray = [50 100 200 300];
     Par.nDim = 100;
+    nExperiment = 10;
 end
 
 for nSample = SampleArray % number of images for each digit
@@ -48,8 +43,8 @@ for nSample = SampleArray % number of images for each digit
             Par.maxIter  = maxIter;
             for rho = [1]
                 Par.rho = rho*10^(-1);
-                for lambda = [-2:1:4]
-                    Par.lambda = 10^(-lambda);
+                for lambda = [.2:.1:.5]
+                    Par.lambda = lambda;
                     accuracy = zeros(nExperiment, 1) ;
                     for i = 1:nExperiment
                         %--------------------------------------------------------------------------
