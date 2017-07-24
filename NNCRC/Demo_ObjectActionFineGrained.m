@@ -5,25 +5,9 @@ dataset = 'Caltech-256_VGG';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
+% cifar-10
+% cifar-100 
 % Caltech-256_VGG
-% cifar-10 % Alex Krizhevsky, Vinod Nair, and Geoffrey Hinton
-% cifar-100 % Alex Krizhevsky, Vinod Nair, and Geoffrey Hinton
-% -------------------------------------------------------------------------
-%% choosing classification methods
-% ClassificationMethod = 'NSC';
-% ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
-% ClassificationMethod = 'CRC';
-% ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
-% ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-
-ClassificationMethod = 'NNLSR' ; % non-negative LSR
-% ClassificationMethod = 'NPLSR' ; % non-positive LSR
-% ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
-% ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
-% ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
-% ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
-% ClassificationMethod = 'ADANNLSR' ; % deformable, affine and non-negative LSR
-% ClassificationMethod = 'ADANPLSR' ; % deformable, affine and non-positive LSR
 % -------------------------------------------------------------------------
 %% number of repeations
 if strcmp(dataset, 'CUB-200-2011_VGG') == 1
@@ -50,6 +34,21 @@ writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
+% -------------------------------------------------------------------------
+%% choosing classification methods
+% ClassificationMethod = 'NSC';
+% ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
+% ClassificationMethod = 'CRC';
+% ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
+% ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
+ClassificationMethod = 'NNLSR' ; % non-negative LSR
+% ClassificationMethod = 'NPLSR' ; % non-positive LSR
+% ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
+% ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
+% ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
+% ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
+% ClassificationMethod = 'ADANNLSR' ; % deformable, affine and non-negative LSR
+% ClassificationMethod = 'ADANPLSR' ; % deformable, affine and non-positive LSR
 %-------------------------------------------------------------------------
 %% PCA dimension
 for nDim = nDimArray
