@@ -14,7 +14,7 @@ if strcmp(dataset, 'CUB-200-2011_VGG') == 1
     nExperiment = 1;
     nDimArray = [4096];
 elseif strcmp(dataset, 'Flower-102_VGG') == 1
-    v  = 1;
+    v = 1;
     nDimArray = [4096];
 elseif strcmp(dataset, 'Standford-40_VGG') == 1
     nExperiment = 1;
