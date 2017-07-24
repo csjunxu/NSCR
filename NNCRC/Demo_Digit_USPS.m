@@ -9,11 +9,15 @@ if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
 % -------------------------------------------------------------------------
-%% number of repeations
+%% Settings
 if  strcmp(dataset, 'MNIST') == 1
     nExperiment = 10;
+    SampleArray = [50 100 300 500];
+    Par.nDim = 500;
 elseif strcmp(dataset, 'USPS') == 1
-    nExperiment = 10;clear
+    nExperiment = 10;
+    SampleArray = [50 100 200 300];
+    Par.nDim = 100;
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
@@ -22,29 +26,18 @@ end
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
 ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
-
-%% Settings
-if strcmp(dataset, 'MNIST') == 1
-    SampleArray = [50 100 300 500];
-    Par.nDim = 500;
-elseif strcmp(dataset, 'USPS') == 1
-    SampleArray = [50 100 200 300];
-    Par.nDim = 100;
-end
-
 for nSample = SampleArray % number of images for each digit
     %-------------------------------------------------------------------------
     %% tuning the parameters
     for s = [.9:.1:3]
         Par.s = s;
-        for maxIter = [1:1:5] 
+        for maxIter = [1:1:5]
             Par.maxIter  = maxIter;
             for rho = [0:1:3]
                 Par.rho = 10^(-rho);
