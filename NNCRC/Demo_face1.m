@@ -42,7 +42,7 @@ for nDim = nDimArray
     %% tuning the parameters
     for s = [.9:.1:2]
         Par.s = s;
-        for maxIter = [1:1:5]
+        for maxIter = [5]
             Par.maxIter  = maxIter;
             for rho = [2:2:10]
                 Par.rho = rho*10^(-2);
