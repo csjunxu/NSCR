@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Caltech-256_VGG';
+dataset = 'cifar-100';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
@@ -58,11 +58,11 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [1:1:6]
+            for maxIter = [5 4 3]
                 Par.maxIter  = maxIter;
-                for rho = [0:1:3]
+                for rho = [2 3 1 0]
                     Par.rho = 10^(-rho);
-                    for lambda = [0 1]
+                    for lambda = [0]
                         Par.lambda = lambda*10^(-2);
                         accuracy = zeros(nExperiment, 1) ;
                         for n = 1:nExperiment
@@ -94,11 +94,11 @@ for nDim = nDimArray
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/train']);
                                 % randomly select half of the samples as training data;
                                 data = data';
-                                nClass = length(unique(fine_label));
+                                nClass = length(unique(fine_labels));
                                 Tr_DAT = [];
                                 trls = [];
                                 for i=1:nClass
-                                    datai = data(:,fine_label==i-1);
+                                    datai = data(:,fine_labels==i-1);
                                     Ni = size(datai, 2);
                                     rng(n);
                                     RpNi = randperm(Ni);
@@ -110,11 +110,11 @@ for nDim = nDimArray
                                 % randomly select half of the samples as training data;
                                 data = data';
                                 [dim, N] = size(data);
-                                nClass = length(unique(fine_label));
+                                nClass = length(unique(fine_labels));
                                 Tt_DAT = [];
                                 ttls = [];
                                 for i=1:nClass
-                                    datai = data(:,fine_label==i-1);
+                                    datai = data(:,fine_labels==i-1);
                                     Ni = size(datai, 2);
                                     rng(n);
                                     RpNi = randperm(Ni);
