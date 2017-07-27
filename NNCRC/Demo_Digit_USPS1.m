@@ -39,9 +39,9 @@ for nSample = SampleArray
     %% tuning the parameters
     for s = [1]
         Par.s = s;
-        for maxIter = [5 4 6]
+        for maxIter = [5]
             Par.maxIter  = maxIter;
-            for rho = [4.1:.1:5]
+            for rho = [5 3 6 10]
                 Par.rho = rho;
                 for lambda = [0]
                     Par.lambda = lambda;
@@ -189,23 +189,26 @@ for nSample = SampleArray
                         cornum      =   sum(ID==ttls);
                         accuracy(i, 1)         =   [cornum/length(ttls)]; % recognition rate
                         fprintf(['Accuracy is ' num2str(accuracy(i, 1)) '.\n']);
-                    end
-                    % -------------------------------------------------------------------------
-                    %% save the results
-                    avgacc = mean(accuracy);
-                    fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                    if strcmp(ClassificationMethod, 'NSC') == 1 || strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
-                        matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '.mat']);
-                        save(matname, 'accuracy', 'avgacc');
-                    elseif strcmp(ClassificationMethod, 'ProCRC') == 1 || strcmp(ClassificationMethod, 'CROC') == 1
-                        matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '_weight' num2str(Par.rho) '.mat']);
-                        save(matname, 'accuracy', 'avgacc');
-                    elseif strcmp(ClassificationMethod, 'NNLSR') == 1 || strcmp(ClassificationMethod, 'NPLSR') == 1 || strcmp(ClassificationMethod, 'ANNLSR') == 1 || strcmp(ClassificationMethod, 'ANPLSR') == 1
-                        matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
-                        save(matname,'accuracy', 'avgacc');
-                    elseif strcmp(ClassificationMethod, 'DANNLSR') == 1 || strcmp(ClassificationMethod, 'DANPLSR') == 1
-                        matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
-                        save(matname,'accuracy', 'avgacc');
+                        % -------------------------------------------------------------------------
+                        %% save the results
+                        avgacc = mean(accuracy);
+                        fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
+                        if strcmp(ClassificationMethod, 'NSC') == 1 || strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
+                            matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '.mat']);
+                            save(matname, 'accuracy', 'avgacc');
+                        elseif strcmp(ClassificationMethod, 'CROC') == 1
+                            matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '_weight' num2str(Par.rho) '.mat']);
+                            save(matname, 'accuracy', 'avgacc');
+                        elseif  strcmp(ClassificationMethod, 'ProCRC') == 1
+                            matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '_gamma' num2str(Par.rho) '.mat']);
+                            save(matname, 'accuracy', 'avgacc');
+                        elseif strcmp(ClassificationMethod, 'NNLSR') == 1 || strcmp(ClassificationMethod, 'NPLSR') == 1 || strcmp(ClassificationMethod, 'ANNLSR') == 1 || strcmp(ClassificationMethod, 'ANPLSR') == 1
+                            matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
+                            save(matname,'accuracy', 'avgacc');
+                        elseif strcmp(ClassificationMethod, 'DANNLSR') == 1 || strcmp(ClassificationMethod, 'DANPLSR') == 1
+                            matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
+                            save(matname,'accuracy', 'avgacc');
+                        end
                     end
                 end
             end
