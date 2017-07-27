@@ -29,7 +29,7 @@ if strcmp(dataset, 'MNIST') == 1
     Par.nDim = 500;
     nExperiment = 10;
 elseif strcmp(dataset, 'USPS') == 1
-    SampleArray = 50; %[50 100 200 300];
+    SampleArray = [200 300]; %[50 100 200 300];
     Par.nDim = 100;
     nExperiment = 10;
 end
@@ -39,9 +39,9 @@ for nSample = SampleArray
     %% tuning the parameters
     for s = [1]
         Par.s = s;
-        for maxIter = [5]
+        for maxIter = [5:1:10]
             Par.maxIter  = maxIter;
-            for rho = [5 3 6 10]
+            for rho = [5:2:25]
                 Par.rho = rho;
                 for lambda = [0]
                     Par.lambda = lambda;
