@@ -12,20 +12,20 @@ dataset = 'cifar-100';
 %% number of repeations
 if strcmp(dataset, 'CUB-200-2011_VGG') == 1
     nExperiment = 1;
-    nDimArray = [4096];
+    nDimArray = [2000 4096];
 elseif strcmp(dataset, 'Flower-102_VGG') == 1
     v = 1; 
-    nDimArray = [4096];
+    nDimArray = [2000 4096];
 elseif strcmp(dataset, 'Standford-40_VGG') == 1
     nExperiment = 1;
-    nDimArray = [4096];
+    nDimArray = [2000 4096];
 elseif strcmp(dataset, 'Caltech-256_VGG') == 1
     nExperiment = 10;
-    nDimArray = [500 1000 4096];
+    nDimArray = [2000 4096];
     SampleArray = [60 45 30 15];
 elseif strcmp(dataset, 'cifar-100') == 1 || strcmp(dataset, 'cifar-10') == 1
     nExperiment = 10;
-    nDimArray = [500 1000 3072];
+    nDimArray = [1500 3072];
     SampleArray = [50 100 300 500];
 end
 % -------------------------------------------------------------------------
@@ -58,9 +58,9 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [5 4 3]
+            for maxIter = [5:1:10]
                 Par.maxIter  = maxIter;
-                for rho = [1 0 -1]
+                for rho = [1:1:4]
                     Par.rho = 10^(-rho);
                     for lambda = [0]
                         Par.lambda = lambda*10^(-2);
