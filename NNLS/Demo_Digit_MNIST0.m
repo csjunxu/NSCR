@@ -15,13 +15,13 @@ elseif strcmp(dataset, 'USPS') == 1
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
-ClassificationMethod = 'NSC';
+% ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 
-% ClassificationMethod = 'NNLSR' ; % non-negative LSR
+ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
@@ -50,11 +50,11 @@ for nSample = SampleArray % number of images for each digit
     %% tuning the parameters
     for s = [1]
         Par.s = s;
-        for maxIter = [5]
+        for maxIter = [5:1:10]
             Par.maxIter  = maxIter;
-            for rho = [1]
+            for rho = [5:1:10]
                 Par.rho = rho*10^(-1);
-                for lambda = [0:1:2]
+                for lambda = [0]
                     Par.lambda = lambda*10^(-1);
                     accuracy = zeros(nExperiment, 1) ;
                     for i = 1:nExperiment
