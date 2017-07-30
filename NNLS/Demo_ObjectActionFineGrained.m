@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'cifar-100';
+dataset = 'Caltech-256_VGG';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
@@ -14,7 +14,7 @@ if strcmp(dataset, 'CUB-200-2011_VGG') == 1
     nExperiment = 1;
     nDimArray = [2000 4096];
 elseif strcmp(dataset, 'Flower-102_VGG') == 1
-    v = 1; 
+    v = 1;
     nDimArray = [2000 4096];
 elseif strcmp(dataset, 'Standford-40_VGG') == 1
     nExperiment = 1;
@@ -60,7 +60,7 @@ for nDim = nDimArray
             Par.s = s;
             for maxIter = [5:1:10]
                 Par.maxIter  = maxIter;
-                for rho = [1:1:4]
+                for rho = [0:1:2]
                     Par.rho = 10^(-rho);
                     for lambda = [0]
                         Par.lambda = lambda*10^(-2);
@@ -69,6 +69,7 @@ for nDim = nDimArray
                             %--------------------------------------------------------------------------
                             %% data loading
                             if strcmp(dataset, 'Caltech-256_VGG') == 1
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                                 % randomly select half of the samples as training data;
                                 [dim, N] = size(descr);
                                 nClass = length(unique(label));
