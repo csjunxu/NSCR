@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'ExtendedYaleB';
+dataset = 'AR_DAT';
 % AR_DAT
 % ExtendedYaleB
 % -------------------------------------------------------------------------
@@ -41,14 +41,14 @@ for nDim = nDimArray
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1:.1:2]
+    for s = [.2:.2:2]
         Par.s = s;
-        for maxIter = [5:1:10]
+        for maxIter = [1:1:10]
             Par.maxIter  = maxIter;
-            for rho = [.1:.1:.1]
+            for rho = [.1:.1:1]
                 Par.rho = rho;
-                for lambda = [0 1 10]
-                    Par.lambda = lambda*10^(-2);
+                for lambda = [0]
+                    Par.lambda = lambda;
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
                         %--------------------------------------------------------------------------
@@ -180,8 +180,10 @@ for nDim = nDimArray
                     elseif strcmp(ClassificationMethod, 'ProCRC') == 1 || strcmp(ClassificationMethod, 'CROC') == 1
                         matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '_weight' num2str(Par.rho) '.mat']);
                         save(matname, 'accuracy', 'avgacc');
-                    else
+                    elseif strcmp(ClassificationMethod, 'DANNLSR') == 1 || strcmp(ClassificationMethod, 'ANNLSR') == 1
                         matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
+                        save(matname,'accuracy', 'avgacc');
+                    else   matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
                         save(matname,'accuracy', 'avgacc');
                     end
                 end
