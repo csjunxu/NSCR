@@ -41,12 +41,12 @@ for nDim = nDimArray
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1.6:.1:2]
+    for s = [1.7:.1:2]
         Par.s = s;
-        for maxIter = [10:1:15]
-            Par.maxIter  = maxIter;
-            for rho = [.1 .2]
-                Par.rho = rho;
+        for rho = [.1 .01]
+            Par.rho = rho;
+            for maxIter = [10:1:15]
+                Par.maxIter  = maxIter;
                 for lambda = [0]
                     Par.lambda = lambda;
                     accuracy = zeros(nExperiment, 1) ;
