@@ -35,11 +35,11 @@ ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 for nSample = SampleArray % number of images for each digit
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1:.2:2]
+    for s = [1.2:.2:2]
         Par.s = s;
         for maxIter = [1:1:5]
             Par.maxIter  = maxIter;
-            for rho = [1 1.1]
+            for rho = [1 1.1 1.2]
                 Par.rho = rho;
                 for lambda = [0]
                     Par.lambda = lambda;
