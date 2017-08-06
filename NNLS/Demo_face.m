@@ -115,8 +115,6 @@ for nDim = nDimArray
                                         % projection matrix computing
                                         Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                         coef         =  Proj_M*tt_dat(:,indTest);
-                                        %                                 case 'CROC'
-                                        %                                     [min_idx] = croc_cvpr12(testFea, tr_dat, trainGnd, lambda, weight);
                                     case 'ProCRC'
                                         params.dataset_name      =      'Extended Yale B';
                                         params.model_type        =      'ProCRC';
