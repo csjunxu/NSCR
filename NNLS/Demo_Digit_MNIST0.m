@@ -17,8 +17,8 @@ end
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
-ClassificationMethod = 'CRC';
-% ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
+% ClassificationMethod = 'CRC';
+ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
@@ -36,7 +36,7 @@ end
 
 %% Settings
 if strcmp(dataset, 'MNIST') == 1
-    SampleArray = [300 600]; %[50 100 300 600];
+    SampleArray = [50 100 300 600];
     Par.nDim = 500;
 elseif strcmp(dataset, 'USPS') == 1
     SampleArray = [50 100 200 300];
@@ -54,8 +54,8 @@ for nSample = SampleArray % number of images for each digit
             Par.maxIter  = maxIter;
             for rho = [1]
                 Par.rho = rho*10^(-1);
-                for lambda = [0]
-                    Par.lambda = lambda*10^(-1);
+                for lambda = [1]
+                    Par.lambda = lambda*10^(-4);
                     accuracy = zeros(nExperiment, 1) ;
                     for i = 1:nExperiment
                         %--------------------------------------------------------------------------
@@ -135,9 +135,8 @@ for nSample = SampleArray % number of images for each digit
                         %-------------------------------------------------------------------------
                         %% testing
                         if strcmp(ClassificationMethod, 'CROC') == 1
-                            weight = Par.rho;
-                            ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
-                            % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, Par.lambda, weight);
+                            ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, Par.rho);
+                            % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, Par.lambda, Par.rho);
                         else
                             ID = [];
                             for indTest = 1:size(tt_dat,2)
