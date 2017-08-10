@@ -16,7 +16,7 @@ end
 % -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
-ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
+ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
