@@ -16,9 +16,9 @@ end
 % -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
-% ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
+ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
-ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
+% ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
@@ -55,7 +55,7 @@ for nSample = SampleArray % number of images for each digit
             for rho = [1]
                 Par.rho = rho*10^(-1);
                 for lambda = [1]
-                    Par.lambda = lambda*10^(-4);
+                    Par.lambda = lambda*10^(-1);
                     accuracy = zeros(nExperiment, 1) ;
                     for i = 1:nExperiment
                         %--------------------------------------------------------------------------
