@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Caltech-256_VGG';
+dataset = 'Standford-40_VGG';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
@@ -18,7 +18,8 @@ elseif strcmp(dataset, 'Flower-102_VGG') == 1
     nDimArray = [2000 4096];
 elseif strcmp(dataset, 'Standford-40_VGG') == 1
     nExperiment = 1;
-    nDimArray = [2000 4096];
+    nDimArray = [4096];
+    SampleArray = [100];
 elseif strcmp(dataset, 'Caltech-256_VGG') == 1
     nExperiment = 10;
     nDimArray = [2000 4096];
@@ -58,7 +59,7 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [5 10]
+            for maxIter = [5 10 15]
                 Par.maxIter  = maxIter;
                 for rho = [0:1:2]
                     Par.rho = 10^(-rho);
@@ -123,13 +124,22 @@ for nDim = nDimArray
                                     ttls     =   [ttls i*ones(1, Ni-nSample)];
                                 end
                                 clear data datai fine_label Ni RpNi
+                            elseif strcmp(dataset, 'Standford-40_VGG') == 1
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                [dim, N] = size(tr_descr);
+                                nClass        =   max(tr_label);
+                                Tr_DAT   =   double(tr_descr);
+                                trls     =   tr_label;
+                                Tt_DAT   =   double(tt_descr);
+                                ttls     =   tt_label;
+                                clear tr_descr tt_descr tr_labels tt_labels
                             else
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                                 nClass        =   max(tr_label);
                                 Tr_DAT   =   double(tr_descr);
-                                trls     =   tr_labels;
+                                trls     =   tr_label;
                                 Tt_DAT   =   double(tt_descr);
-                                ttls     =   tt_labels;
+                                ttls     =   tt_label;
                                 clear tr_descr tt_descr tr_labels tt_labels
                             end
                             %--------------------------------------------------------------------------
@@ -227,7 +237,7 @@ for nDim = nDimArray
                         elseif strcmp(ClassificationMethod, 'ProCRC') == 1 || strcmp(ClassificationMethod, 'CROC') == 1
                             matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '_weight' num2str(Par.rho) '.mat']);
                             save(matname, 'accuracy', 'avgacc');
-                        elseif strcmp(ClassificationMethod, 'NNLSR') == 1 || strcmp(ClassificationMethod, 'DANNLSR') == 1 
+                        elseif strcmp(ClassificationMethod, 'NNLSR') == 1 || strcmp(ClassificationMethod, 'DANNLSR') == 1
                             matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
                             save(matname,'accuracy', 'avgacc');
                         end
