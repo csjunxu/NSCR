@@ -16,7 +16,7 @@ if  strcmp(dataset, 'MNIST') == 1
     Par.nDim = 500;
 elseif strcmp(dataset, 'USPS') == 1
     nExperiment = 10;
-    SampleArray = [50 100 200 300];
+    SampleArray = [200 300]; %[50 100 200 300];
     Par.nDim = 100;
 end
 % -------------------------------------------------------------------------
@@ -26,20 +26,20 @@ end
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-% ClassificationMethod = 'NNLSR' ; % non-negative LSR
+ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
-ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
+% ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 for nSample = SampleArray % number of images for each digit
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1.2:.2:2]
+    for s = 1 %[1:.2:2]
         Par.s = s;
-        for maxIter = [1:1:5]
+        for maxIter = [9:1:20]
             Par.maxIter  = maxIter;
-            for rho = [1 1.1 1.2]
+            for rho = [2:2:10]
                 Par.rho = rho;
                 for lambda = [0]
                     Par.lambda = lambda;
