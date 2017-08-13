@@ -24,7 +24,7 @@ ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 %% number of repeations
 if strcmp(dataset, 'ExtendedYaleB') == 1
     nExperiment = 10;
-    nDimArray = 150;%[84 150 300];
+    nDimArray = 300;%[84 150 300];
 elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
     nDimArray = [54 120 300];
@@ -41,7 +41,7 @@ for nDim = nDimArray
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1.7 1:.2:2]
+    for s = [1.1:.1:2]
         Par.s = s;
         for maxIter = [5:5:15]
             Par.maxIter  = maxIter;
