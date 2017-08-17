@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'GTfaceCrop';
+dataset = 'ORLfaceCrop';
 % AR_DAT
 % YaleBCrop025
 % GTfaceCrop
@@ -51,7 +51,7 @@ for nDim = nDimArray
             Par.maxIter  = maxIter;
             for rho = [.01]
                 Par.rho = rho;
-                for lambda = [0.1 1]
+                for lambda = [.1:.1:1]
                     Par.lambda = lambda;
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
