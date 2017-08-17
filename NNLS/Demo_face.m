@@ -1,10 +1,11 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'GT';
+dataset = 'GTfaceCrop';
 % AR_DAT
-% ExtendedYaleB
-% GT
+% YaleBCrop025
+% GTfaceCrop
+% ORLfaceCrop
 % -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
@@ -23,14 +24,13 @@ ClassificationMethod = 'CRC';
 % ClassificationMethod = 'ADANPLSR' ; % deformable, affine and non-positive LSR
 % -------------------------------------------------------------------------
 %% number of repeations
-if strcmp(dataset, 'ExtendedYaleB') == 1
+if strcmp(dataset, 'YaleBCrop025') == 1 ...
+        || strcmp(dataset, 'GTfaceCrop') == 1 ...
+        || strcmp(dataset, 'ORLfaceCrop') == 1
     nExperiment = 10;
     nDimArray = [84 150 300];
 elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
-    nDimArray = [54 120 300];
-elseif strcmp(dataset, 'GT') == 1
-    nExperiment = 10;
     nDimArray = [54 120 300];
 end
 % -------------------------------------------------------------------------
@@ -66,9 +66,11 @@ for nDim = nDimArray
                             Tt_DAT   =   double(NewTest_DAT(:,testlabels<=nClass));
                             ttls     =   testlabels(testlabels<=nClass);
                             clear NewTest_DAT NewTrain_DAT testlabels trainlabels
-                        elseif strcmp(dataset, 'ExtendedYaleB') == 1 || strcmp(dataset, 'GT') == 1
+                        elseif strcmp(dataset, 'YaleBCrop025') == 1 ...
+                                || strcmp(dataset, 'GTfaceCrop') == 1 ...
+                                || strcmp(dataset, 'ORLfaceCrop') == 1 
                             % Par.nDim = 84 150 300 the eigenfaces dimension
-                            load(['C:/Users/csjunxu/Desktop/Classification/Dataset/YaleBCrop025']);
+                            load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                             % randomly select half of the samples as training data;
                             [dim, nSample, nClass] = size(Y);
                             % nClass is the number of classes in the subset of AR database
