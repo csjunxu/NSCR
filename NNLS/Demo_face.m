@@ -31,7 +31,7 @@ elseif strcmp(dataset, 'AR_DAT') == 1
     nDimArray = [54 120 300];
 elseif strcmp(dataset, 'GT') == 1
     nExperiment = 10;
-    nDimArray = [100 300 500];
+    nDimArray = [54 120 300];
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
