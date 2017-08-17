@@ -18,7 +18,7 @@ elseif strcmp(dataset, 'Flower-102_VGG') == 1
     nDimArray = [2000 4096];
 elseif strcmp(dataset, 'Standford-40_VGG') == 1
     nExperiment = 1;
-    nDimArray = [4096];
+    nDimArray = [500 1000 2000 4096];
     SampleArray = [100];
 elseif strcmp(dataset, 'Caltech-256_VGG') == 1
     nExperiment = 10;
@@ -59,7 +59,7 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [1:1:4 6:1:10]
+            for maxIter = [5]
                 Par.maxIter  = maxIter;
                 for rho = [1]
                     Par.rho = rho;
