@@ -26,9 +26,11 @@ ClassificationMethod = 'NSC';
 %% number of repeations
 if strcmp(dataset, 'YaleBCrop025') == 1 ...
         || strcmp(dataset, 'GTfaceCrop') == 1 ...
-        || strcmp(dataset, 'ORLfaceCrop') == 1
     nExperiment = 10;
     nDimArray = [84 150 300];
+elseif strcmp(dataset, 'ORLfaceCrop') == 1
+    nExperiment = 10;
+    nDimArray = 200;%[84 150 200];
 elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
     nDimArray = [54 120 300];
