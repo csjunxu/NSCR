@@ -213,10 +213,6 @@ for nDim = nDimArray
                                             coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
                                             coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
-                                        case 'ADANNLSR'                 % affine, non-negative, sum to a scalar s
-                                            coef = ADANNLSR( tt_dat(:,indTest), tr_dat, Par );
-                                        case 'ADANPLSR'             % affine, non-positive, sum to a scalar -s
-                                            coef = ADANPLSR( tt_dat(:,indTest), tr_dat, Par );
                                     end
                                     % -------------------------------------------------------------------------
                                     %% assign the class  index
