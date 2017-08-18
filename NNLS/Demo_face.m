@@ -8,9 +8,9 @@ dataset = 'ORLfaceCrop';
 % ORLfaceCrop
 % -------------------------------------------------------------------------
 %% choosing classification methods
-ClassificationMethod = 'NSC';
+% ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
-% ClassificationMethod = 'CRC';
+ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 
@@ -30,7 +30,7 @@ if strcmp(dataset, 'YaleBCrop025') == 1 ...
     nDimArray = [84 150 300];
 elseif strcmp(dataset, 'ORLfaceCrop') == 1
     nExperiment = 10;
-    nDimArray = 200;%[84 150 200];
+    nDimArray = [84 150 200];
 elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
     nDimArray = [54 120 300];
@@ -53,7 +53,7 @@ for nDim = nDimArray
             Par.maxIter  = maxIter;
             for rho = [.01]
                 Par.rho = rho;
-                for lambda = [.1:.1:1]
+                for lambda = [.1]
                     Par.lambda = lambda;
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
