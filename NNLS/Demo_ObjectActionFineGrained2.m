@@ -18,7 +18,7 @@ elseif strcmp(dataset, 'Flower-102_VGG') == 1
     nDimArray = [2000 4096];
 elseif strcmp(dataset, 'Standford-40_VGG') == 1
     nExperiment = 1;
-    nDimArray = [500 1000 2000 4096];
+    nDimArray = [4096];
     SampleArray = [100];
 elseif strcmp(dataset, 'Caltech-256_VGG') == 1
     nExperiment = 10;
@@ -41,8 +41,8 @@ end
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
-% ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-ClassificationMethod = 'NNLSR' ; % non-negative LSR
+ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
+% ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
@@ -61,7 +61,7 @@ for nDim = nDimArray
             Par.s = s;
             for maxIter = [5]
                 Par.maxIter  = maxIter;
-                for rho = [1]
+                for rho = [1e-3 1e-2 1e-1 1]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda*10^(-2);
@@ -172,13 +172,10 @@ for nDim = nDimArray
                                             % projection matrix computing
                                             Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                             coef         =  Proj_M*tt_dat(:,indTest);
-                                            %                                 case 'CROC'
-                                            %                                     [min_idx] = croc_cvpr12(testFea, tr_dat, trainGnd, lambda, weight);
                                         case 'ProCRC'
-                                            params.dataset_name      =      'Extended Yale B';
                                             params.model_type        =      'ProCRC';
-                                            params.gamma             =     Par.rho; % [1e-2];
-                                            params.lambda            =      Par.lambda; % [1e-0];
+                                            params.gamma             =     Par.rho;
+                                            params.lambda            =      1e-2; 
                                             params.class_num         =      max(trls);
                                             data.tr_descr = tr_dat;
                                             data.tt_descr = tt_dat(:,indTest);

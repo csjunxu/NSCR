@@ -30,7 +30,7 @@ if strcmp(dataset, 'YaleBCrop025') == 1 ...
     nDimArray = [84 150 300];
 elseif strcmp(dataset, 'ORLfaceCrop') == 1
     nExperiment = 10;
-    nDimArray = [84 150 200];
+    nDimArray = [150 200]; % 84
 elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
     nDimArray = [54 120 300];
@@ -51,9 +51,9 @@ for nDim = nDimArray
         Par.s = s;
         for maxIter = [5]
             Par.maxIter  = maxIter;
-            for rho = [0:.1:1]
+            for rho = [0]
                 Par.rho = rho;
-                for lambda = [.1:.1:1]
+                for lambda = [.1]
                     Par.lambda = lambda;
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
