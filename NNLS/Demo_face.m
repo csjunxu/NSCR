@@ -10,8 +10,8 @@ dataset = 'ORLfaceCrop';
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
-ClassificationMethod = 'CRC';
-% ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
+% ClassificationMethod = 'CRC';
+ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
@@ -25,7 +25,7 @@ ClassificationMethod = 'CRC';
 % -------------------------------------------------------------------------
 %% number of repeations
 if strcmp(dataset, 'YaleBCrop025') == 1 ...
-        || strcmp(dataset, 'GTfaceCrop') == 1 ...
+        || strcmp(dataset, 'GTfaceCrop') == 1
     nExperiment = 10;
     nDimArray = [84 150 300];
 elseif strcmp(dataset, 'ORLfaceCrop') == 1
@@ -51,9 +51,9 @@ for nDim = nDimArray
         Par.s = s;
         for maxIter = [5]
             Par.maxIter  = maxIter;
-            for rho = [.01]
+            for rho = [0:.1:1]
                 Par.rho = rho;
-                for lambda = [.1]
+                for lambda = [.1:.1:1]
                     Par.lambda = lambda;
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
