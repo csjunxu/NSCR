@@ -11,8 +11,8 @@ dataset = 'ORLfaceCrop';
 % ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
-ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
-% ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
+% ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
+ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
@@ -30,7 +30,7 @@ if strcmp(dataset, 'YaleBCrop025') == 1 ...
     nDimArray = [84 150 300];
 elseif strcmp(dataset, 'ORLfaceCrop') == 1
     nExperiment = 10;
-    nDimArray = [150 200]; % 84
+    nDimArray = [84 150 200];
 elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
     nDimArray = [54 120 300];
@@ -51,9 +51,9 @@ for nDim = nDimArray
         Par.s = s;
         for maxIter = [5]
             Par.maxIter  = maxIter;
-            for rho = [0:.1:1]
+            for rho = [0 1e-3 1e-2 1e-1 1]
                 Par.rho = rho;
-                for lambda = [.1:.1:1]
+                for lambda = [0]
                     Par.lambda = lambda;
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
@@ -125,8 +125,8 @@ for nDim = nDimArray
                                         coef         =  Proj_M*tt_dat(:,indTest);
                                     case 'ProCRC'
                                         params.model_type        =      'ProCRC';
-                                        params.gamma             =     Par.rho; % [1e-2];
-                                        params.lambda            =      Par.lambda; % [1e-0];
+                                        params.gamma             =     Par.rho; 
+                                        params.lambda            =      1e-2; 
                                         params.class_num         =      max(trls);
                                         data.tr_descr = tr_dat;
                                         data.tt_descr = tt_dat(:,indTest);
