@@ -12,21 +12,21 @@ dataset = 'Standford-40_VGG';
 %% number of repeations
 if strcmp(dataset, 'CUB-200-2011_VGG') == 1
     nExperiment = 1;
-    nDimArray = [2000 4096];
+    nDimArray = [4096];
 elseif strcmp(dataset, 'Flower-102_VGG') == 1
     v = 1;
-    nDimArray = [2000 4096];
+    nDimArray = [4096];
 elseif strcmp(dataset, 'Standford-40_VGG') == 1
     nExperiment = 1;
     nDimArray = [4096];
     SampleArray = [100];
 elseif strcmp(dataset, 'Caltech-256_VGG') == 1
     nExperiment = 10;
-    nDimArray = [2000 4096];
+    nDimArray = [4096];
     SampleArray = [60 45 30 15];
 elseif strcmp(dataset, 'cifar-100') == 1 || strcmp(dataset, 'cifar-10') == 1
     nExperiment = 10;
-    nDimArray = [1500 3072];
+    nDimArray = [3072];
     SampleArray = [50 100 300 500];
 end
 % -------------------------------------------------------------------------
