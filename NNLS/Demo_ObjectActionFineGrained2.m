@@ -37,9 +37,9 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
-% ClassificationMethod = 'NSC';
+ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
-ClassificationMethod = 'CRC';
+% ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
@@ -94,8 +94,9 @@ for nDim = nDimArray
                                 % TBA
                             elseif strcmp(dataset, 'cifar-100') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/train']);
-                                % randomly select half of the samples as training data;
+                                % training data: randomly select half of the samples as training data;
                                 data = data';
+                                [dim, N] = size(data);
                                 nClass = length(unique(fine_labels));
                                 Tr_DAT = [];
                                 trls = [];
@@ -108,22 +109,10 @@ for nDim = nDimArray
                                     trls     =   [trls i*ones(1, nSample)];
                                 end
                                 clear data datai fine_label Ni RpNi
+                                % testing data
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/test']);
-                                % randomly select half of the samples as training data;
-                                data = data';
-                                [dim, N] = size(data);
-                                nClass = length(unique(fine_labels));
-                                Tt_DAT = [];
-                                ttls = [];
-                                for i=1:nClass
-                                    datai = data(:,fine_labels==i-1);
-                                    Ni = size(datai, 2);
-                                    rng(n);
-                                    RpNi = randperm(Ni);
-                                    Tt_DAT   =   [Tt_DAT double(datai(:, RpNi(nSample+1:end)))];
-                                    ttls     =   [ttls i*ones(1, Ni-nSample)];
-                                end
-                                clear data datai fine_label Ni RpNi
+                                Tt_DAT = data';
+                                ttls = fine_labels + 1;
                             elseif strcmp(dataset, 'Standford-40_VGG') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                                 [dim, N] = size(tr_descr);
@@ -175,7 +164,7 @@ for nDim = nDimArray
                                         case 'ProCRC'
                                             params.model_type        =      'ProCRC';
                                             params.gamma             =     Par.rho;
-                                            params.lambda            =      Par.lambda; %1e-2 
+                                            params.lambda            =      Par.lambda; %1e-2
                                             params.class_num         =      max(trls);
                                             data.tr_descr = tr_dat;
                                             data.tt_descr = tt_dat(:,indTest);

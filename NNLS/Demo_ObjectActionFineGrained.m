@@ -93,8 +93,9 @@ for nDim = nDimArray
                                 % TBA
                             elseif strcmp(dataset, 'cifar-100') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/train']);
-                                % randomly select half of the samples as training data;
+                                % training data: randomly select half of the samples as training data;
                                 data = data';
+                                [dim, N] = size(data);
                                 nClass = length(unique(fine_labels));
                                 Tr_DAT = [];
                                 trls = [];
@@ -107,22 +108,10 @@ for nDim = nDimArray
                                     trls     =   [trls i*ones(1, nSample)];
                                 end
                                 clear data datai fine_label Ni RpNi
+                                % testing data
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/test']);
-                                % randomly select half of the samples as training data;
-                                data = data';
-                                [dim, N] = size(data);
-                                nClass = length(unique(fine_labels));
-                                Tt_DAT = [];
-                                ttls = [];
-                                for i=1:nClass
-                                    datai = data(:,fine_labels==i-1);
-                                    Ni = size(datai, 2);
-                                    rng(n);
-                                    RpNi = randperm(Ni);
-                                    Tt_DAT   =   [Tt_DAT double(datai(:, RpNi(nSample+1:end)))];
-                                    ttls     =   [ttls i*ones(1, Ni-nSample)];
-                                end
-                                clear data datai fine_label Ni RpNi
+                                Tt_DAT = data';
+                                ttls = fine_labels + 1;
                             else
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                                 nClass        =   max(tr_label);
@@ -227,7 +216,7 @@ for nDim = nDimArray
                         elseif strcmp(ClassificationMethod, 'ProCRC') == 1 || strcmp(ClassificationMethod, 'CROC') == 1
                             matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '_weight' num2str(Par.rho) '.mat']);
                             save(matname, 'accuracy', 'avgacc');
-                        elseif strcmp(ClassificationMethod, 'NNLSR') == 1 || strcmp(ClassificationMethod, 'DANNLSR') == 1 
+                        elseif strcmp(ClassificationMethod, 'NNLSR') == 1 || strcmp(ClassificationMethod, 'DANNLSR') == 1
                             matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
                             save(matname,'accuracy', 'avgacc');
                         end
