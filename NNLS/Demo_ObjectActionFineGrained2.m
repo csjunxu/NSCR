@@ -111,7 +111,7 @@ for nDim = nDimArray
                                 clear data datai fine_label Ni RpNi
                                 % testing data
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/test']);
-                                Tt_DAT = data';
+                                Tt_DAT = double(data');
                                 ttls = fine_labels + 1;
                             elseif strcmp(dataset, 'Standford-40_VGG') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);

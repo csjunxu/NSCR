@@ -70,7 +70,7 @@ for nDim = nDimArray
                             %% data loading
                             if strcmp(dataset, 'Caltech-256_VGG') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
-                                % randomly select half of the samples as training data;
+                                % randomly select half of the samples as training data
                                 [dim, N] = size(descr);
                                 nClass = length(unique(label));
                                 % nClass is the number of classes in the subset of AR database
