@@ -60,10 +60,10 @@ for nDim = nDimArray
             Par.s = s;
             for maxIter = [5]
                 Par.maxIter  = maxIter;
-                for rho = [0:1:2]
-                    Par.rho = 10^(-rho);
+                for rho = .1
+                    Par.rho = rho;
                     for lambda = [0]
-                        Par.lambda = lambda*10^(-2);
+                        Par.lambda = lambda;
                         accuracy = zeros(nExperiment, 1) ;
                         for n = 1:nExperiment
                             %--------------------------------------------------------------------------
@@ -138,7 +138,6 @@ for nDim = nDimArray
                             if strcmp(ClassificationMethod, 'CROC') == 1
                                 weight = Par.rho;
                                 ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
-                                % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, Par.lambda, weight);
                             else
                                 ID = [];
                                 for indTest = 1:size(tt_dat,2)
@@ -210,7 +209,9 @@ for nDim = nDimArray
                         %% save the results
                         avgacc = mean(accuracy);
                         fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                        if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
+                        if strcmp(ClassificationMethod, 'SRC') == 1 ...
+                                || strcmp(ClassificationMethod, 'CRC') == 1 ...
+                                || strcmp(ClassificationMethod, 'NSC') == 1
                             matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '.mat']);
                             save(matname, 'accuracy', 'avgacc');
                         elseif strcmp(ClassificationMethod, 'ProCRC') == 1 || strcmp(ClassificationMethod, 'CROC') == 1
