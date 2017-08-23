@@ -1,12 +1,14 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Standford-40_VGG';
+dataset = 'COIL100';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
 % cifar-10
 % cifar-100
+% COIL100
+% COIL20
 % Caltech-256_VGG
 % -------------------------------------------------------------------------
 %% number of repeations
@@ -28,6 +30,10 @@ elseif strcmp(dataset, 'cifar-100') == 1 || strcmp(dataset, 'cifar-10') == 1
     nExperiment = 10;
     nDimArray = [3072];
     SampleArray = [50 100 300 500];
+elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
+    nExperiment = 10;
+    nDimArray = [1024];
+    SampleArray = [36];
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
@@ -39,8 +45,8 @@ end
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
-% ClassificationMethod = 'CRC';
-ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
+ClassificationMethod = 'CRC';
+% ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
@@ -113,6 +119,27 @@ for nDim = nDimArray
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/test']);
                                 Tt_DAT = double(data');
                                 ttls = fine_labels + 1;
+                            elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '.mat']);
+                                % training data: randomly select half of the samples as training data;
+                                data = fea';
+                                [dim, N] = size(data);
+                                nClass = length(unique(gnd));
+                                Tr_DAT = [];
+                                Tt_DAT = [];
+                                trls = [];
+                                ttls = [];
+                                for i=1:nClass
+                                    datai = data(:, gnd==i);
+                                    Ni = size(datai, 2);
+                                    rng(n);
+                                    RpNi = randperm(Ni);
+                                    Tr_DAT   =   [Tr_DAT double(datai(:, RpNi(1:nSample)))];
+                                    Tt_DAT   =   [Tt_DAT double(datai(:, RpNi(nSample+1:end)))];
+                                    trls     =   [trls i*ones(1, nSample)];
+                                    ttls     =   [ttls i*ones(1, nSample)];
+                                end
+                                clear data datai fine_label Ni RpNi
                             elseif strcmp(dataset, 'Standford-40_VGG') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                                 [dim, N] = size(tr_descr);

@@ -31,7 +31,7 @@ end
 % -------------------------------------------------------------------------
 %% directory to save the results
 writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
-if ~isdir(writefilepath)
+if ~isdir(writefilepath) 
     mkdir(writefilepath);
 end
 % -------------------------------------------------------------------------
