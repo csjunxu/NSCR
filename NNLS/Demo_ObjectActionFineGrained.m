@@ -20,7 +20,7 @@ elseif strcmp(dataset, 'Standford-40_VGG') == 1
     nExperiment = 1;
     nDimArray = [4096];
 elseif strcmp(dataset, 'Caltech-256_VGG') == 1
-    nExperiment = 10;
+    nExperiment = 1;
     nDimArray = [4096];
     SampleArray = [60 45 30 15];
 elseif strcmp(dataset, 'cifar-100') == 1 || strcmp(dataset, 'cifar-10') == 1
@@ -38,10 +38,10 @@ end
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
-% ClassificationMethod = 'CRC';
+ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-ClassificationMethod = 'NNLSR' ; % non-negative LSR
+% ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
@@ -58,12 +58,12 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [5 10]
+            for maxIter = [5]
                 Par.maxIter  = maxIter;
-                for rho = [0:1:2]
-                    Par.rho = 10^(-rho);
+                for rho = [.1]
+                    Par.rho = rho;
                     for lambda = [0]
-                        Par.lambda = lambda*10^(-2);
+                        Par.lambda = lambda;
                         accuracy = zeros(nExperiment, 1) ;
                         for n = 1:nExperiment
                             %--------------------------------------------------------------------------
