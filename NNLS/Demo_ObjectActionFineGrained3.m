@@ -27,6 +27,10 @@ elseif strcmp(dataset, 'cifar-100') == 1 || strcmp(dataset, 'cifar-10') == 1
     nExperiment = 10;
     nDimArray = [3072];
     SampleArray = [50 100 300 500];
+elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
+    nExperiment = 10;
+    nDimArray = [1024];
+    SampleArray = [36];
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
@@ -112,6 +116,36 @@ for nDim = nDimArray
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/test']);
                                 Tt_DAT = double(data');
                                 ttls = fine_labels + 1;
+                            elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '.mat']);
+                                % training data: randomly select half of the samples as training data;
+                                data = fea';
+                                [dim, N] = size(data);
+                                nClass = length(unique(gnd));
+                                Tr_DAT = [];
+                                Tt_DAT = [];
+                                trls = [];
+                                ttls = [];
+                                for i=1:nClass
+                                    datai = data(:, gnd==i);
+                                    Ni = size(datai, 2);
+                                    rng(n);
+                                    RpNi = randperm(Ni);
+                                    Tr_DAT   =   [Tr_DAT double(datai(:, RpNi(1:nSample)))];
+                                    Tt_DAT   =   [Tt_DAT double(datai(:, RpNi(nSample+1:end)))];
+                                    trls     =   [trls i*ones(1, nSample)];
+                                    ttls     =   [ttls i*ones(1, nSample)];
+                                end
+                                clear data datai fine_label Ni RpNi
+                            elseif strcmp(dataset, 'Standford-40_VGG') == 1
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                [dim, N] = size(tr_descr);
+                                nClass        =   max(tr_label);
+                                Tr_DAT   =   double(tr_descr);
+                                trls     =   tr_label;
+                                Tt_DAT   =   double(tt_descr);
+                                ttls     =   tt_label;
+                                clear tr_descr tt_descr tr_labels tt_labels
                             else
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                                 nClass        =   max(tr_label);
