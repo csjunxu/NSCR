@@ -40,9 +40,9 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
-ClassificationMethod = 'NSC';
+% ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
-% ClassificationMethod = 'CRC';
+ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
@@ -208,7 +208,7 @@ for nDim = nDimArray
                                         case 'DANNLSR'                 % affine, non-negative, sum to a scalar s
                                             coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
-                                            coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                             coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'ADANNLSR'                 % affine, non-negative, sum to a scalar s
                                             coef = ADANNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'ADANPLSR'             % affine, non-positive, sum to a scalar -s
