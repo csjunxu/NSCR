@@ -115,7 +115,7 @@ for nDim = nDimArray
                                 % testing data
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/test']);
                                 Tt_DAT = double(data');
-                                ttls = fine_labels + 1;
+                                ttls = fine_labels' + 1;
                             elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '.mat']);
                                 % training data: randomly select half of the samples as training data;
