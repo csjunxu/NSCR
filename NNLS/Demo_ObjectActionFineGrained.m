@@ -90,7 +90,40 @@ for nDim = nDimArray
                                 end
                                 clear descr label descri RpNi Ni
                             elseif strcmp(dataset, 'cifar-10') == 1
-                                % TBA
+                                            % training data
+                                Tr_DATall = [];
+                                trlsall = [];
+                                for i=1:1:5
+                                    load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/data_batch_' num2str(i)]);
+                                    Tr_DATall = [Tr_DATall double(data')];
+                                    trlsall     =   [trlsall labels'];
+                                end
+                                if min(trlsall)==0
+                                    trlsall = trlsall + 1;
+                                end
+                                % randomly select half of the samples as training data
+                                [dim, N] = size(Tr_DATall);
+                                nClass = length(unique(trlsall));
+                                % nClass is the number of classes in the subset of AR database
+                                Tr_DAT = [];
+                                trls = [];
+                                for i=1:nClass
+                                    Tr_DATi = Tr_DATall(:, trlsall==i);
+                                    Ni = size(Tr_DATi, 2);
+                                    rng(n);
+                                    RpNi = randperm(Ni);
+                                    Tr_DAT   =   [Tr_DAT double(Tr_DATi(:, RpNi(1:nSample)))];
+                                    trls     =   [trls i*ones(1, nSample)];
+                                end
+                                clear Tr_DATall Tr_DATi trlsall RpNi Ni
+                                % testing data
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/test_batch']);
+                                Tt_DAT = double(data');
+                                ttls = labels';
+                                if min(ttls)==0
+                                    ttls = ttls + 1;
+                                end
+                                clear data labels
                             elseif strcmp(dataset, 'cifar-100') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/train']);
                                 % training data: randomly select half of the samples as training data;
