@@ -43,11 +43,11 @@ if ~isdir(writefilepath)
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
-ClassificationMethod = 'NSC';
+% ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
-% ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
+ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
@@ -67,7 +67,7 @@ for nDim = nDimArray
             Par.s = s;
             for maxIter = [5]
                 Par.maxIter  = maxIter;
-                for rho = [.1]
+                for rho = [.01 .1 1]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
@@ -189,9 +189,9 @@ for nDim = nDimArray
                                             Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                             coef         =  Proj_M*tt_dat(:,indTest);
                                         case 'ProCRC'
-                                            params.model_type        =      'ProCRC';
+                                            params.model_type       =      'ProCRC';
                                             params.gamma             =     Par.rho;
-                                            params.lambda            =      Par.lambda; %1e-2
+                                            params.lambda             =    1e-2; % Par.lambda; %1e-2
                                             params.class_num         =      max(trls);
                                             data.tr_descr = tr_dat;
                                             data.tt_descr = tt_dat(:,indTest);
