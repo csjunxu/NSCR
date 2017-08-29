@@ -293,5 +293,5 @@ for nDim = nDimArray
                 end
             end
         end
-    end
+        endclear
 end
