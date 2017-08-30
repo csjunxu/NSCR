@@ -22,7 +22,7 @@ elseif strcmp(dataset, 'Standford-40_VGG') == 1
 elseif strcmp(dataset, 'Caltech-256_VGG') == 1
     nExperiment = 1;
     nDimArray = [4096];
-    SampleArray = [60 45 30 15];
+    SampleArray = 30; %[60 45 30 15];
 elseif strcmp(dataset, 'cifar-100') == 1 || strcmp(dataset, 'cifar-10') == 1
     nExperiment = 10;
     nDimArray = [3072];
