@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'cifar-10';
+dataset = 'Flower-102_VGG';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
@@ -42,10 +42,10 @@ end
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
-ClassificationMethod = 'CRC';
+% ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-% ClassificationMethod = 'NNLSR' ; % non-negative LSR
+ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
@@ -62,9 +62,9 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [5]
+            for maxIter = [15 20]
                 Par.maxIter  = maxIter;
-                for rho = .1
+                for rho = 1
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
