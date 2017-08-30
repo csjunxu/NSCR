@@ -5,11 +5,11 @@ dataset = 'COIL100';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
+% Caltech-256_VGG
 % cifar-10
 % cifar-100
-% COIL100
 % COIL20
-% Caltech-256_VGG
+% COIL100
 % -------------------------------------------------------------------------
 %% number of repeations
 if strcmp(dataset, 'CUB-200-2011_VGG') == 1

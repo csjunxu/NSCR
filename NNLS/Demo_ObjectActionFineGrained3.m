@@ -1,13 +1,15 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Flower-102_VGG';
+dataset = 'CUB-200-2011_VGG';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
+% Caltech-256_VGG
 % cifar-10
 % cifar-100
-% Caltech-256_VGG
+% COIL20
+% COIL100
 % -------------------------------------------------------------------------
 %% number of repeations
 if strcmp(dataset, 'CUB-200-2011_VGG') == 1
