@@ -44,10 +44,10 @@ end
 % -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
-% ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
+ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
-ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
+% ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
@@ -67,9 +67,9 @@ for nDim = nDimArray
             Par.s = s;
             for maxIter = [5]
                 Par.maxIter  = maxIter;
-                for rho = [.001 .0001]
+                for rho = [1]
                     Par.rho = rho;
-                    for lambda = [.01]
+                    for lambda = [.1 1]
                         Par.lambda = lambda;
                         accuracy = zeros(nExperiment, 1) ;
                         for n = 1:nExperiment
@@ -97,7 +97,7 @@ for nDim = nDimArray
                                 end
                                 clear descr label descri RpNi Ni
                             elseif strcmp(dataset, 'cifar-10') == 1
-                                            % training data
+                                % training data
                                 Tr_DATall = [];
                                 trlsall = [];
                                 for i=1:1:5
@@ -224,7 +224,7 @@ for nDim = nDimArray
                                         case 'ProCRC'
                                             params.model_type       =    'ProCRC';
                                             params.gamma             =    Par.rho;
-                                            params.lambda             =    1e-2; 
+                                            params.lambda             =    1e-2;
                                             params.class_num         =    max(trls);
                                             data.tr_descr = tr_dat;
                                             data.tt_descr = tt_dat(:,indTest);
@@ -293,5 +293,5 @@ for nDim = nDimArray
                 end
             end
         end
-        endclear
+    end
 end
