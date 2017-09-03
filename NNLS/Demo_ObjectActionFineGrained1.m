@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'COIL100';
+dataset = 'Flower-102_VGG';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
@@ -15,13 +15,15 @@ dataset = 'COIL100';
 if strcmp(dataset, 'CUB-200-2011_VGG') == 1
     nExperiment = 1;
     nDimArray = [4096];
+    SampleArray = 0;
 elseif strcmp(dataset, 'Flower-102_VGG') == 1
-    v = 1;
+    nExperiment = 1;
     nDimArray = [4096];
+    SampleArray = 0;
 elseif strcmp(dataset, 'Standford-40_VGG') == 1
     nExperiment = 1;
     nDimArray = [4096];
-    SampleArray = [100];
+    SampleArray = 0;
 elseif strcmp(dataset, 'Caltech-256_VGG') == 1
     nExperiment = 10;
     nDimArray = [4096];
@@ -65,7 +67,7 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [11:1:20]
+            for maxIter = [10]
                 Par.maxIter  = maxIter;
                 for rho = [1]
                     Par.rho = rho;
@@ -173,7 +175,9 @@ for nDim = nDimArray
                                     ttls     =   [ttls i*ones(1, nSample)];
                                 end
                                 clear data datai fine_label Ni RpNi
-                            elseif strcmp(dataset, 'Standford-40_VGG') == 1
+                            elseif strcmp(dataset, 'Standford-40_VGG') == 1 ...
+                                    || strcmp(dataset, 'Flower-102_VGG') == 1 ...
+                                    || strcmp(dataset, 'CUB-200-2011_VGG') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                                 [dim, N] = size(tr_descr);
                                 nClass        =   max(tr_label);
