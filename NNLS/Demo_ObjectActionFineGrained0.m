@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Caltech-256_VGG';
+dataset = 'Standford-40_VGG';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
@@ -36,7 +36,7 @@ end
 % -------------------------------------------------------------------------
 %% directory to save the results
 writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
-if ~isdir(writefilepath) 
+if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
 % -------------------------------------------------------------------------
@@ -45,8 +45,8 @@ end
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
-% ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-ClassificationMethod = 'NNLSR' ; % non-negative LSR
+ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
+% ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
@@ -95,7 +95,7 @@ for nDim = nDimArray
                                 end
                                 clear descr label descri RpNi Ni
                             elseif strcmp(dataset, 'cifar-10') == 1
-                                            % training data
+                                % training data
                                 Tr_DATall = [];
                                 trlsall = [];
                                 for i=1:1:5
@@ -150,7 +150,7 @@ for nDim = nDimArray
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/test']);
                                 Tt_DAT = double(data');
                                 ttls = fine_labels + 1;
-                                   elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
+                            elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '.mat']);
                                 % training data: randomly select half of the samples as training data;
                                 data = fea';
@@ -209,6 +209,18 @@ for nDim = nDimArray
                                 weight = Par.rho;
                                 ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
                                 % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, Par.lambda, weight);
+                            elseif strcmp(ClassificationMethod, 'ProCRC') == 1
+                                global params
+                                set_params(dataset);
+%                                 params.model_type        =      'ProCRC';
+%                                 params.gamma             =     Par.rho; % [1e-2];
+%                                 params.lambda            =      Par.lambda; % [1e-0];
+%                                 params.class_num         =      max(trls);
+                                data.tr_descr = tr_dat;
+                                data.tt_descr = tt_dat;
+                                data.tr_label = trls;
+                                data.tt_label = ttls;
+                                coef = ProCRC(data, params);
                             else
                                 ID = [];
                                 for indTest = 1:size(tt_dat,2)
@@ -223,17 +235,6 @@ for nDim = nDimArray
                                             coef         =  Proj_M*tt_dat(:,indTest);
                                             %                                 case 'CROC'
                                             %                                     [min_idx] = croc_cvpr12(testFea, tr_dat, trainGnd, lambda, weight);
-                                        case 'ProCRC'
-                                            params.dataset_name      =      'Extended Yale B';
-                                            params.model_type        =      'ProCRC';
-                                            params.gamma             =     Par.rho; % [1e-2];
-                                            params.lambda            =      Par.lambda; % [1e-0];
-                                            params.class_num         =      max(trls);
-                                            data.tr_descr = tr_dat;
-                                            data.tt_descr = tt_dat(:,indTest);
-                                            data.tr_label = trls;
-                                            data.tt_label = ttls;
-                                            coef = ProCRC(data, params);
                                         case 'NNLSR'                   % non-negative
                                             coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'NPLSR'               % non-positive
