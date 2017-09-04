@@ -209,9 +209,29 @@ for nDim = nDimArray
                             end
                             %-------------------------------------------------------------------------
                             %% testing
+                            class_num = max(trls);
                             if strcmp(ClassificationMethod, 'CROC') == 1
                                 weight = Par.rho;
                                 ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
+                                % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, Par.lambda, weight);
+                            elseif strcmp(ClassificationMethod, 'ProCRC') == 1
+                                global params
+                                set_params(dataset);
+                                %                                 params.model_type        =      'ProCRC';
+                                %                                 params.gamma             =     Par.rho; % [1e-2];
+                                %                                 params.lambda            =      Par.lambda; % [1e-0];
+                                %                                 params.class_num         =      max(trls);
+                                data.tr_descr = tr_dat;
+                                data.tt_descr = tt_dat;
+                                data.tr_label = trls;
+                                data.tt_label = ttls;
+                                params.class_num = class_num;
+                                %                                 params.model_type        =      'ProCRC';
+                                %                                 params.gamma             =     Par.rho; % [1e-2];
+                                %                                 params.lambda            =      Par.lambda; % [1e-0];
+                                %                                 params.class_num         =      max(trls);
+                                coef = ProCRC(data, params);
+                                [ID, ~] = ProMax(coef, data, params);
                             else
                                 ID = [];
                                 for indTest = 1:size(tt_dat,2)
@@ -226,17 +246,6 @@ for nDim = nDimArray
                                             coef         =  Proj_M*tt_dat(:,indTest);
                                             %                                 case 'CROC'
                                             %                                     [min_idx] = croc_cvpr12(testFea, tr_dat, trainGnd, lambda, weight);
-                                        case 'ProCRC'
-                                            params.dataset_name      =      'Extended Yale B';
-                                            params.model_type        =      'ProCRC';
-                                            params.gamma             =     Par.rho; % [1e-2];
-                                            params.lambda            =      Par.lambda; % [1e-0];
-                                            params.class_num         =      max(trls);
-                                            data.tr_descr = tr_dat;
-                                            data.tt_descr = tt_dat(:,indTest);
-                                            data.tr_label = trls;
-                                            data.tt_label = ttls;
-                                            coef = ProCRC(data, params);
                                         case 'NNLSR'                   % non-negative
                                             coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'NPLSR'               % non-positive
@@ -257,22 +266,24 @@ for nDim = nDimArray
                                     % -------------------------------------------------------------------------
                                     %% assign the class  index
                                     if strcmp(ClassificationMethod, 'NSC') == 1
-                                        for ci = 1:max(trls)
+                                        for ci = 1:class_num
                                             Xc = tr_dat(:, trls==ci);
                                             Aci = Xc/(Xc'*Xc+Par.lambda*eye(size(Xc, 2)))*Xc';
                                             coef_c = Aci*tt_dat(:,indTest);
                                             error(ci) = norm(tt_dat(:,indTest)-coef_c,2)^2/sum(coef_c.*coef_c);
                                         end
+                                        index      =  find(error==min(error));
+                                        id         =  index(1);
+                                        ID      =   [ID id];
                                     else
-                                        for ci = 1:max(trls)
-                                            coef_c   =  coef(trls==ci);
-                                            Dc       =  tr_dat(:,trls==ci);
-                                            error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
-                                        end
+                                        [id, ~] = PredictID(coef, tr_dat, trls, class_num);
+                                        ID      =   [ID id];
+                                        %                                         for ci = 1:max(trls)
+                                        %                                             coef_c   =  coef(trls==ci);
+                                        %                                             Dc       =  tr_dat(:,trls==ci);
+                                        %                                             error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
+                                        %                                         end
                                     end
-                                    index      =  find(error==min(error));
-                                    id         =  index(1);
-                                    ID      =   [ID id];
                                 end
                             end
                             cornum      =   sum(ID==ttls);
