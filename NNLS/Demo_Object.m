@@ -1,42 +1,26 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Caltech-256_VGG';
-% Flower-102_VGG
-% CUB-200-2011_VGG
-% Standford-40_VGG
-% Caltech-256_VGG
+dataset = 'COIL100';
 % cifar-10
 % cifar-100
 % COIL20
 % COIL100
 % -------------------------------------------------------------------------
 %% number of repeations
-if strcmp(dataset, 'CUB-200-2011_VGG') == 1
-    nExperiment = 1;
-    nDimArray = [4096];
-    SampleArray = 0;
-elseif strcmp(dataset, 'Flower-102_VGG') == 1
-    nExperiment = 1;
-    nDimArray = [4096];
-    SampleArray = 0;
-elseif strcmp(dataset, 'Standford-40_VGG') == 1
-    nExperiment = 1;
-    nDimArray = [4096];
-    SampleArray = 0;
-elseif strcmp(dataset, 'Caltech-256_VGG') == 1
-    nExperiment = 1;
-    nDimArray = [4096];
-    SampleArray = 30; %[60 45 30 15];
-elseif strcmp(dataset, 'cifar-100') == 1 || strcmp(dataset, 'cifar-10') == 1
+if strcmp(dataset, 'cifar-100') == 1 || strcmp(dataset, 'cifar-10') == 1
     nExperiment = 10;
     nDimArray = [3072];
-    SampleArray = [50 100 300 500];
+    SampleArray = [500];
+elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
+    nExperiment = 10;
+    nDimArray = [1024];
+    SampleArray = [36];
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
 writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
-if ~isdir(writefilepath) 
+if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
 % -------------------------------------------------------------------------
@@ -54,7 +38,7 @@ ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 % ClassificationMethod = 'ADANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'ADANPLSR' ; % deformable, affine and non-positive LSR
-%-------------------------------------------------------------------------
+%------------------------------------------------------------------------------
 %% PCA dimension
 for nDim = nDimArray
     Par.nDim = nDim;
@@ -63,9 +47,9 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [5:5:20]
+            for maxIter = [6:1:10]
                 Par.maxIter  = maxIter;
-                for rho = [.1 .5 1]
+                for rho = [.4:.2:1.2]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
@@ -73,29 +57,8 @@ for nDim = nDimArray
                         for n = 1:nExperiment
                             %--------------------------------------------------------------------------
                             %% data loading
-                            if strcmp(dataset, 'Caltech-256_VGG') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
-                                % randomly select half of the samples as training data;
-                                [dim, N] = size(descr);
-                                nClass = length(unique(label));
-                                % nClass is the number of classes in the subset of AR database
-                                Tr_DAT = [];
-                                Tt_DAT = [];
-                                trls = [];
-                                ttls = [];
-                                for i=1:nClass
-                                    descri = descr(:, label==i);
-                                    Ni = size(descri, 2);
-                                    rng(n);
-                                    RpNi = randperm(Ni);
-                                    Tr_DAT   =   [Tr_DAT double(descri(:, RpNi(1:nSample)))];
-                                    trls     =   [trls i*ones(1, nSample)];
-                                    Tt_DAT   =   [Tt_DAT double(descri(:, RpNi(nSample+1:end)))];
-                                    ttls     =   [ttls i*ones(1, Ni-nSample)];
-                                end
-                                clear descr label descri RpNi Ni
-                            elseif strcmp(dataset, 'cifar-10') == 1
-                                            % training data
+                            if strcmp(dataset, 'cifar-10') == 1
+                                % training data
                                 Tr_DATall = [];
                                 trlsall = [];
                                 for i=1:1:5
@@ -149,8 +112,8 @@ for nDim = nDimArray
                                 % testing data
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/test']);
                                 Tt_DAT = double(data');
-                                ttls = fine_labels + 1;
-                                   elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
+                                ttls = fine_labels' + 1;
+                            elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '.mat']);
                                 % training data: randomly select half of the samples as training data;
                                 data = fea';
@@ -171,17 +134,6 @@ for nDim = nDimArray
                                     ttls     =   [ttls i*ones(1, nSample)];
                                 end
                                 clear data datai fine_label Ni RpNi
-                            elseif strcmp(dataset, 'Standford-40_VGG') == 1 ...
-                                    || strcmp(dataset, 'Flower-102_VGG') == 1 ...
-                                    || strcmp(dataset, 'CUB-200-2011_VGG') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
-                                [dim, N] = size(tr_descr);
-                                nClass        =   max(tr_label);
-                                Tr_DAT   =   double(tr_descr);
-                                trls     =   tr_label;
-                                Tt_DAT   =   double(tt_descr);
-                                ttls     =   tt_label;
-                                clear tr_descr tt_descr tr_labels tt_labels
                             else
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                                 nClass        =   max(tr_label);

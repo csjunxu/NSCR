@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'COIL100';
+dataset = 'Caltech-256_VGG';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
@@ -25,22 +25,18 @@ elseif strcmp(dataset, 'Standford-40_VGG') == 1
     nDimArray = [4096];
     SampleArray = 0;
 elseif strcmp(dataset, 'Caltech-256_VGG') == 1
-    nExperiment = 10;
+    nExperiment = 1;
     nDimArray = [4096];
-    SampleArray = [60 45 30 15];
+    SampleArray = 30; %[60 45 30 15];
 elseif strcmp(dataset, 'cifar-100') == 1 || strcmp(dataset, 'cifar-10') == 1
     nExperiment = 10;
     nDimArray = [3072];
     SampleArray = [50 100 300 500];
-elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
-    nExperiment = 10;
-    nDimArray = [1024];
-    SampleArray = [36];
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
 writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
-if ~isdir(writefilepath)
+if ~isdir(writefilepath) 
     mkdir(writefilepath);
 end
 % -------------------------------------------------------------------------
@@ -67,9 +63,9 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [13:1:20]
+            for maxIter = [5:5:20]
                 Par.maxIter  = maxIter;
-                for rho = [1]
+                for rho = [.1 .5 1]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
@@ -99,7 +95,7 @@ for nDim = nDimArray
                                 end
                                 clear descr label descri RpNi Ni
                             elseif strcmp(dataset, 'cifar-10') == 1
-                                % training data
+                                            % training data
                                 Tr_DATall = [];
                                 trlsall = [];
                                 for i=1:1:5
@@ -154,7 +150,7 @@ for nDim = nDimArray
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/test']);
                                 Tt_DAT = double(data');
                                 ttls = fine_labels + 1;
-                            elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
+                                   elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '.mat']);
                                 % training data: randomly select half of the samples as training data;
                                 data = fea';
@@ -190,9 +186,9 @@ for nDim = nDimArray
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                                 nClass        =   max(tr_label);
                                 Tr_DAT   =   double(tr_descr);
-                                trls     =   tr_label;
+                                trls     =   tr_labels;
                                 Tt_DAT   =   double(tt_descr);
-                                ttls     =   tt_label;
+                                ttls     =   tt_labels;
                                 clear tr_descr tt_descr tr_labels tt_labels
                             end
                             %--------------------------------------------------------------------------
@@ -207,7 +203,7 @@ for nDim = nDimArray
                                 tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [Par.nDim,1]) );
                                 tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
                             end
-                           %-------------------------------------------------------------------------
+                            %-------------------------------------------------------------------------
                             %% testing
                             class_num = max(trls);
                             if strcmp(ClassificationMethod, 'CROC') == 1
@@ -258,27 +254,31 @@ for nDim = nDimArray
                                             coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
                                             coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                        case 'ADANNLSR'                 % affine, non-negative, sum to a scalar s
+                                            coef = ADANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                        case 'ADANPLSR'             % affine, non-positive, sum to a scalar -s
+                                            coef = ADANPLSR( tt_dat(:,indTest), tr_dat, Par );
                                     end
                                     % -------------------------------------------------------------------------
                                     %% assign the class  index
                                     if strcmp(ClassificationMethod, 'NSC') == 1
-                                        for ci = 1:max(trls)
+                                        for ci = 1:class_num
                                             Xc = tr_dat(:, trls==ci);
                                             Aci = Xc/(Xc'*Xc+Par.lambda*eye(size(Xc, 2)))*Xc';
                                             coef_c = Aci*tt_dat(:,indTest);
                                             error(ci) = norm(tt_dat(:,indTest)-coef_c,2)^2/sum(coef_c.*coef_c);
                                         end
-                                    index      =  find(error==min(error));
-                                    id         =  index(1);
-                                    ID      =   [ID id];
+                                        index      =  find(error==min(error));
+                                        id         =  index(1);
+                                        ID      =   [ID id];
                                     else
                                         [id, ~] = PredictID(coef, tr_dat, trls, class_num);
                                         ID      =   [ID id];
-%                                         for ci = 1:max(trls)
-%                                             coef_c   =  coef(trls==ci);
-%                                             Dc       =  tr_dat(:,trls==ci);
-%                                             error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
-%                                         end
+                                        %                                         for ci = 1:max(trls)
+                                        %                                             coef_c   =  coef(trls==ci);
+                                        %                                             Dc       =  tr_dat(:,trls==ci);
+                                        %                                             error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
+                                        %                                         end
                                     end
                                 end
                             end
@@ -290,7 +290,9 @@ for nDim = nDimArray
                         %% save the results
                         avgacc = mean(accuracy);
                         fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                        if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
+                        if strcmp(ClassificationMethod, 'SRC') == 1 ...
+                                || strcmp(ClassificationMethod, 'CRC') == 1 ...
+                                || strcmp(ClassificationMethod, 'NSC') == 1
                             matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '.mat']);
                             save(matname, 'accuracy', 'avgacc');
                         elseif strcmp(ClassificationMethod, 'ProCRC') == 1 || strcmp(ClassificationMethod, 'CROC') == 1
