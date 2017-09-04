@@ -205,10 +205,6 @@ for nDim = nDimArray
                             end
                             %-------------------------------------------------------------------------
                             %% testing
-                                data.tr_descr = tr_dat;
-                                data.tt_descr = tt_dat;
-                                data.tr_label = trls;
-                                data.tt_label = ttls;
                                 class_num = max(trls);
                             if strcmp(ClassificationMethod, 'CROC') == 1
                                 weight = Par.rho;
@@ -221,8 +217,12 @@ for nDim = nDimArray
 %                                 params.gamma             =     Par.rho; % [1e-2];
 %                                 params.lambda            =      Par.lambda; % [1e-0];
 %                                 params.class_num         =      max(trls);
+                                data.tr_descr = tr_dat;
+                                data.tt_descr = tt_dat;
+                                data.tr_label = trls;
+                                data.tt_label = ttls;
                                 coef = ProCRC(data, params);
-                                [ID, ~] = ProMax(coef, data, class_num);
+                                [ID, ~] = ProMax(coef, tr_dat, trls, ttls, class_num);
                             else
                                 ID = [];
                                 for indTest = 1:size(tt_dat,2)
@@ -257,7 +257,7 @@ for nDim = nDimArray
                                     % -------------------------------------------------------------------------
                                     %% assign the class  index
                                     if strcmp(ClassificationMethod, 'NSC') == 1
-                                        for ci = 1:max(trls)
+                                        for ci = 1:class_num
                                             Xc = tr_dat(:, trls==ci);
                                             Aci = Xc/(Xc'*Xc+Par.lambda*eye(size(Xc, 2)))*Xc';
                                             coef_c = Aci*tt_dat(:,indTest);
@@ -267,7 +267,7 @@ for nDim = nDimArray
                                     id         =  index(1);
                                     ID      =   [ID id];
                                     else
-                                        [id, ~] = ProMax(coef, data, class_num);
+                                        [id, ~] = PredictID(coef, tr_dat, trls, class_num);
                                         ID      =   [ID id];
 %                                         for ci = 1:max(trls)
 %                                             coef_c   =  coef(trls==ci);

@@ -33,7 +33,7 @@ elseif strcmp(dataset, 'ORLfaceCrop') == 1
     nDimArray = [84 150 200];
 elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
-    nDimArray = 300; % [54 120 300];
+    nDimArray = [54 120 300];
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
@@ -49,7 +49,7 @@ for nDim = nDimArray
     %% tuning the parameters
     for s = [1]
         Par.s = s;
-        for maxIter = [1]
+        for maxIter = [1:1:10]
             Par.maxIter  = maxIter;
             for rho = [.01]
                 Par.rho = rho;
@@ -70,7 +70,7 @@ for nDim = nDimArray
                             clear NewTest_DAT NewTrain_DAT testlabels trainlabels
                         elseif strcmp(dataset, 'YaleBCrop025') == 1 ...
                                 || strcmp(dataset, 'GTfaceCrop') == 1 ...
-                                || strcmp(dataset, 'ORLfaceCrop') == 1 
+                                || strcmp(dataset, 'ORLfaceCrop') == 1
                             % Par.nDim = 84 150 300 the eigenfaces dimension
                             load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                             % randomly select half of the samples as training data;
@@ -107,10 +107,20 @@ for nDim = nDimArray
                         
                         %-------------------------------------------------------------------------
                         %% testing
+                        class_num = max(trls);
                         if strcmp(ClassificationMethod, 'CROC') == 1
                             weight = Par.rho;
                             ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
                             % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, Par.lambda, weight);
+                        elseif strcmp(ClassificationMethod, 'ProCRC') == 1
+                            global params
+                            set_params(dataset);
+                            %                                 params.model_type        =      'ProCRC';
+                            %                                 params.gamma             =     Par.rho; % [1e-2];
+                            %                                 params.lambda            =      Par.lambda; % [1e-0];
+                            %                                 params.class_num         =      max(trls);
+                            coef = ProCRC(data, params);
+                            [ID, ~] = ProMax(coef, tr_dat, trls, ttls, class_num);
                         else
                             ID = [];
                             for indTest = 1:size(tt_dat,2)
@@ -123,16 +133,6 @@ for nDim = nDimArray
                                         % projection matrix computing
                                         Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                         coef         =  Proj_M*tt_dat(:,indTest);
-                                    case 'ProCRC'
-                                        params.model_type        =      'ProCRC';
-                                        params.gamma             =     Par.rho; 
-                                        params.lambda            =      1e-2; 
-                                        params.class_num         =      max(trls);
-                                        data.tr_descr = tr_dat;
-                                        data.tt_descr = tt_dat(:,indTest);
-                                        data.tr_label = trls;
-                                        data.tt_label = ttls;
-                                        coef = ProCRC(data, params);
                                     case 'NNLSR'                   % non-negative
                                         coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                     case 'NPLSR'               % non-positive
@@ -153,22 +153,24 @@ for nDim = nDimArray
                                 % -------------------------------------------------------------------------
                                 %% assign the class  index
                                 if strcmp(ClassificationMethod, 'NSC') == 1
-                                    for ci = 1:max(trls)
+                                    for ci = 1:class_num
                                         Xc = tr_dat(:, trls==ci);
                                         Aci = Xc/(Xc'*Xc+Par.lambda*eye(size(Xc, 2)))*Xc';
                                         coef_c = Aci*tt_dat(:,indTest);
                                         error(ci) = norm(tt_dat(:,indTest)-coef_c,2)^2/sum(coef_c.*coef_c);
                                     end
+                                    index      =  find(error==min(error));
+                                    id         =  index(1);
+                                    ID      =   [ID id];
                                 else
-                                    for ci = 1:max(trls)
-                                        coef_c   =  coef(trls==ci);
-                                        Dc       =  tr_dat(:,trls==ci);
-                                        error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
-                                    end
+                                    [id, ~] = PredictID(coef, tr_dat, trls, class_num);
+                                    ID      =   [ID id];
+                                    %                                     for ci = 1:max(trls)
+                                    %                                         coef_c   =  coef(trls==ci);
+                                    %                                         Dc       =  tr_dat(:,trls==ci);
+                                    %                                         error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
+                                    %                                     end
                                 end
-                                index      =  find(error==min(error));
-                                id         =  index(1);
-                                ID      =   [ID id];
                             end
                         end
                         cornum      =   sum(ID==ttls);
