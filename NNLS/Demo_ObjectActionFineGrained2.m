@@ -67,7 +67,7 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [14:1:20]
+            for maxIter = [13:1:20]
                 Par.maxIter  = maxIter;
                 for rho = [1]
                     Par.rho = rho;
@@ -207,12 +207,31 @@ for nDim = nDimArray
                                 tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [Par.nDim,1]) );
                                 tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
                             end
-                            %-------------------------------------------------------------------------
+                           %-------------------------------------------------------------------------
                             %% testing
+                            class_num = max(trls);
                             if strcmp(ClassificationMethod, 'CROC') == 1
                                 weight = Par.rho;
                                 ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
                                 % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, Par.lambda, weight);
+                            elseif strcmp(ClassificationMethod, 'ProCRC') == 1
+                                global params
+                                set_params(dataset);
+                                %                                 params.model_type        =      'ProCRC';
+                                %                                 params.gamma             =     Par.rho; % [1e-2];
+                                %                                 params.lambda            =      Par.lambda; % [1e-0];
+                                %                                 params.class_num         =      max(trls);
+                                data.tr_descr = tr_dat;
+                                data.tt_descr = tt_dat;
+                                data.tr_label = trls;
+                                data.tt_label = ttls;
+                                params.class_num = class_num;
+                                %                                 params.model_type        =      'ProCRC';
+                                %                                 params.gamma             =     Par.rho; % [1e-2];
+                                %                                 params.lambda            =      Par.lambda; % [1e-0];
+                                %                                 params.class_num         =      max(trls);
+                                coef = ProCRC(data, params);
+                                [ID, ~] = ProMax(coef, data, params);
                             else
                                 ID = [];
                                 for indTest = 1:size(tt_dat,2)
@@ -225,16 +244,8 @@ for nDim = nDimArray
                                             % projection matrix computing
                                             Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                             coef         =  Proj_M*tt_dat(:,indTest);
-                                        case 'ProCRC'
-                                            params.model_type       =    'ProCRC';
-                                            params.gamma             =    Par.rho;
-                                            params.lambda             =    1e-2;
-                                            params.class_num         =    max(trls);
-                                            data.tr_descr = tr_dat;
-                                            data.tt_descr = tt_dat(:,indTest);
-                                            data.tr_label = trls;
-                                            data.tt_label = ttls;
-                                            coef = ProCRC(data, params);
+                                            %                                 case 'CROC'
+                                            %                                     [min_idx] = croc_cvpr12(testFea, tr_dat, trainGnd, lambda, weight);
                                         case 'NNLSR'                   % non-negative
                                             coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'NPLSR'               % non-positive
@@ -247,10 +258,6 @@ for nDim = nDimArray
                                             coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
                                             coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
-                                        case 'ADANNLSR'                 % affine, non-negative, sum to a scalar s
-                                            coef = ADANNLSR( tt_dat(:,indTest), tr_dat, Par );
-                                        case 'ADANPLSR'             % affine, non-positive, sum to a scalar -s
-                                            coef = ADANPLSR( tt_dat(:,indTest), tr_dat, Par );
                                     end
                                     % -------------------------------------------------------------------------
                                     %% assign the class  index
@@ -261,16 +268,18 @@ for nDim = nDimArray
                                             coef_c = Aci*tt_dat(:,indTest);
                                             error(ci) = norm(tt_dat(:,indTest)-coef_c,2)^2/sum(coef_c.*coef_c);
                                         end
-                                    else
-                                        for ci = 1:max(trls)
-                                            coef_c   =  coef(trls==ci);
-                                            Dc       =  tr_dat(:,trls==ci);
-                                            error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
-                                        end
-                                    end
                                     index      =  find(error==min(error));
                                     id         =  index(1);
                                     ID      =   [ID id];
+                                    else
+                                        [id, ~] = PredictID(coef, tr_dat, trls, class_num);
+                                        ID      =   [ID id];
+%                                         for ci = 1:max(trls)
+%                                             coef_c   =  coef(trls==ci);
+%                                             Dc       =  tr_dat(:,trls==ci);
+%                                             error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
+%                                         end
+                                    end
                                 end
                             end
                             cornum      =   sum(ID==ttls);
@@ -281,9 +290,7 @@ for nDim = nDimArray
                         %% save the results
                         avgacc = mean(accuracy);
                         fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                        if strcmp(ClassificationMethod, 'SRC') == 1 ...
-                                || strcmp(ClassificationMethod, 'CRC') == 1 ...
-                                || strcmp(ClassificationMethod, 'NSC') == 1
+                        if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
                             matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '.mat']);
                             save(matname, 'accuracy', 'avgacc');
                         elseif strcmp(ClassificationMethod, 'ProCRC') == 1 || strcmp(ClassificationMethod, 'CROC') == 1
