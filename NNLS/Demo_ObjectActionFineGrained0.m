@@ -45,8 +45,8 @@ end
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
-ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-% ClassificationMethod = 'NNLSR' ; % non-negative LSR
+% ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
+ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
@@ -63,7 +63,7 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [15 10 5]
+            for maxIter = [5:1:15]
                 Par.maxIter  = maxIter;
                 for rho = [1]
                     Par.rho = rho;
@@ -205,6 +205,11 @@ for nDim = nDimArray
                             end
                             %-------------------------------------------------------------------------
                             %% testing
+                                data.tr_descr = tr_dat;
+                                data.tt_descr = tt_dat;
+                                data.tr_label = trls;
+                                data.tt_label = ttls;
+                                class_num = max(trls);
                             if strcmp(ClassificationMethod, 'CROC') == 1
                                 weight = Par.rho;
                                 ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
@@ -216,11 +221,8 @@ for nDim = nDimArray
 %                                 params.gamma             =     Par.rho; % [1e-2];
 %                                 params.lambda            =      Par.lambda; % [1e-0];
 %                                 params.class_num         =      max(trls);
-                                data.tr_descr = tr_dat;
-                                data.tt_descr = tt_dat;
-                                data.tr_label = trls;
-                                data.tt_label = ttls;
                                 coef = ProCRC(data, params);
+                                [ID, ~] = ProMax(coef, data, class_num);
                             else
                                 ID = [];
                                 for indTest = 1:size(tt_dat,2)
@@ -261,17 +263,20 @@ for nDim = nDimArray
                                             coef_c = Aci*tt_dat(:,indTest);
                                             error(ci) = norm(tt_dat(:,indTest)-coef_c,2)^2/sum(coef_c.*coef_c);
                                         end
-                                    else
-                                        for ci = 1:max(trls)
-                                            coef_c   =  coef(trls==ci);
-                                            Dc       =  tr_dat(:,trls==ci);
-                                            error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
-                                        end
-                                    end
                                     index      =  find(error==min(error));
                                     id         =  index(1);
                                     ID      =   [ID id];
+                                    else
+                                        [id, ~] = ProMax(coef, data, class_num);
+                                        ID      =   [ID id];
+%                                         for ci = 1:max(trls)
+%                                             coef_c   =  coef(trls==ci);
+%                                             Dc       =  tr_dat(:,trls==ci);
+%                                             error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
+%                                         end
+                                    end
                                 end
+%                                 [pred_tt_label, ~] = ProMax(Alpha, data, params);
                             end
                             cornum      =   sum(ID==ttls);
                             accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
