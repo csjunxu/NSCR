@@ -6,10 +6,6 @@ dataset = 'Standford-40_VGG';
 % CUB-200-2011_VGG
 % Standford-40_VGG
 % Caltech-256_VGG
-% cifar-10
-% cifar-100
-% COIL20
-% COIL100
 % -------------------------------------------------------------------------
 %% number of repeations
 if strcmp(dataset, 'CUB-200-2011_VGG') == 1
@@ -28,14 +24,6 @@ elseif strcmp(dataset, 'Caltech-256_VGG') == 1
     nExperiment = 10;
     nDimArray = [4096];
     SampleArray = [60 45 30 15];
-elseif strcmp(dataset, 'cifar-100') == 1 || strcmp(dataset, 'cifar-10') == 1
-    nExperiment = 10;
-    nDimArray = [3072];
-    SampleArray = [500];
-elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
-    nExperiment = 10;
-    nDimArray = [1024];
-    SampleArray = [36];
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
@@ -98,83 +86,6 @@ for nDim = nDimArray
                                     ttls     =   [ttls i*ones(1, Ni-nSample)];
                                 end
                                 clear descr label descri RpNi Ni
-                            elseif strcmp(dataset, 'cifar-10') == 1
-                                % training data
-                                Tr_DATall = [];
-                                trlsall = [];
-                                for i=1:1:5
-                                    load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/data_batch_' num2str(i)]);
-                                    Tr_DATall = [Tr_DATall double(data')];
-                                    trlsall     =   [trlsall labels'];
-                                end
-                                if min(trlsall)==0
-                                    trlsall = trlsall + 1;
-                                end
-                                % randomly select half of the samples as training data
-                                [dim, N] = size(Tr_DATall);
-                                nClass = length(unique(trlsall));
-                                % nClass is the number of classes in the subset of AR database
-                                Tr_DAT = [];
-                                trls = [];
-                                for i=1:nClass
-                                    Tr_DATi = Tr_DATall(:, trlsall==i);
-                                    Ni = size(Tr_DATi, 2);
-                                    rng(n);
-                                    RpNi = randperm(Ni);
-                                    Tr_DAT   =   [Tr_DAT double(Tr_DATi(:, RpNi(1:nSample)))];
-                                    trls     =   [trls i*ones(1, nSample)];
-                                end
-                                clear Tr_DATall Tr_DATi trlsall RpNi Ni
-                                % testing data
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/test_batch']);
-                                Tt_DAT = double(data');
-                                ttls = labels';
-                                if min(ttls)==0
-                                    ttls = ttls + 1;
-                                end
-                                clear data labels
-                            elseif strcmp(dataset, 'cifar-100') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/train']);
-                                % training data: randomly select half of the samples as training data;
-                                data = data';
-                                [dim, N] = size(data);
-                                nClass = length(unique(fine_labels));
-                                Tr_DAT = [];
-                                trls = [];
-                                for i=1:nClass
-                                    datai = data(:,fine_labels==i-1);
-                                    Ni = size(datai, 2);
-                                    rng(n);
-                                    RpNi = randperm(Ni);
-                                    Tr_DAT   =   [Tr_DAT double(datai(:, RpNi(1:nSample)))];
-                                    trls     =   [trls i*ones(1, nSample)];
-                                end
-                                clear data datai fine_label Ni RpNi
-                                % testing data
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/test']);
-                                Tt_DAT = double(data');
-                                ttls = fine_labels' + 1;
-                            elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '.mat']);
-                                % training data: randomly select half of the samples as training data;
-                                data = fea';
-                                [dim, N] = size(data);
-                                nClass = length(unique(gnd));
-                                Tr_DAT = [];
-                                Tt_DAT = [];
-                                trls = [];
-                                ttls = [];
-                                for i=1:nClass
-                                    datai = data(:, gnd==i);
-                                    Ni = size(datai, 2);
-                                    rng(n);
-                                    RpNi = randperm(Ni);
-                                    Tr_DAT   =   [Tr_DAT double(datai(:, RpNi(1:nSample)))];
-                                    Tt_DAT   =   [Tt_DAT double(datai(:, RpNi(nSample+1:end)))];
-                                    trls     =   [trls i*ones(1, nSample)];
-                                    ttls     =   [ttls i*ones(1, nSample)];
-                                end
-                                clear data datai fine_label Ni RpNi
                             elseif strcmp(dataset, 'Standford-40_VGG') == 1 ...
                                     || strcmp(dataset, 'Flower-102_VGG') == 1 ...
                                     || strcmp(dataset, 'CUB-200-2011_VGG') == 1
@@ -185,14 +96,6 @@ for nDim = nDimArray
                                 trls     =   tr_label;
                                 Tt_DAT   =   double(tt_descr);
                                 ttls     =   tt_label;
-                                clear tr_descr tt_descr tr_labels tt_labels
-                            else
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
-                                nClass        =   max(tr_label);
-                                Tr_DAT   =   double(tr_descr);
-                                trls     =   tr_labels;
-                                Tt_DAT   =   double(tt_descr);
-                                ttls     =   tt_labels;
                                 clear tr_descr tt_descr tr_labels tt_labels
                             end
                             %--------------------------------------------------------------------------
@@ -217,10 +120,6 @@ for nDim = nDimArray
                             elseif strcmp(ClassificationMethod, 'ProCRC') == 1
                                 global params
                                 set_params(dataset);
-                                %                                 params.model_type        =      'ProCRC';
-                                %                                 params.gamma             =     Par.rho; % [1e-2];
-                                %                                 params.lambda            =      Par.lambda; % [1e-0];
-                                %                                 params.class_num         =      max(trls);
                                 data.tr_descr = tr_dat;
                                 data.tt_descr = tt_dat;
                                 data.tr_label = trls;
