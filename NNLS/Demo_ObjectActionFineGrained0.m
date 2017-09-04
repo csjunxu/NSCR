@@ -276,8 +276,7 @@ for nDim = nDimArray
 %                                         end
                                     end
                                 end
-%                                 [pred_tt_label, ~] = ProMax(Alpha, data, params);
-                            end
+                           end
                             cornum      =   sum(ID==ttls);
                             accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
                             fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
