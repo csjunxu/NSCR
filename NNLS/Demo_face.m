@@ -32,7 +32,7 @@ elseif strcmp(dataset, 'ORLfaceCrop') == 1
     nDimArray = [84 150 200];
 elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
-    nDimArray = [54 120 300];
+    nDimArray = 120; %[54 120 300];
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
@@ -50,7 +50,7 @@ for nDim = nDimArray
         Par.s = s;
         for maxIter = [5:1:15]
             Par.maxIter  = maxIter;
-            for rho = [.11:.01:.2]
+            for rho = [.1:.01:.2]
                 Par.rho = rho;
                 for lambda = [0]
                     Par.lambda = lambda;
