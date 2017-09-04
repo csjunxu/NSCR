@@ -13,7 +13,6 @@ dataset = 'AR_DAT';
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-
 ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
@@ -49,9 +48,9 @@ for nDim = nDimArray
     %% tuning the parameters
     for s = [1]
         Par.s = s;
-        for maxIter = [6:1:10]
+        for maxIter = [5:1:15]
             Par.maxIter  = maxIter;
-            for rho = [.01:.01:.1]
+            for rho = [.11:.01:.2]
                 Par.rho = rho;
                 for lambda = [0]
                     Par.lambda = lambda;
