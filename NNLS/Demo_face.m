@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'AR_DAT';
+dataset = 'YaleBCrop025';
 % AR_DAT
 % YaleBCrop025
 % GTfaceCrop
@@ -32,7 +32,7 @@ elseif strcmp(dataset, 'ORLfaceCrop') == 1
     nDimArray = [84 150 200];
 elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
-    nDimArray = 300; %[54 120 300];
+    nDimArray = [54 120 300];
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
@@ -48,9 +48,9 @@ for nDim = nDimArray
     %% tuning the parameters
     for s = [1]
         Par.s = s;
-        for maxIter = [7:1:15]
+        for maxIter = [1:1:10]
             Par.maxIter  = maxIter;
-            for rho = [.01:.01:.1]
+            for rho = [.001 .005 .01:.01:.1]
                 Par.rho = rho;
                 for lambda = [0]
                     Par.lambda = lambda;
