@@ -39,7 +39,7 @@ for nSample = SampleArray % number of images for each digit
         Par.s = s;
         for maxIter = [5:1:10]
             Par.maxIter  = maxIter;
-            for rho = [.2:.2:1]
+            for rho = [.2::.2:1]
                 Par.rho = rho;
                 for lambda = [0]
                     Par.lambda = lambda;
@@ -188,6 +188,7 @@ for nSample = SampleArray % number of images for each digit
                                     %                                         error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
                                     %                                     end
                                 end
+                                
                             end
                         end
                         cornum      =   sum(ID==ttls);
@@ -219,7 +220,6 @@ for nSample = SampleArray % number of images for each digit
         end
     end
 end
-
 
 
 
