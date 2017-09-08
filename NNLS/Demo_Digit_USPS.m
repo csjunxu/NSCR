@@ -1,10 +1,12 @@
 clear;
+warning off;
 addpath('C:\Users\csjunxu\Desktop\SC\Datasets\MNISThelpcode');
 addpath('C:\Users\csjunxu\Desktop\SC\SSCOMP_Code\scatnet-0.2');
 % -------------------------------------------------------------------------
 %% directory to save the results
 dataset = 'USPS';
-writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
+% writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
+writefilepath  = ['/Users/xujun/Desktop/NNLS' dataset '/'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
@@ -39,7 +41,7 @@ for nSample = SampleArray % number of images for each digit
         Par.s = s;
         for maxIter = [5:1:10]
             Par.maxIter  = maxIter;
-            for rho = [.2:.2:1]
+            for rho = [2:2:10]
                 Par.rho = rho;
                 for lambda = [0]
                     Par.lambda = lambda;
@@ -78,7 +80,8 @@ for nSample = SampleArray % number of images for each digit
                             tt_DATA = tt_MNIST_DATA;
                             tt_LABEL = tt_MNIST_LABEL'+1;
                         elseif strcmp(dataset, 'USPS')==1
-                            load('C:\Users\csjunxu\Desktop\SC\Datasets\USPS');
+                            % load('C:\Users\csjunxu\Desktop\SC\Datasets\USPS');
+                            load('/Users/xujun/Desktop/NNLS/USPS');
                             tr_DATA = double(fea(1:7291, :)');
                             tr_LABEL = gnd(1:7291)';
                             tt_DATA = double(fea(7292:end, :)');
