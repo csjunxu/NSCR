@@ -6,7 +6,7 @@ addpath('C:\Users\csjunxu\Desktop\SC\SSCOMP_Code\scatnet-0.2');
 %% directory to save the results
 dataset = 'USPS';
 % writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
-writefilepath  = ['/Users/xujun/Desktop/NNLS' dataset '/'];
+writefilepath  = ['/Users/xujun/Desktop/NNLS/' dataset '/'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
