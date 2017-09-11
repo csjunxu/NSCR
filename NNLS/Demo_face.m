@@ -26,7 +26,7 @@ ClassificationMethod = 'NNLSR' ; % non-negative LSR
 if strcmp(dataset, 'YaleBCrop025') == 1 ...
         || strcmp(dataset, 'GTfaceCrop') == 1
     nExperiment = 10;
-    nDimArray = [84 150 300];
+    nDimArray = 150; %[84 150 300];
 elseif strcmp(dataset, 'ORLfaceCrop') == 1
     nExperiment = 10;
     nDimArray = [84 150 200];
@@ -48,9 +48,9 @@ for nDim = nDimArray
     %% tuning the parameters
     for s = [1]
         Par.s = s;
-        for maxIter = [6:1:10]
+        for maxIter = [5:1:10]
             Par.maxIter  = maxIter;
-            for rho = [.2:.2:1]
+            for rho = [.2:.2:.8]
                 Par.rho = rho;
                 for lambda = [0]
                     Par.lambda = lambda;
