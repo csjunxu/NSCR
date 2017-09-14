@@ -55,7 +55,7 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [5:5:20]
+            for maxIter = [4:-1:1]
                 Par.maxIter  = maxIter;
                 for rho = [.1 .5 1]
                     Par.rho = rho;
