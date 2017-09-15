@@ -4,9 +4,9 @@ addpath('C:\Users\csjunxu\Desktop\SC\Datasets\MNISThelpcode');
 addpath('C:\Users\csjunxu\Desktop\SC\SSCOMP_Code\scatnet-0.2');
 % -------------------------------------------------------------------------
 %% directory to save the results
-dataset = 'USPS';
+dataset = 'MNIST';
 % writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
-writefilepath  = ['/Users/xujun/Desktop/NNLS/' dataset '/'];
+writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
@@ -39,9 +39,9 @@ for nSample = SampleArray % number of images for each digit
     %% tuning the parameters
     for s = 1
         Par.s = s;
-        for maxIter = [17:1:20]
+        for maxIter = [10:1:20]
             Par.maxIter  = maxIter;
-            for rho = [6]
+            for rho = [1:1:6]
                 Par.rho = rho;
                 for lambda = [0]
                     Par.lambda = lambda;
