@@ -5,7 +5,6 @@ addpath('C:\Users\csjunxu\Desktop\SC\SSCOMP_Code\scatnet-0.2');
 % -------------------------------------------------------------------------
 %% directory to save the results
 dataset = 'MNIST';
-% writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
 writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
