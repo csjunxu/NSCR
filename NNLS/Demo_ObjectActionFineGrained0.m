@@ -27,6 +27,10 @@ elseif strcmp(dataset, 'Caltech-256_VGG') == 1
     nExperiment = 1;
     nDimArray = [4096];
     SampleArray = 30; %[60 45 30 15];
+    elseif strcmp(dataset, 'CUB_sift') == 1
+    nExperiment = 1;
+    nDimArray = [5120];
+    SampleArray = 0;
 elseif strcmp(dataset, 'Caltech256_sift') == 1
     nExperiment = 1;
     nDimArray = [5120];
