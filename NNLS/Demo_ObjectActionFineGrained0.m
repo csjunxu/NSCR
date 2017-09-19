@@ -1,11 +1,14 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Standford-40_VGG';
+dataset = 'Caltech256_sift';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
 % Caltech-256_VGG
+
+% CUB_sift
+% Caltech256_sift
 % -------------------------------------------------------------------------
 %% number of repeations
 if strcmp(dataset, 'CUB-200-2011_VGG') == 1
@@ -23,6 +26,10 @@ elseif strcmp(dataset, 'Standford-40_VGG') == 1
 elseif strcmp(dataset, 'Caltech-256_VGG') == 1
     nExperiment = 1;
     nDimArray = [4096];
+    SampleArray = 30; %[60 45 30 15];
+elseif strcmp(dataset, 'Caltech256_sift') == 1
+    nExperiment = 1;
+    nDimArray = [5120];
     SampleArray = 30; %[60 45 30 15];
 end
 % -------------------------------------------------------------------------
@@ -55,9 +62,9 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [3]
+            for maxIter = [3:1:5]
                 Par.maxIter  = maxIter;
-                for rho = [.25 .35]
+                for rho = [.1:.1:.5]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
@@ -86,6 +93,27 @@ for nDim = nDimArray
                                     ttls     =   [ttls i*ones(1, Ni-nSample)];
                                 end
                                 clear descr label descri RpNi Ni
+                            elseif strcmp(dataset, 'Caltech256_sift') == 1
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                % randomly select half of the samples as training data;
+                                [dim, N] = size(Data);
+                                nClass = length(unique(Label));
+                                % nClass is the number of classes in the subset of AR database
+                                Tr_DAT = [];
+                                Tt_DAT = [];
+                                trls = [];
+                                ttls = [];
+                                for i=1:nClass
+                                    Datai = Data(:, Label==i);
+                                    Ni = size(Datai, 2);
+                                    rng(n);
+                                    RpNi = randperm(Ni);
+                                    Tr_DAT   =   [Tr_DAT double(Datai(:, RpNi(1:nSample)))];
+                                    trls     =   [trls i*ones(1, nSample)];
+                                    Tt_DAT   =   [Tt_DAT double(Datai(:, RpNi(nSample+1:end)))];
+                                    ttls     =   [ttls i*ones(1, Ni-nSample)];
+                                end
+                                clear Data Label Datai RpNi Ni
                             elseif strcmp(dataset, 'Standford-40_VGG') == 1 ...
                                     || strcmp(dataset, 'Flower-102_VGG') == 1 ...
                                     || strcmp(dataset, 'CUB-200-2011_VGG') == 1
@@ -129,10 +157,6 @@ for nDim = nDimArray
                                 data.tr_label = trls;
                                 data.tt_label = ttls;
                                 params.class_num = class_num;
-                                %                                 params.model_type        =      'ProCRC';
-                                %                                 params.gamma             =     Par.rho; % [1e-2];
-                                %                                 params.lambda            =      Par.lambda; % [1e-0];
-                                %                                 params.class_num         =      max(trls);
                                 coef = ProCRC(data, params);
                                 [ID, ~] = ProMax(coef, data, params);
                             else
