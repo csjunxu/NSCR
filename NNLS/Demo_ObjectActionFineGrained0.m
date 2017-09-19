@@ -1,14 +1,16 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Caltech256_sift';
+dataset = 'Caltech-256_sift';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
 % Caltech-256_VGG
 
-% CUB_sift
-% Caltech256_sift
+% Flower-102_sift
+% CUB-200-2011_sift
+% Standford-40_sift
+% Caltech-256_sift
 % -------------------------------------------------------------------------
 %% number of repeations
 if strcmp(dataset, 'CUB-200-2011_VGG') == 1
@@ -27,11 +29,15 @@ elseif strcmp(dataset, 'Caltech-256_VGG') == 1
     nExperiment = 1;
     nDimArray = [4096];
     SampleArray = 30; %[60 45 30 15];
+    elseif strcmp(dataset, 'CUB_sift') == 1
+    nExperiment = 1;
+    nDimArray = [5120];
+    SampleArray = 0;
 elseif strcmp(dataset, 'CUB_sift') == 1
     nExperiment = 1;
     nDimArray = [5120];
     SampleArray = 0;
-elseif strcmp(dataset, 'Caltech256_sift') == 1
+elseif strcmp(dataset, 'Caltech-256_sift') == 1
     nExperiment = 1;
     nDimArray = [5120];
     SampleArray = 30; %[60 45 30 15];
