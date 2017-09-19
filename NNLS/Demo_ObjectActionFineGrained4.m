@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Caltech-256_sift';
+dataset = 'Flower-102_sift';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
@@ -13,9 +13,9 @@ dataset = 'Caltech-256_sift';
 % Caltech-256_sift
 % -------------------------------------------------------------------------
 %% number of repeations
-if strcmp(dataset, 'Standford-40_sift') == 1 ...
-        || strcmp(dataset, 'Flower-102_sift') == 1 ...
-        || strcmp(dataset, 'CUB-200-2011_sift') == 1
+if strcmp(dataset, 'Standford-40_VGG') == 1 ...
+        || strcmp(dataset, 'Flower-102_VGG') == 1 ...
+        || strcmp(dataset, 'CUB-200-2011_VGG') == 1
     nExperiment = 1;
     nDimArray = [4096];
     SampleArray = 0;
@@ -118,7 +118,7 @@ for nDim = nDimArray
                                 clear Data Label Datai RpNi Ni
                             elseif strcmp(dataset, 'Standford-40_VGG') == 1 ...
                                     || strcmp(dataset, 'Flower-102_VGG') == 1 ...
-                                    || strcmp(dataset, 'CUB_sift') == 1
+                                    || strcmp(dataset, 'CUB-200-2011_VGG') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                                 [dim, N] = size(tr_descr);
                                 nClass        =   max(tr_label);
