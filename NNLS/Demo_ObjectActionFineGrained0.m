@@ -27,7 +27,7 @@ elseif strcmp(dataset, 'Caltech-256_VGG') == 1
     nExperiment = 1;
     nDimArray = [4096];
     SampleArray = 30; %[60 45 30 15];
-    elseif strcmp(dataset, 'CUB_sift') == 1
+elseif strcmp(dataset, 'CUB_sift') == 1
     nExperiment = 1;
     nDimArray = [5120];
     SampleArray = 0;
@@ -118,9 +118,20 @@ for nDim = nDimArray
                                     ttls     =   [ttls i*ones(1, Ni-nSample)];
                                 end
                                 clear Data Label Datai RpNi Ni
-                            elseif strcmp(dataset, 'Standford-40_VGG') == 1 ...
+                            elseif strcmp(dataset, 'Standford-40_sift') == 1 ...
+                                    || strcmp(dataset, 'Flower-102_sift') == 1 ...
+                                    || strcmp(dataset, 'CUB-200-2011_sift') == 1
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                [dim, N] = size(tr_descr);
+                                nClass        =   max(tr_label);
+                                Tr_DAT   =   double(tr_descr);
+                                trls     =   tr_label;
+                                Tt_DAT   =   double(tt_descr);
+                                ttls     =   tt_label;
+                                clear tr_descr tt_descr tr_labels tt_labels
+                                elseif strcmp(dataset, 'Standford-40_VGG') == 1 ...
                                     || strcmp(dataset, 'Flower-102_VGG') == 1 ...
-                                    || strcmp(dataset, 'CUB-200-2011_VGG') == 1
+                                    || strcmp(dataset, 'CUB_sift') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                                 [dim, N] = size(tr_descr);
                                 nClass        =   max(tr_label);
