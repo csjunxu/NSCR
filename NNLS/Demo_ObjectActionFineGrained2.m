@@ -1,26 +1,21 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Caltech-256_VGG';
+dataset = 'CUB-200-2011_sift';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
 % Caltech-256_VGG
-% cifar-10
-% cifar-100
-% COIL20
-% COIL100
+
+% Flower-102_sift
+% CUB-200-2011_sift
+% Standford-40_sift
+% Caltech-256_sift
 % -------------------------------------------------------------------------
 %% number of repeations
-if strcmp(dataset, 'CUB-200-2011_VGG') == 1
-    nExperiment = 1;
-    nDimArray = [4096];
-    SampleArray = 0;
-elseif strcmp(dataset, 'Flower-102_VGG') == 1
-    nExperiment = 1;
-    nDimArray = [4096];
-    SampleArray = 0;
-elseif strcmp(dataset, 'Standford-40_VGG') == 1
+if strcmp(dataset, 'Standford-40_VGG') == 1 ...
+        || strcmp(dataset, 'Flower-102_VGG') == 1 ...
+        || strcmp(dataset, 'CUB-200-2011_VGG') == 1
     nExperiment = 1;
     nDimArray = [4096];
     SampleArray = 0;
@@ -28,15 +23,21 @@ elseif strcmp(dataset, 'Caltech-256_VGG') == 1
     nExperiment = 1;
     nDimArray = [4096];
     SampleArray = 30; %[60 45 30 15];
-elseif strcmp(dataset, 'cifar-100') == 1 || strcmp(dataset, 'cifar-10') == 1
-    nExperiment = 10;
-    nDimArray = [3072];
-    SampleArray = [50 100 300 500];
+elseif strcmp(dataset, 'Standford-40_sift') == 1 ...
+        || strcmp(dataset, 'Flower-102_sift') == 1 ...
+        || strcmp(dataset, 'CUB-200-2011_sift') == 1
+    nExperiment = 1;
+    nDimArray = [5120];
+    SampleArray = 0;
+elseif strcmp(dataset, 'Caltech-256_sift') == 1
+    nExperiment = 1;
+    nDimArray = [5120];
+    SampleArray = 30; %[60 45 30 15];
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
 writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
-if ~isdir(writefilepath) 
+if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
 % -------------------------------------------------------------------------
@@ -63,9 +64,9 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [5:5:20]
+            for maxIter = [3:1:5]
                 Par.maxIter  = maxIter;
-                for rho = [.1 .5 1]
+                for rho = [.1:.1:.5]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
@@ -94,83 +95,27 @@ for nDim = nDimArray
                                     ttls     =   [ttls i*ones(1, Ni-nSample)];
                                 end
                                 clear descr label descri RpNi Ni
-                            elseif strcmp(dataset, 'cifar-10') == 1
-                                            % training data
-                                Tr_DATall = [];
-                                trlsall = [];
-                                for i=1:1:5
-                                    load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/data_batch_' num2str(i)]);
-                                    Tr_DATall = [Tr_DATall double(data')];
-                                    trlsall     =   [trlsall labels'];
-                                end
-                                if min(trlsall)==0
-                                    trlsall = trlsall + 1;
-                                end
-                                % randomly select half of the samples as training data
-                                [dim, N] = size(Tr_DATall);
-                                nClass = length(unique(trlsall));
+                            elseif strcmp(dataset, 'Caltech-256_sift') == 1
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                % randomly select half of the samples as training data;
+                                [dim, N] = size(Data);
+                                nClass = length(unique(Label));
                                 % nClass is the number of classes in the subset of AR database
-                                Tr_DAT = [];
-                                trls = [];
-                                for i=1:nClass
-                                    Tr_DATi = Tr_DATall(:, trlsall==i);
-                                    Ni = size(Tr_DATi, 2);
-                                    rng(n);
-                                    RpNi = randperm(Ni);
-                                    Tr_DAT   =   [Tr_DAT double(Tr_DATi(:, RpNi(1:nSample)))];
-                                    trls     =   [trls i*ones(1, nSample)];
-                                end
-                                clear Tr_DATall Tr_DATi trlsall RpNi Ni
-                                % testing data
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/test_batch']);
-                                Tt_DAT = double(data');
-                                ttls = labels';
-                                if min(ttls)==0
-                                    ttls = ttls + 1;
-                                end
-                                clear data labels
-                            elseif strcmp(dataset, 'cifar-100') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/train']);
-                                % training data: randomly select half of the samples as training data;
-                                data = data';
-                                [dim, N] = size(data);
-                                nClass = length(unique(fine_labels));
-                                Tr_DAT = [];
-                                trls = [];
-                                for i=1:nClass
-                                    datai = data(:,fine_labels==i-1);
-                                    Ni = size(datai, 2);
-                                    rng(n);
-                                    RpNi = randperm(Ni);
-                                    Tr_DAT   =   [Tr_DAT double(datai(:, RpNi(1:nSample)))];
-                                    trls     =   [trls i*ones(1, nSample)];
-                                end
-                                clear data datai fine_label Ni RpNi
-                                % testing data
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '/test']);
-                                Tt_DAT = double(data');
-                                ttls = fine_labels + 1;
-                                   elseif strcmp(dataset, 'COIL100') == 1 || strcmp(dataset, 'COIL20') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset '.mat']);
-                                % training data: randomly select half of the samples as training data;
-                                data = fea';
-                                [dim, N] = size(data);
-                                nClass = length(unique(gnd));
                                 Tr_DAT = [];
                                 Tt_DAT = [];
                                 trls = [];
                                 ttls = [];
                                 for i=1:nClass
-                                    datai = data(:, gnd==i);
-                                    Ni = size(datai, 2);
+                                    Datai = Data(:, Label==i);
+                                    Ni = size(Datai, 2);
                                     rng(n);
                                     RpNi = randperm(Ni);
-                                    Tr_DAT   =   [Tr_DAT double(datai(:, RpNi(1:nSample)))];
-                                    Tt_DAT   =   [Tt_DAT double(datai(:, RpNi(nSample+1:end)))];
+                                    Tr_DAT   =   [Tr_DAT double(Datai(:, RpNi(1:nSample)))];
                                     trls     =   [trls i*ones(1, nSample)];
-                                    ttls     =   [ttls i*ones(1, nSample)];
+                                    Tt_DAT   =   [Tt_DAT double(Datai(:, RpNi(nSample+1:end)))];
+                                    ttls     =   [ttls i*ones(1, Ni-nSample)];
                                 end
-                                clear data datai fine_label Ni RpNi
+                                clear Data Label Datai RpNi Ni
                             elseif strcmp(dataset, 'Standford-40_VGG') == 1 ...
                                     || strcmp(dataset, 'Flower-102_VGG') == 1 ...
                                     || strcmp(dataset, 'CUB-200-2011_VGG') == 1
@@ -182,14 +127,17 @@ for nDim = nDimArray
                                 Tt_DAT   =   double(tt_descr);
                                 ttls     =   tt_label;
                                 clear tr_descr tt_descr tr_labels tt_labels
-                            else
+                            elseif strcmp(dataset, 'Standford-40_sift') == 1 ...
+                                    || strcmp(dataset, 'Flower-102_sift') == 1 ...
+                                    || strcmp(dataset, 'CUB-200-2011_sift') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
-                                nClass        =   max(tr_label);
-                                Tr_DAT   =   double(tr_descr);
-                                trls     =   tr_labels;
-                                Tt_DAT   =   double(tt_descr);
-                                ttls     =   tt_labels;
-                                clear tr_descr tt_descr tr_labels tt_labels
+                                [dim, N] = size(TrData);
+                                nClass        =   max(TrLabel);
+                                Tr_DAT   =   double(TrData);
+                                trls     =   TrLabel;
+                                Tt_DAT   =   double(TtData);
+                                ttls     =   TtLabel;
+                                clear TrData TtData TrLabel TtLabel
                             end
                             %--------------------------------------------------------------------------
                             %% eigenface extracting
@@ -222,10 +170,6 @@ for nDim = nDimArray
                                 data.tr_label = trls;
                                 data.tt_label = ttls;
                                 params.class_num = class_num;
-                                %                                 params.model_type        =      'ProCRC';
-                                %                                 params.gamma             =     Par.rho; % [1e-2];
-                                %                                 params.lambda            =      Par.lambda; % [1e-0];
-                                %                                 params.class_num         =      max(trls);
                                 coef = ProCRC(data, params);
                                 [ID, ~] = ProMax(coef, data, params);
                             else

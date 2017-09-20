@@ -5,8 +5,12 @@ addpath('/Users/xujun/Desktop/NNLS/scatnet-0.2');
 % -------------------------------------------------------------------------
 %% directory to save the results
 dataset = 'MNIST';
+<<<<<<< HEAD
 % writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
 writefilepath  = ['/Users/xujun/Desktop/NNLS/' dataset '/'];
+=======
+writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
+>>>>>>> bddb1fc66bad52d8a4259c750d68bb8e6609b667
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
@@ -39,9 +43,15 @@ for nSample = SampleArray % number of images for each digit
     %% tuning the parameters
     for s = 1
         Par.s = s;
+<<<<<<< HEAD
         for maxIter = [10:1:20]
             Par.maxIter  = maxIter;
             for rho = [1:1:6]
+=======
+        for maxIter = [7:1:10]
+            Par.maxIter  = maxIter;
+            for rho = [.1]
+>>>>>>> bddb1fc66bad52d8a4259c750d68bb8e6609b667
                 Par.rho = rho;
                 for lambda = [0]
                     Par.lambda = lambda;

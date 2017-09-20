@@ -1,29 +1,38 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Standford-40_VGG';
+dataset = 'Flower-102_sift';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
 % Caltech-256_VGG
+
+% Flower-102_sift
+% CUB-200-2011_sift
+% Standford-40_sift
+% Caltech-256_sift
 % -------------------------------------------------------------------------
 %% number of repeations
-if strcmp(dataset, 'CUB-200-2011_VGG') == 1
-    nExperiment = 1;
-    nDimArray = [4096];
-    SampleArray = 0;
-elseif strcmp(dataset, 'Flower-102_VGG') == 1
-    nExperiment = 1;
-    nDimArray = [4096];
-    SampleArray = 0;
-elseif strcmp(dataset, 'Standford-40_VGG') == 1
+if strcmp(dataset, 'Standford-40_VGG') == 1 ...
+        || strcmp(dataset, 'Flower-102_VGG') == 1 ...
+        || strcmp(dataset, 'CUB-200-2011_VGG') == 1
     nExperiment = 1;
     nDimArray = [4096];
     SampleArray = 0;
 elseif strcmp(dataset, 'Caltech-256_VGG') == 1
-    nExperiment = 10;
+    nExperiment = 1;
     nDimArray = [4096];
-    SampleArray = [60 45 30 15];
+    SampleArray = 30; %[60 45 30 15];
+elseif strcmp(dataset, 'Standford-40_sift') == 1 ...
+        || strcmp(dataset, 'Flower-102_sift') == 1 ...
+        || strcmp(dataset, 'CUB-200-2011_sift') == 1
+    nExperiment = 1;
+    nDimArray = [5120];
+    SampleArray = 0;
+elseif strcmp(dataset, 'Caltech-256_sift') == 1
+    nExperiment = 1;
+    nDimArray = [5120];
+    SampleArray = 30; %[60 45 30 15];
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
@@ -46,7 +55,7 @@ ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 % ClassificationMethod = 'ADANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'ADANPLSR' ; % deformable, affine and non-positive LSR
-%------------------------------------------------------------------------------
+%-------------------------------------------------------------------------
 %% PCA dimension
 for nDim = nDimArray
     Par.nDim = nDim;
@@ -55,9 +64,9 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [6:1:10]
+            for maxIter = [3:1:5]
                 Par.maxIter  = maxIter;
-                for rho = [.4:.2:1.2]
+                for rho = [.1:.1:.5]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
@@ -67,7 +76,7 @@ for nDim = nDimArray
                             %% data loading
                             if strcmp(dataset, 'Caltech-256_VGG') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
-                                % randomly select half of the samples as training data
+                                % randomly select half of the samples as training data;
                                 [dim, N] = size(descr);
                                 nClass = length(unique(label));
                                 % nClass is the number of classes in the subset of AR database
@@ -86,6 +95,27 @@ for nDim = nDimArray
                                     ttls     =   [ttls i*ones(1, Ni-nSample)];
                                 end
                                 clear descr label descri RpNi Ni
+                            elseif strcmp(dataset, 'Caltech-256_sift') == 1
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                % randomly select half of the samples as training data;
+                                [dim, N] = size(Data);
+                                nClass = length(unique(Label));
+                                % nClass is the number of classes in the subset of AR database
+                                Tr_DAT = [];
+                                Tt_DAT = [];
+                                trls = [];
+                                ttls = [];
+                                for i=1:nClass
+                                    Datai = Data(:, Label==i);
+                                    Ni = size(Datai, 2);
+                                    rng(n);
+                                    RpNi = randperm(Ni);
+                                    Tr_DAT   =   [Tr_DAT double(Datai(:, RpNi(1:nSample)))];
+                                    trls     =   [trls i*ones(1, nSample)];
+                                    Tt_DAT   =   [Tt_DAT double(Datai(:, RpNi(nSample+1:end)))];
+                                    ttls     =   [ttls i*ones(1, Ni-nSample)];
+                                end
+                                clear Data Label Datai RpNi Ni
                             elseif strcmp(dataset, 'Standford-40_VGG') == 1 ...
                                     || strcmp(dataset, 'Flower-102_VGG') == 1 ...
                                     || strcmp(dataset, 'CUB-200-2011_VGG') == 1
@@ -97,6 +127,17 @@ for nDim = nDimArray
                                 Tt_DAT   =   double(tt_descr);
                                 ttls     =   tt_label;
                                 clear tr_descr tt_descr tr_labels tt_labels
+                            elseif strcmp(dataset, 'Standford-40_sift') == 1 ...
+                                    || strcmp(dataset, 'Flower-102_sift') == 1 ...
+                                    || strcmp(dataset, 'CUB-200-2011_sift') == 1
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                [dim, N] = size(TrData);
+                                nClass        =   max(TrLabel);
+                                Tr_DAT   =   double(TrData);
+                                trls     =   TrLabel;
+                                Tt_DAT   =   double(TtData);
+                                ttls     =   TtLabel;
+                                clear TrData TtData TrLabel TtLabel
                             end
                             %--------------------------------------------------------------------------
                             %% eigenface extracting
@@ -120,15 +161,15 @@ for nDim = nDimArray
                             elseif strcmp(ClassificationMethod, 'ProCRC') == 1
                                 global params
                                 set_params(dataset);
+                                %                                 params.model_type        =      'ProCRC';
+                                %                                 params.gamma             =     Par.rho; % [1e-2];
+                                %                                 params.lambda            =      Par.lambda; % [1e-0];
+                                %                                 params.class_num         =      max(trls);
                                 data.tr_descr = tr_dat;
                                 data.tt_descr = tt_dat;
                                 data.tr_label = trls;
                                 data.tt_label = ttls;
                                 params.class_num = class_num;
-                                %                                 params.model_type        =      'ProCRC';
-                                %                                 params.gamma             =     Par.rho; % [1e-2];
-                                %                                 params.lambda            =      Par.lambda; % [1e-0];
-                                %                                 params.class_num         =      max(trls);
                                 coef = ProCRC(data, params);
                                 [ID, ~] = ProMax(coef, data, params);
                             else
