@@ -1,7 +1,7 @@
 clear;
 warning off;
-addpath('C:\Users\csjunxu\Desktop\SC\Datasets\MNISThelpcode');
-addpath('C:\Users\csjunxu\Desktop\SC\SSCOMP_Code\scatnet-0.2');
+addpath('../../Non-negativeSubspaceClustering/MNISThelpcode');
+addpath('/Users/xujun/Desktop/NNLS/scatnet-0.2');
 % -------------------------------------------------------------------------
 %% directory to save the results
 dataset = 'MNIST';
