@@ -1,31 +1,29 @@
-clear all; clc;
+clear
 warning off;
 
 addpath('C:\Users\csjunxu\Desktop\Classification\Dataset');
 % addpath('.\liblinear-1.96');
 addpath('.\invChol');
 
-% dataDir = fullfile('C:\Users\csjunxu\Desktop\Classification\Dataset','imagenet12-feat-caffe-alex') ;
-dataDir = fullfile('C:\Users\csjunxu\Desktop\Classification\Dataset','imagenet12-sbow-split') ;
+dataDir = fullfile('C:\Users\csjunxu\Desktop\Classification\Dataset','imagenet12-feat-caffe-alex') ;
+% dataDir = fullfile('C:\Users\csjunxu\Desktop\Classification\Dataset','imagenet12-sbow-split') ;
 
 dirTrain=dir(fullfile(dataDir,'train_category_*.mat'));
 TrainfileNames={dirTrain.name}';
 dirTest=dir(fullfile(dataDir,'valid_category_*.mat'));
-TestfileNames={dirTest.name
-
+TestfileNames={dirTest.name}';
+    
 dataset = 'ImageNet';
-if strcmp(dataset, 'ImageNet') == 1
-    nExperiment = 1;
-    nDimArray = [4096];
-    SampleArray = 0;
-    normalization.flag = 1;
-    normalization.type = 1;
-end
+nExperiment = 1;
+nDimArray = [4096];
+SampleArray = 0;
+normalization.flag = 1;
+normalization.type = 1;
 % -------------------------------------------------------------------------
 %% directory to save the results
 writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
 if ~isdir(writefilepath)
-    mkdir(writefilepath);
+mkdir(writefilepath);
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
