@@ -14,6 +14,13 @@ dirTest=dir(fullfile(dataDir,'valid_category_*.mat'));
 TestfileNames={dirTest.name}';
 
 dataset = 'ImageNet';
+if strcmp(dataset, 'ImageNet') == 1
+    nExperiment = 1;
+    nDimArray = [4096];
+    SampleArray = 0;
+    normalization.flag = 1;
+    normalization.type = 1;
+end
 % -------------------------------------------------------------------------
 %% directory to save the results
 writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
@@ -94,7 +101,6 @@ clear D labelD;
 % load imagenet_trainP;
 % tr_dat = double(tr_dat);
 % load imagenet_test;
-
 
 %-------------------------------------------------------------------------
 %% PCA dimension
@@ -225,7 +231,7 @@ for nDim = nDimArray
                                             % projection matrix computing
                                             Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                             coef         =  Proj_M*tt_dat(:,indTest);
-                                                case 'NNLSR'                   % non-negative
+                                        case 'NNLSR'                   % non-negative
                                             coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'NPLSR'               % non-positive
                                             coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
@@ -288,40 +294,3 @@ for nDim = nDimArray
 end
 
 
-
-
-
-
-normalization.flag = 1;
-normalization.type = 1;
-gamma = [1e-2];
-lambda = [1e-2];
-regularizer = 'l2';
-
-method = 'ProCRC';
-
-
-
-switch method
-    case 'ProCRC'
-        [x, y] = meshgrid(gamma, lambda);
-        para_table = [x(:) y(:)];
-        
-        for i = 1:size(para_table,1)
-            %% run ProCRC
-            fprintf('\n------------------------Coding Process------------------------\n\n');
-            tic;
-            Alpha = ProCRC(tt_dat, tr_dat, trls, para_table(i,1), para_table(i,2), regularizer);
-            toc
-            
-            tic;
-            fprintf('\n------------------------Labeling Process------------------------\n\n');
-            [pred_ttls, pre_matrix] = ProMax(tt_dat, Alpha, tr_dat, trls, para_table(i,1), para_table(i,2), regularizer);
-            toc
-            accuracy  =  (sum(pred_ttls==ttls))/length(ttls);
-            %mAccuracy = [mAccuracy, accuracy];
-            %lname = ['RandomProCRC_D',num2str(l+20)];
-            %save(lname,'pre_matrix','pred_ttls','accuracy');
-            fprintf(['\nThe accuracy on the ', dataset, ' with gamma=',num2str(para_table(i,1)), ' and lambda=',num2str(para_table(i,2)), ' is ', num2str(roundn(accuracy,-3))])
-        end
-end
