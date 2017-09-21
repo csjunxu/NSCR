@@ -3,15 +3,15 @@ warning off;
 
 addpath('C:\Users\csjunxu\Desktop\Classification\Dataset');
 % addpath('.\liblinear-1.96');
-% addpath('.\invChol');
+addpath('.\invChol');
 
-dataDir = fullfile('C:\Users\csjunxu\Desktop\Classification\Dataset','imagenet12-feat-caffe-alex') ;
-%dataDir = fullfile('C:\Users\csjunxu\Desktop\Classification\Dataset','imagenet12-sbow-split') ;
+% dataDir = fullfile('C:\Users\csjunxu\Desktop\Classification\Dataset','imagenet12-feat-caffe-alex') ;
+dataDir = fullfile('C:\Users\csjunxu\Desktop\Classification\Dataset','imagenet12-sbow-split') ;
 
 dirTrain=dir(fullfile(dataDir,'train_category_*.mat'));
 TrainfileNames={dirTrain.name}';
 dirTest=dir(fullfile(dataDir,'valid_category_*.mat'));
-TestfileNames={dirTest.name}';
+TestfileNames={dirTest.name
 
 dataset = 'ImageNet';
 if strcmp(dataset, 'ImageNet') == 1
@@ -52,7 +52,7 @@ ttls   = [];
 num_atom_ci = num_atom_per_class;
 eta = 1;
 %fprintf('class:');
-parfor ci = 1:num_class
+for ci = 1:num_class % parfor
     tic;
     tr_dat_ci = load(fullfile(dataDir,TrainfileNames{ci}));
     %tr_dat_ci.descrs = tr_dat_ci.descrs(:,1:300);
@@ -121,71 +121,6 @@ for nDim = nDimArray
                         for n = 1:nExperiment
                             %--------------------------------------------------------------------------
                             %% data loading
-                            if strcmp(dataset, 'Caltech-256_VGG') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
-                                % randomly select half of the samples as training data;
-                                [dim, N] = size(descr);
-                                nClass = length(unique(label));
-                                % nClass is the number of classes in the subset of AR database
-                                Tr_DAT = [];
-                                Tt_DAT = [];
-                                trls = [];
-                                ttls = [];
-                                for i=1:nClass
-                                    descri = descr(:, label==i);
-                                    Ni = size(descri, 2);
-                                    rng(n);
-                                    RpNi = randperm(Ni);
-                                    Tr_DAT   =   [Tr_DAT double(descri(:, RpNi(1:nSample)))];
-                                    trls     =   [trls i*ones(1, nSample)];
-                                    Tt_DAT   =   [Tt_DAT double(descri(:, RpNi(nSample+1:end)))];
-                                    ttls     =   [ttls i*ones(1, Ni-nSample)];
-                                end
-                                clear descr label descri RpNi Ni
-                            elseif strcmp(dataset, 'Caltech-256_sift') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
-                                % randomly select half of the samples as training data;
-                                [dim, N] = size(Data);
-                                nClass = length(unique(Label));
-                                % nClass is the number of classes in the subset of AR database
-                                Tr_DAT = [];
-                                Tt_DAT = [];
-                                trls = [];
-                                ttls = [];
-                                for i=1:nClass
-                                    Datai = Data(:, Label==i);
-                                    Ni = size(Datai, 2);
-                                    rng(n);
-                                    RpNi = randperm(Ni);
-                                    Tr_DAT   =   [Tr_DAT double(Datai(:, RpNi(1:nSample)))];
-                                    trls     =   [trls i*ones(1, nSample)];
-                                    Tt_DAT   =   [Tt_DAT double(Datai(:, RpNi(nSample+1:end)))];
-                                    ttls     =   [ttls i*ones(1, Ni-nSample)];
-                                end
-                                clear Data Label Datai RpNi Ni
-                            elseif strcmp(dataset, 'Standford-40_VGG') == 1 ...
-                                    || strcmp(dataset, 'Flower-102_VGG') == 1 ...
-                                    || strcmp(dataset, 'CUB-200-2011_VGG') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
-                                [dim, N] = size(tr_descr);
-                                nClass        =   max(tr_label);
-                                Tr_DAT   =   double(tr_descr);
-                                trls     =   tr_label;
-                                Tt_DAT   =   double(tt_descr);
-                                ttls     =   tt_label;
-                                clear tr_descr tt_descr tr_labels tt_labels
-                            elseif strcmp(dataset, 'Standford-40_sift') == 1 ...
-                                    || strcmp(dataset, 'Flower-102_sift') == 1 ...
-                                    || strcmp(dataset, 'CUB-200-2011_sift') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
-                                [dim, N] = size(TrData);
-                                nClass        =   max(TrLabel);
-                                Tr_DAT   =   double(TrData);
-                                trls     =   TrLabel;
-                                Tt_DAT   =   double(TtData);
-                                ttls     =   TtLabel;
-                                clear TrData TtData TrLabel TtLabel
-                            end
                             %--------------------------------------------------------------------------
                             %% eigenface extracting
                             if Par.nDim == 0 || Par.nDim == dim

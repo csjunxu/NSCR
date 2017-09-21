@@ -5,8 +5,8 @@ addpath('.\data');
 addpath('.\liblinear-1.96');
 addpath('.\invChol');
 
-% dataDir = fullfile('data','imagenet12-feat-caffe-alex') ;
-dataDir = fullfile('data','imagenet12-sbow-split') ;
+dataDir = fullfile('data','imagenet12-feat-caffe-alex') ; 
+%dataDir = fullfile('data','imagenet12-sbow-split') ;
 
 dirTrain=dir(fullfile(dataDir,'train_category_*.mat'));
 TrainfileNames={dirTrain.name}';
@@ -21,7 +21,7 @@ lambda = [1e-2];
 regularizer = 'l2';
 
 method = 'ProCRC';
-
+    
 %% pre-processing
 
 num_class = length(TrainfileNames);
@@ -57,14 +57,14 @@ parfor ci = 1:num_class
     tt_dat_ci_labels = tt_dat_ci_labels(logical(iind2(1,:)));
     tt_dat_ci_descrs = tt_dat_ci_descrs(:,logical(iind2(1,:)));
     
-    %     %tr_dat_ci           =    tr_dat(:,trls==ci);
-    %     [Dini_ci,~,mean_ci] =    Eigenface_f(tr_dat_ci_descrs,num_atom_ci-1);
-    %     Dini_ci             =    [Dini_ci mean_ci./norm(mean_ci)];
-    Dini_ci             =    normcol_equal(randn(size(tr_dat_ci_descrs,1),num_atom_ci));
+%     %tr_dat_ci           =    tr_dat(:,trls==ci);
+%     [Dini_ci,~,mean_ci] =    Eigenface_f(tr_dat_ci_descrs,num_atom_ci-1);
+%     Dini_ci             =    [Dini_ci mean_ci./norm(mean_ci)];
+     Dini_ci             =    normcol_equal(randn(size(tr_dat_ci_descrs,1),num_atom_ci));
     D_ci                =    dict_learner2(tr_dat_ci_descrs, Dini_ci, eta);
-    %D_ci = tr_dat_ci_descrs;
+%D_ci = tr_dat_ci_descrs;
     %D_ci                =   Dini_ci;
-    %D_ci                =     tr_dat_ci_descrs;
+   %D_ci                =     tr_dat_ci_descrs;
     D                   =    [D D_ci];
     labelD              =    [labelD ci*ones(1,size(D_ci,2))];
     
