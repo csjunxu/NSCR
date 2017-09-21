@@ -184,8 +184,6 @@ for nDim = nDimArray
                                             % projection matrix computing
                                             Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                             coef         =  Proj_M*tt_dat(:,indTest);
-                                            %                                 case 'CROC'
-                                            %                                     [min_idx] = croc_cvpr12(testFea, tr_dat, trainGnd, lambda, weight);
                                         case 'NNLSR'                   % non-negative
                                             coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'NPLSR'               % non-positive
@@ -218,11 +216,6 @@ for nDim = nDimArray
                                     else
                                         [id, ~] = PredictID(coef, tr_dat, trls, class_num);
                                         ID      =   [ID id];
-                                        %                                         for ci = 1:max(trls)
-                                        %                                             coef_c   =  coef(trls==ci);
-                                        %                                             Dc       =  tr_dat(:,trls==ci);
-                                        %                                             error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
-                                        %                                         end
                                     end
                                 end
                             end
