@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Caltech-256_sift';
+dataset = 'Standford-40_sift';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
