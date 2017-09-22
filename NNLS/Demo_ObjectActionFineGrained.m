@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Caltech-256_VGG';
+dataset = 'Caltech-256_sift';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % Standford-40_VGG
@@ -64,9 +64,9 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [5]
+            for maxIter = [3:1:5]
                 Par.maxIter  = maxIter;
-                for rho = [.4 .6]
+                for rho = [.3:.1:.6]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
