@@ -50,7 +50,7 @@ ttls   = [];
 num_atom_ci = num_atom_per_class;
 eta = 1;
 %fprintf('class:');
-for ci = 1:num_class % parfor
+for ci = 1:num_class
     tic;
     tr_dat_ci = load(fullfile(dataDir,TrainfileNames{ci}));
     %tr_dat_ci.descrs = tr_dat_ci.descrs(:,1:300);
@@ -111,7 +111,7 @@ for nDim = nDimArray
             Par.s = s;
             for maxIter = [3:1:5]
                 Par.maxIter  = maxIter;
-                for rho = [.1:.1:.5]
+                for rho = [.2:.2:.8]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
