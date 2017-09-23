@@ -1,4 +1,5 @@
 clear
+maxNumCompThreads(1);
 warning off;
 
 addpath('C:\Users\csjunxu\Desktop\Classification\Dataset');
