@@ -1,4 +1,5 @@
 clear;
+maxNumCompThreads(1);
 % -------------------------------------------------------------------------
 %% choosing the dataset
 dataset = 'CUB-200-2011_sift';
