@@ -1,4 +1,5 @@
 clear;
+maxNumCompThreads(1);
 % -------------------------------------------------------------------------
 %% choosing the dataset
 dataset = 'Standford-40_sift';
