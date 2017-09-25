@@ -124,18 +124,18 @@ for nDim = nDimArray
                             %--------------------------------------------------------------------------
                             %% data loading
                             [dim, N] = size(tr_dat);
-                            %--------------------------------------------------------------------------
-                            %% eigenface extracting
-                            if Par.nDim == 0 || Par.nDim == dim
-                                tr_dat  =  Tr_DAT./( repmat(sqrt(sum(Tr_DAT.*Tr_DAT)), [size(Tr_DAT,1), 1]) );
-                                tt_dat  =  Tt_DAT./( repmat(sqrt(sum(Tt_DAT.*Tt_DAT)), [size(Tt_DAT,1), 1]) );
-                            else
-                                [disc_set,disc_value,Mean_Image]  =  Eigenface_f(Tr_DAT,Par.nDim);
-                                tr_dat  =  disc_set'*Tr_DAT;
-                                tt_dat  =  disc_set'*Tt_DAT;
-                                tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [Par.nDim,1]) );
-                                tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
-                            end
+%                             %--------------------------------------------------------------------------
+%                             %% eigenface extracting
+%                             if Par.nDim == 0 || Par.nDim == dim
+%                                 tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [size(tr_dat,1), 1]) );
+%                                 tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [size(tt_dat,1), 1]) );
+%                             else
+%                                 [disc_set,disc_value,Mean_Image]  =  Eigenface_f(Tr_DAT,Par.nDim);
+%                                 tr_dat  =  disc_set'*tr_dat;
+%                                 tt_dat  =  disc_set'*tt_dat;
+%                                 tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [Par.nDim,1]) );
+%                                 tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
+%                             end
                             %-------------------------------------------------------------------------
                             %% testing
                             class_num = max(trls);
