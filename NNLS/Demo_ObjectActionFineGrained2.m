@@ -1,5 +1,5 @@
 clear;
-maxNumCompThreads(1);
+% maxNumCompThreads(1);
 % -------------------------------------------------------------------------
 %% choosing the dataset
 dataset = 'Standford-40_sift';
@@ -67,7 +67,7 @@ for nDim = nDimArray
             Par.s = s;
             for maxIter = [3:1:5]
                 Par.maxIter  = maxIter;
-                for rho = [.5:.1:1]
+                for rho = [1.2:.2:2]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
