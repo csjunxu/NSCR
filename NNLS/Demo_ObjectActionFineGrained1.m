@@ -1,5 +1,5 @@
 clear;
-maxNumCompThreads(1);
+% maxNumCompThreads(1);
 % -------------------------------------------------------------------------
 %% choosing the dataset
 dataset = 'CUB-200-2011_sift';
@@ -67,7 +67,7 @@ for nDim = nDimArray
             Par.s = s;
             for maxIter = [3:1:5]
                 Par.maxIter  = maxIter;
-                for rho = [.1:.1:.5]
+                for rho = [.3:.1:.6]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
