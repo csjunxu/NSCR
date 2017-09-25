@@ -1,5 +1,5 @@
 clear
-maxNumCompThreads(1);
+% maxNumCompThreads(1);
 warning off;
 
 addpath('C:\Users\csjunxu\Desktop\Classification\Dataset');
@@ -94,15 +94,12 @@ ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % 
 % tr_dat = D;
 % trls = labelD;
-% save trdata.mat tr_dat trls;
-% save ttdata.mat tt_dat ttls;
+% save C:\Users\csjunxu\Desktop\Classification\Dataset\trdata.mat tr_dat trls;
+% save C:\Users\csjunxu\Desktop\Classification\Dataset\ttdata.mat tt_dat ttls;
 % clear D labelD;
 
 load 'C:\Users\csjunxu\Desktop\Classification\Dataset\imagenet_trdata.mat';
 load 'C:\Users\csjunxu\Desktop\Classification\Dataset\imagenet_ttdata.mat';
-% load imagenet_trainP;
-% tr_dat = double(tr_dat);
-% load imagenet_test;
 
 %-------------------------------------------------------------------------
 %% PCA dimension
