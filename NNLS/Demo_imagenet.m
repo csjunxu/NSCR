@@ -3,7 +3,6 @@ clear
 warning off;
 
 addpath('C:\Users\csjunxu\Desktop\Classification\Dataset');
-% addpath('.\liblinear-1.96');
 addpath('.\invChol');
 
 dataDir = fullfile('C:\Users\csjunxu\Desktop\Classification\Dataset','imagenet12-feat-caffe-alex') ;
@@ -157,6 +156,7 @@ for nDim = nDimArray
                             else
                                 ID = [];
                                 for indTest = 1:size(tt_dat,2)
+                                    fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ']);
                                     switch ClassificationMethod
                                         case 'SRC'
                                             rel_tol = 0.01;     % relative target duality gap
