@@ -149,9 +149,9 @@ for nDim = nDimArray
                                 [dim, N] = size(trainFV);
                                 nClass        =   max(trainY);
                                 Tr_DAT   =   double(trainFV);
-                                trls     =   trainY;
+                                trls     =   trainY';
                                 Tt_DAT   =   double(valFV);
-                                ttls     =   valY;
+                                ttls     =   valY';
                                 clear trainFV valFV trainY valY
                             end
                             %--------------------------------------------------------------------------
