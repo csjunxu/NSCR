@@ -1,10 +1,12 @@
 clear;
-% maxNumCompThreads(1);
+%maxNumCompThreads(1);
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Caltech-256_sift';
+dataset = 'cars';
 % Flower-102_VGG
 % CUB-200-2011_VGG
+% aircraft
+% cars
 % Standford-40_VGG
 % Caltech-256_VGG
 
@@ -16,7 +18,9 @@ dataset = 'Caltech-256_sift';
 %% number of repeations
 if strcmp(dataset, 'Standford-40_VGG') == 1 ...
         || strcmp(dataset, 'Flower-102_VGG') == 1 ...
-        || strcmp(dataset, 'CUB-200-2011_VGG') == 1
+        || strcmp(dataset, 'CUB-200-2011_VGG') == 1 ...
+        || strcmp(dataset, 'aircraft') == 1 ...
+        || strcmp(dataset, 'cars') == 1
     nExperiment = 1;
     nDimArray = [4096];
     SampleArray = 0;
@@ -65,9 +69,9 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [3:1:5]
+            for maxIter = [1:1:3]
                 Par.maxIter  = maxIter;
-                for rho = [.3:.1:.5]
+                for rho = [.5:.5:3]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
@@ -139,6 +143,16 @@ for nDim = nDimArray
                                 Tt_DAT   =   double(TtData);
                                 ttls     =   TtLabel;
                                 clear TrData TtData TrLabel TtLabel
+                                elseif strcmp(dataset, 'aircraft') == 1 ...
+                                    || strcmp(dataset, 'cars') == 1
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                [dim, N] = size(trainFV);
+                                nClass        =   max(trainY);
+                                Tr_DAT   =   double(trainFV);
+                                trls     =   trainY;
+                                Tt_DAT   =   double(valFV);
+                                ttls     =   valY;
+                                clear trainFV valFV trainY valY
                             end
                             %--------------------------------------------------------------------------
                             %% eigenface extracting
@@ -176,6 +190,7 @@ for nDim = nDimArray
                             else
                                 ID = [];
                                 for indTest = 1:size(tt_dat,2)
+                                    fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ']);
                                     switch ClassificationMethod
                                         case 'SRC'
                                             rel_tol = 0.01;     % relative target duality gap
@@ -185,8 +200,6 @@ for nDim = nDimArray
                                             % projection matrix computing
                                             Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                             coef         =  Proj_M*tt_dat(:,indTest);
-                                            %                                 case 'CROC'
-                                            %                                     [min_idx] = croc_cvpr12(testFea, tr_dat, trainGnd, lambda, weight);
                                         case 'NNLSR'                   % non-negative
                                             coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'NPLSR'               % non-positive
@@ -219,11 +232,6 @@ for nDim = nDimArray
                                     else
                                         [id, ~] = PredictID(coef, tr_dat, trls, class_num);
                                         ID      =   [ID id];
-                                        %                                         for ci = 1:max(trls)
-                                        %                                             coef_c   =  coef(trls==ci);
-                                        %                                             Dc       =  tr_dat(:,trls==ci);
-                                        %                                             error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
-                                        %                                         end
                                     end
                                 end
                             end
