@@ -2,9 +2,11 @@ clear;
 %maxNumCompThreads(1);
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Caltech-256_VGG';
+dataset = 'aircraft';
 % Flower-102_VGG
 % CUB-200-2011_VGG
+% aircraft
+% cars
 % Standford-40_VGG
 % Caltech-256_VGG
 
@@ -16,7 +18,9 @@ dataset = 'Caltech-256_VGG';
 %% number of repeations
 if strcmp(dataset, 'Standford-40_VGG') == 1 ...
         || strcmp(dataset, 'Flower-102_VGG') == 1 ...
-        || strcmp(dataset, 'CUB-200-2011_VGG') == 1
+        || strcmp(dataset, 'CUB-200-2011_VGG') == 1 ...
+        || strcmp(dataset, 'aircraft') == 1 ...
+        || strcmp(dataset, 'cars') == 1
     nExperiment = 1;
     nDimArray = [4096];
     SampleArray = 0;
@@ -67,7 +71,7 @@ for nDim = nDimArray
             Par.s = s;
             for maxIter = [1:1:3]
                 Par.maxIter  = maxIter;
-                for rho = [.4 .6 .9 1.1 1.4 1.6 1.9]
+                for rho = [.5:.5:3]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
@@ -139,6 +143,16 @@ for nDim = nDimArray
                                 Tt_DAT   =   double(TtData);
                                 ttls     =   TtLabel;
                                 clear TrData TtData TrLabel TtLabel
+                                elseif strcmp(dataset, 'aircraft') == 1 ...
+                                    || strcmp(dataset, 'cars') == 1
+                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                [dim, N] = size(trainFV);
+                                nClass        =   max(trainY);
+                                Tr_DAT   =   double(trainFV);
+                                trls     =   trainY;
+                                Tt_DAT   =   double(valFV);
+                                ttls     =   valY;
+                                clear trainFV valFV trainY valY
                             end
                             %--------------------------------------------------------------------------
                             %% eigenface extracting
@@ -176,6 +190,7 @@ for nDim = nDimArray
                             else
                                 ID = [];
                                 for indTest = 1:size(tt_dat,2)
+                                    fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ']);
                                     switch ClassificationMethod
                                         case 'SRC'
                                             rel_tol = 0.01;     % relative target duality gap
