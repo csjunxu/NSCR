@@ -71,7 +71,7 @@ for nDim = nDimArray
             Par.s = s;
             for maxIter = [1:1:3]
                 Par.maxIter  = maxIter;
-                for rho = [.5:.5:3]
+                for rho = [1:.5:3]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
@@ -149,9 +149,9 @@ for nDim = nDimArray
                                 [dim, N] = size(trainFV);
                                 nClass        =   max(trainY);
                                 Tr_DAT   =   double(trainFV);
-                                trls     =   trainY;
+                                trls     =   trainY';
                                 Tt_DAT   =   double(valFV);
-                                ttls     =   valY;
+                                ttls     =   valY';
                                 clear trainFV valFV trainY valY
                             end
                             %--------------------------------------------------------------------------
