@@ -1,60 +1,48 @@
 clear;
+warning off;
 addpath('C:\Users\csjunxu\Desktop\SC\Datasets\MNISThelpcode');
 addpath('C:\Users\csjunxu\Desktop\SC\SSCOMP_Code\scatnet-0.2');
 % -------------------------------------------------------------------------
-%% choosing the dataset
+%% directory to save the results
 dataset = 'MNIST';
-% MNIST
-% USPS
+writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
+if ~isdir(writefilepath)
+    mkdir(writefilepath);
+end
 % -------------------------------------------------------------------------
-%% number of repeations
+%% Settings
 if  strcmp(dataset, 'MNIST') == 1
     nExperiment = 10;
+    SampleArray = [50 100 300 500];
+    Par.nDim = 500;
 elseif strcmp(dataset, 'USPS') == 1
     nExperiment = 10;
+    SampleArray = [100 200 300];
+    Par.nDim = 100;
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
-% ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
-ClassificationMethod = 'CRC';
+% ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
+% ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-
-% ClassificationMethod = 'NNLSR' ; % non-negative LSR
+ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
 % ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
-% -------------------------------------------------------------------------
-%% directory to save the results
-writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
-if ~isdir(writefilepath)
-    mkdir(writefilepath);
-end
-
-%% Settings
-if strcmp(dataset, 'MNIST') == 1
-    SampleArray = [50 100 300 600];
-    Par.nDim = 500;
-elseif strcmp(dataset, 'USPS') == 1
-    SampleArray = [50 100 200 300];
-    Par.nDim = 100;
-end
-
-
-
 for nSample = SampleArray % number of images for each digit
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1]
+    for s = 1
         Par.s = s;
-        for maxIter = [5]
+        for maxIter = [5:-1:1]
             Par.maxIter  = maxIter;
-            for rho = [1]
-                Par.rho = rho*10^(-1);
-                for lambda = [.1]
+            for rho = [.1 .2]
+                Par.rho = rho;
+                for lambda = [0]
                     Par.lambda = lambda;
                     accuracy = zeros(nExperiment, 1) ;
                     for i = 1:nExperiment
@@ -91,13 +79,16 @@ for nSample = SampleArray % number of images for each digit
                             tt_DATA = tt_MNIST_DATA;
                             tt_LABEL = tt_MNIST_LABEL'+1;
                         elseif strcmp(dataset, 'USPS')==1
-                            load('C:\Users\csjunxu\Desktop\SC\Datasets\USPS');
+                            % load('C:\Users\csjunxu\Desktop\SC\Datasets\USPS');
+                            load('/Users/xujun/Desktop/NNLS/USPS');
                             tr_DATA = double(fea(1:7291, :)');
                             tr_LABEL = gnd(1:7291)';
                             tt_DATA = double(fea(7292:end, :)');
                             tt_LABEL = gnd(7292:end)';
                             clear fea gnd
                         end
+                        %-------------------------------------------------------------------------
+                        %% randomly select the training samples
                         nCluster = 10;
                         % set of digits to test on, e.g. [2, 0]. Pick randomly if empty.
                         digit_set = 0:9;
@@ -134,34 +125,39 @@ for nSample = SampleArray % number of images for each digit
                         tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
                         %-------------------------------------------------------------------------
                         %% testing
+                        class_num = max(trls);
                         if strcmp(ClassificationMethod, 'CROC') == 1
                             weight = Par.rho;
                             ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
                             % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, Par.lambda, weight);
+                        elseif strcmp(ClassificationMethod, 'ProCRC') == 1
+                            global params
+                            set_params(dataset);
+                            data.tr_descr = tr_dat;
+                            data.tt_descr = tt_dat;
+                            data.tr_label = trls;
+                            data.tt_label = ttls;
+                            params.class_num = class_num;
+                            %                                 params.model_type        =      'ProCRC';
+                            %                                 params.gamma             =     Par.rho; % [1e-2];
+                            %                                 params.lambda            =      Par.lambda; % [1e-0];
+                            %                                 params.class_num         =      max(trls);
+                            coef = ProCRC(data, params);
+                            [ID, ~] = ProMax(coef, data, params);
                         else
                             ID = [];
                             for indTest = 1:size(tt_dat,2)
+                                fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ']);
                                 switch ClassificationMethod
                                     case 'SRC'
                                         rel_tol = 0.01;     % relative target duality gap
                                         [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
                                     case 'CRC'
                                         Par.lambda = .001 * size(Tr_DAT,2)/700;
-                                        %projection matrix computing
+                                        % projection matrix computing
                                         Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                         coef         =  Proj_M*tt_dat(:,indTest);
-                                    case 'ProCRC'
-                                        params.dataset_name      =      dataset;
-                                        params.model_type        =      'ProCRC';
-                                        params.gamma             =     Par.rho;      % [1e-2];
-                                        params.lambda            =      Par.lambda; % [1e-0];
-                                        params.class_num         =      max(trls);
-                                        data.tr_descr = tr_dat;
-                                        data.tt_descr = tt_dat(:,indTest);
-                                        data.tr_label = trls;
-                                        data.tt_label = ttls;
-                                        coef = ProCRC(data, params);
-                                    case 'NNLSR'                    % non-negative
+                                    case 'NNLSR'                   % non-negative
                                         coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                     case 'NPLSR'               % non-positive
                                         coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
@@ -183,16 +179,18 @@ for nSample = SampleArray % number of images for each digit
                                         coef_c = Aci*tt_dat(:,indTest);
                                         error(ci) = norm(tt_dat(:,indTest)-coef_c,2)^2/sum(coef_c.*coef_c);
                                     end
+                                    index      =  find(error==min(error));
+                                    id         =  index(1);
+                                    ID      =   [ID id];
                                 else
-                                    for ci = 1:max(trls)
-                                        coef_c   =  coef(trls==ci);
-                                        Dc       =  tr_dat(:,trls==ci);
-                                        error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
-                                    end
+                                    [id, ~] = PredictID(coef, tr_dat, trls, class_num);
+                                    ID      =   [ID id];
+                                    %                                     for ci = 1:max(trls)
+                                    %                                         coef_c   =  coef(trls==ci);
+                                    %                                         Dc       =  tr_dat(:,trls==ci);
+                                    %                                         error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
+                                    %                                     end
                                 end
-                                index      =  find(error==min(error));
-                                id         =  index(1);
-                                ID      =   [ID id];
                             end
                         end
                         cornum      =   sum(ID==ttls);
@@ -224,6 +222,7 @@ for nSample = SampleArray % number of images for each digit
         end
     end
 end
+
 
 
 
