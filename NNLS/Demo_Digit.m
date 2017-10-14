@@ -38,8 +38,6 @@ elseif strcmp(dataset, 'USPS') == 1
     SampleArray = [50 100 200 300];
 end
 
-
-
 for nSample = SampleArray % number of images for each digit
     %-------------------------------------------------------------------------
     %% tuning the parameters
@@ -130,7 +128,14 @@ for nSample = SampleArray % number of images for each digit
                         %-------------------------------------------------------------------------
                         %% testing
                         ID = [];
+                         [D, N] = size(tr_dat);
+                            if N < D
+                                XTXinv = (tr_dat' * tr_dat + Par.rho/2 * eye(N))\eye(N);
+                            else
+                                XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
+                            end
                         for indTest = 1:size(tt_dat,2)
+                            t = cputime;
                             switch ClassificationMethod
                                 case 'SRC'
                                     rel_tol = 0.01;     % relative target duality gap
@@ -141,7 +146,8 @@ for nSample = SampleArray % number of images for each digit
                                     Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                     coef         =  Proj_M*tt_dat(:,indTest);
                                 case 'NNLSR'                   % non-negative
-                                    coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
+%                                     coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                 case 'NPLSR'               % non-positive
                                     coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
                                 case 'ANNLSR'                 % affine, non-negative, sum to 1
@@ -163,6 +169,8 @@ for nSample = SampleArray % number of images for each digit
                             index      =  find(error==min(error));
                             id         =  index(1);
                             ID      =   [ID id];
+                            e = cputime-t;
+                            fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
                         end
                         cornum      =   sum(ID==ttls);
                         accuracy(i, 1)         =   [cornum/length(ttls)]; % recognition rate

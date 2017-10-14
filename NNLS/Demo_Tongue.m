@@ -97,7 +97,8 @@ for nSample = SampleArray % number of images for each digit
                                     Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                     coef         =  Proj_M*tt_dat(:,indTest);
                                 case 'NNLSR'                   % non-negative
-                                    coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
+                                    %                                     coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                 case 'NPLSR'               % non-positive
                                     coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
                                 case 'ANNLSR'                 % affine, non-negative, sum to 1

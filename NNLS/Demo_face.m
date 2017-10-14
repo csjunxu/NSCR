@@ -134,6 +134,7 @@ for nDim = nDimArray
                         else
                             ID = [];
                             for indTest = 1:size(tt_dat,2)
+                                t = cputime;
                                 switch ClassificationMethod
                                     case 'SRC'
                                         rel_tol = 0.01;     % relative target duality gap
@@ -175,6 +176,8 @@ for nDim = nDimArray
                                 else
                                     [id, ~] = PredictID(coef, tr_dat, trls, class_num);
                                     ID      =   [ID id];
+                                    e = cputime-t;
+                                    fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
                                 end
                             end
                         end

@@ -158,12 +158,12 @@ for nDim = nDimArray
                             %-------------------------------------------------------------------------
                             %% testing
                             class_num = max(trls);
-                                                    [D, N] = size(tr_dat);
-                        if N < D
-                            XTXinv = (tr_dat' * tr_dat + Par.rho/2 * eye(N))\eye(N);
-                        else
-                            XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
-                        end
+                            [D, N] = size(tr_dat);
+                            if N < D
+                                XTXinv = (tr_dat' * tr_dat + Par.rho/2 * eye(N))\eye(N);
+                            else
+                                XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
+                            end
                             if strcmp(ClassificationMethod, 'CROC') == 1
                                 weight = Par.rho;
                                 ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
@@ -189,6 +189,7 @@ for nDim = nDimArray
                             else
                                 ID = [];
                                 for indTest = 1:size(tt_dat,2)
+                                    t = cputime;
                                     switch ClassificationMethod
                                         case 'SRC'
                                             rel_tol = 0.01;     % relative target duality gap
@@ -232,11 +233,9 @@ for nDim = nDimArray
                                     else
                                         [id, ~] = PredictID(coef, tr_dat, trls, class_num);
                                         ID      =   [ID id];
-                                        %                                         for ci = 1:max(trls)
-                                        %                                             coef_c   =  coef(trls==ci);
-                                        %                                             Dc       =  tr_dat(:,trls==ci);
-                                        %                                             error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
-                                        %                                         end
+                                        e = cputime-t;
+                                        fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
+                                        
                                     end
                                 end
                             end
