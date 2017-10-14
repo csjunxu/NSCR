@@ -2,7 +2,6 @@ clear
 % maxNumCompThreads(1);
 warning off;
 
-addpath('C:\Users\csjunxu\Desktop\Classification\Dataset');
 addpath('.\invChol');
 
 dataDir = fullfile('C:\Users\csjunxu\Desktop\Classification\Dataset','imagenet12-feat-caffe-alex') ;
@@ -21,15 +20,15 @@ normalization.flag = 1;
 normalization.type = 1;
 % -------------------------------------------------------------------------
 %% directory to save the results
-writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
+writefilepath  = [dataset];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
 
-ClassificationMethod = 'NNLSR' ; % non-negative LSR
+ClassificationMethod = 'NNLS' ;
 
-load 'C:\Users\csjunxu\Desktop\Classification\Dataset\imagenet_trdata.mat';
-load 'C:\Users\csjunxu\Desktop\Classification\Dataset\imagenet_ttdata.mat';
+load 'imagenet_trdata.mat';
+load 'imagenet_ttdata.mat';
 
 %% PCA dimension
 for nDim = nDimArray
@@ -56,11 +55,13 @@ for nDim = nDimArray
                             class_num = max(trls);
                             ID = [];
                             for indTest = 1:size(tt_dat,2)
-                                fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ']);
+                                t = cputime;
                                 coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 %% assign the class  index
                                 [id, ~] = PredictID(coef, tr_dat, trls, class_num);
                                 ID      =   [ID id];
+                                e = cputime-t;
+                                fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
                             end
                             cornum      =   sum(ID==ttls);
                             accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
