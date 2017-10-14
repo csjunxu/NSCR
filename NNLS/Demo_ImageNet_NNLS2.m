@@ -37,9 +37,9 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [1:1:5]
+            for maxIter = [2:1:4]
                 Par.maxIter  = maxIter;
-                for rho = [.2:.2:.8]
+                for rho = [.3:.2:.7]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;

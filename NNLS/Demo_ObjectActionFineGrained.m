@@ -143,7 +143,7 @@ for nDim = nDimArray
                                 Tt_DAT   =   double(TtData);
                                 ttls     =   TtLabel;
                                 clear TrData TtData TrLabel TtLabel
-                                elseif strcmp(dataset, 'aircraft') == 1 ...
+                            elseif strcmp(dataset, 'aircraft') == 1 ...
                                     || strcmp(dataset, 'cars') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                                 [dim, N] = size(trainFV);
@@ -169,6 +169,12 @@ for nDim = nDimArray
                             %-------------------------------------------------------------------------
                             %% testing
                             class_num = max(trls);
+                            [D, N] = size(tr_dat);
+                            if N < D
+                                XTXinv = (tr_dat' * tr_dat + Par.rho/2 * eye(N))\eye(N);
+                            else
+                                XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
+                            end
                             if strcmp(ClassificationMethod, 'CROC') == 1
                                 weight = Par.rho;
                                 ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
@@ -201,7 +207,8 @@ for nDim = nDimArray
                                             Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                             coef         =  Proj_M*tt_dat(:,indTest);
                                         case 'NNLSR'                   % non-negative
-                                            coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                            coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
+                                            %                                             coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'NPLSR'               % non-positive
                                             coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'ANNLSR'                 % affine, non-negative, sum to 1
@@ -343,7 +350,7 @@ for nDim = nDimArray
                                 Tt_DAT   =   double(TtData);
                                 ttls     =   TtLabel;
                                 clear TrData TtData TrLabel TtLabel
-                                elseif strcmp(dataset, 'aircraft') == 1 ...
+                            elseif strcmp(dataset, 'aircraft') == 1 ...
                                     || strcmp(dataset, 'cars') == 1
                                 load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                                 [dim, N] = size(trainFV);

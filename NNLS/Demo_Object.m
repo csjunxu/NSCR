@@ -158,6 +158,12 @@ for nDim = nDimArray
                             %-------------------------------------------------------------------------
                             %% testing
                             class_num = max(trls);
+                                                    [D, N] = size(tr_dat);
+                        if N < D
+                            XTXinv = (tr_dat' * tr_dat + Par.rho/2 * eye(N))\eye(N);
+                        else
+                            XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
+                        end
                             if strcmp(ClassificationMethod, 'CROC') == 1
                                 weight = Par.rho;
                                 ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
@@ -195,7 +201,7 @@ for nDim = nDimArray
                                             %                                 case 'CROC'
                                             %                                     [min_idx] = croc_cvpr12(testFea, tr_dat, trainGnd, lambda, weight);
                                         case 'NNLSR'                   % non-negative
-                                            coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                            coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                         case 'NPLSR'               % non-positive
                                             coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'ANNLSR'                 % affine, non-negative, sum to 1
