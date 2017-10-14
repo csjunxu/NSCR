@@ -107,6 +107,12 @@ for nDim = nDimArray
                         %-------------------------------------------------------------------------
                         %% testing
                         class_num = max(trls);
+                        [D, N] = size(tr_dat);
+                        if N < D
+                            XTXinv = (tr_dat' * tr_dat + Par.rho/2 * eye(N))\eye(N);
+                        else
+                            XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
+                        end
                         if strcmp(ClassificationMethod, 'CROC') == 1
                             weight = Par.rho;
                             ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
@@ -138,7 +144,7 @@ for nDim = nDimArray
                                         Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                         coef         =  Proj_M*tt_dat(:,indTest);
                                     case 'NNLSR'                   % non-negative
-                                        coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                        coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                     case 'NPLSR'               % non-positive
                                         coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
                                     case 'ANNLSR'                 % affine, non-negative, sum to 1
@@ -169,11 +175,6 @@ for nDim = nDimArray
                                 else
                                     [id, ~] = PredictID(coef, tr_dat, trls, class_num);
                                     ID      =   [ID id];
-                                    %                                     for ci = 1:max(trls)
-                                    %                                         coef_c   =  coef(trls==ci);
-                                    %                                         Dc       =  tr_dat(:,trls==ci);
-                                    %                                         error(ci) = norm(tt_dat(:,indTest)-Dc*coef_c,2)^2/sum(coef_c.*coef_c);
-                                    %                                     end
                                 end
                             end
                         end
