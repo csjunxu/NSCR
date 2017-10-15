@@ -62,6 +62,7 @@ for nDim = nDimArray
                                 ID      =   [ID id];
                                 e = cputime-t;
                                 fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
+				save TempID.mat ID;
                             end
                             cornum      =   sum(ID==ttls);
                             accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
