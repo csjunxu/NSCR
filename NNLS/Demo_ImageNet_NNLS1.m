@@ -18,6 +18,7 @@ nDimArray = [4096];
 SampleArray = 0;
 normalization.flag = 1;
 normalization.type = 1;
+existID  = ['TempID_' dataset '1.mat'];
 % -------------------------------------------------------------------------
 %% directory to save the results
 writefilepath  = [dataset];
@@ -39,7 +40,7 @@ for nDim = nDimArray
             Par.s = s;
             for maxIter = [1:1:5]
                 Par.maxIter  = maxIter;
-                for rho = [.3:.2:.7]
+                for rho = [.3:.2:.9]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
@@ -54,13 +55,12 @@ for nDim = nDimArray
                             %% testing
                             class_num = max(trls);
                             %% load finished IDs
-                            existID  = ['TempID_' dataset '.mat'];
-                            if exist(existID)
+                            if exist(existID)==2
                                 eval(['load ' existID]);
                             else
                                 ID = [];
                             end
-                            for indTest = size(ID)+1:size(tt_dat,2)
+                            for indTest = length(ID)+1:size(tt_dat,2)
                                 t = cputime;
                                 coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 %% assign the class  index
@@ -73,7 +73,8 @@ for nDim = nDimArray
                             cornum      =   sum(ID==ttls);
                             accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
                             fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
-                            eval(['delete ' existID]);              
+                            eval(['delete ' existID]);
+                            pause(3);
                         end
                         %% save the results
                         avgacc = mean(accuracy);
