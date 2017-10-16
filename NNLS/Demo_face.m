@@ -40,6 +40,7 @@ writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
+existID  = ['TempID_' dataset '.mat'];
 %-------------------------------------------------------------------------
 %% PCA dimension
 for nDim = nDimArray
@@ -134,12 +135,11 @@ for nDim = nDimArray
                             [ID, ~] = ProMax(coef, data, params);
                         else
                             %% load finished IDs
-                        existID  = ['TempID_' dataset '.mat'];
-                        if exist(existID)
-                            eval(['load ' existID]);
-                        else
-                            ID = [];
-                        end
+                           if exist(existID)==2
+                                eval(['load ' existID]);
+                            else
+                                ID = [];
+                            end
                             for indTest = size(ID)+1:size(tt_dat,2)
                                 t = cputime;
                                 switch ClassificationMethod
@@ -193,6 +193,7 @@ for nDim = nDimArray
                         accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
                         fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
                         eval(['delete ' existID]);  
+                        pause(3);
                     end
                     % -------------------------------------------------------------------------
                     %% save the results
