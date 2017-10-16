@@ -60,7 +60,7 @@ for nDim = nDimArray
                             else
                                 ID = [];
                             end
-                            for indTest = 16081:size(tt_dat,2) %  length(ID)+1
+                            for indTest = length(ID)+1:size(tt_dat,2) 
                                 t = cputime;
                                 coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 %% assign the class  index
