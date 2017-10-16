@@ -53,8 +53,14 @@ for nDim = nDimArray
                             end
                             %% testing
                             class_num = max(trls);
-                            ID = [];
-                            for indTest = 1:size(tt_dat,2)
+                            %% load finished IDs
+                            existID  = ['TempID_' dataset '.mat'];
+                            if exist(existID)
+                                eval(['load ' existID]);
+                            else
+                                ID = [];
+                            end
+                            for indTest = size(ID)+1:size(tt_dat,2)
                                 t = cputime;
                                 coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 %% assign the class  index
@@ -62,11 +68,12 @@ for nDim = nDimArray
                                 ID      =   [ID id];
                                 e = cputime-t;
                                 fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
-				save TempID.mat ID;
+                                save(existID, 'ID');
                             end
                             cornum      =   sum(ID==ttls);
                             accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
                             fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
+                            eval(['delete ' existID]);              
                         end
                         %% save the results
                         avgacc = mean(accuracy);

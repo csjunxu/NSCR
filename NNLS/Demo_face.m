@@ -113,6 +113,7 @@ for nDim = nDimArray
                         else
                             XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
                         end
+                        
                         if strcmp(ClassificationMethod, 'CROC') == 1
                             weight = Par.rho;
                             ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
@@ -132,8 +133,14 @@ for nDim = nDimArray
                             coef = ProCRC(data, params);
                             [ID, ~] = ProMax(coef, data, params);
                         else
+                            %% load finished IDs
+                        existID  = ['TempID_' dataset '.mat'];
+                        if exist(existID)
+                            eval(['load ' existID]);
+                        else
                             ID = [];
-                            for indTest = 1:size(tt_dat,2)
+                        end
+                            for indTest = size(ID)+1:size(tt_dat,2)
                                 t = cputime;
                                 switch ClassificationMethod
                                     case 'SRC'
@@ -176,14 +183,16 @@ for nDim = nDimArray
                                 else
                                     [id, ~] = PredictID(coef, tr_dat, trls, class_num);
                                     ID      =   [ID id];
-                                    e = cputime-t;
-                                    fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
                                 end
+                                e = cputime-t;
+                                fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
+                                save(existID, 'ID');
                             end
                         end
                         cornum      =   sum(ID==ttls);
                         accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
                         fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
+                        eval(['delete ' existID]);  
                     end
                     % -------------------------------------------------------------------------
                     %% save the results
