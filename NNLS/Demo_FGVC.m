@@ -44,6 +44,7 @@ writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
+existID  = ['TempID_' dataset '.mat'];
 
 ClassificationMethod = 'NNLSR' ;
 
@@ -54,9 +55,9 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [6:1:10]
+            for maxIter = [1 10]
                 Par.maxIter  = maxIter;
-                for rho = [.7:.1:1.2]
+                for rho = [.8:.1:1.2]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
@@ -152,26 +153,37 @@ for nDim = nDimArray
                             end
                             %-------------------------------------------------------------------------
                             %% testing
-                            class_num = max(trls);
                             [D, N] = size(tr_dat);
                             if N < D
                                 XTXinv = (tr_dat' * tr_dat + Par.rho/2 * eye(N))\eye(N);
                             else
                                 XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
                             end
-                            ID = [];
-                            for indTest = 1:size(tt_dat,2)
-                                t = cputime;
+                            class_num = max(trls);
+                            %% load finished IDs
+                            if exist(existID)==2
+                                eval(['load ' existID]);
+                            else
+                                ID = [];
+                            end
+                            t = cputime;
+                            TestSeg = length(ID):3000:size(tt_dat,2);
+                            TestSeg = [TestSeg size(tt_dat,2)];
+                            for set  = 1:length(TestSeg)
+                                indTest = TestSeg(set)+1:TestSeg(set+1);
                                 coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 %% assign the class  index
                                 [id, ~] = PredictID(coef, tr_dat, trls, class_num);
                                 ID      =   [ID id];
                                 e = cputime-t;
                                 fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
+                                save(existID, 'ID');
                             end
                             cornum      =   sum(ID==ttls);
                             accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
                             fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
+                            eval(['delete ' existID]);
+                            pause(3);
                         end
                         % -------------------------------------------------------------------------
                         %% save the results
