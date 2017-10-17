@@ -22,13 +22,16 @@ writefilepath  = [dataset];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
-existID  = ['TempID_' dataset '1.mat'];
 
 ClassificationMethod = 'NNLS' ;
-
+%-------------------------------------------------------------------------
+%% data loading
 load 'imagenet_trdata.mat';
 load 'imagenet_ttdata.mat';
-
+%-------------------------------------------------------------------------
+%% Top-k accuracy
+Top = 5; % 1 or 5
+%-------------------------------------------------------------------------
 %% PCA dimension
 for nDim = nDimArray
     Par.nDim = nDim;
@@ -53,6 +56,7 @@ for nDim = nDimArray
                             %% testing
                             class_num = max(trls);
                             %% load finished IDs
+                            existID  = ['TempID_' dataset '_' ClassificationMethod '_D' num2str(Par.nDim) '_s' num2str(Par.s) '_mIte' num2str(Par.maxIter) '_r' num2str(Par.rho) '_l' num2str(Par.lambda)  '_' num2str(nExperiment) '.mat'];
                             if exist(existID)==2
                                 eval(['load ' existID]);
                             else
@@ -65,14 +69,16 @@ for nDim = nDimArray
                                 indTest = TestSeg(set)+1:TestSeg(set+1);
                                 coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 %% assign the class  index
-                                [id, ~] = PredictID(coef, tr_dat, trls, class_num);
+                                [id, ~] = PredictIDTop(coef, tr_dat, trls, class_num, Top);
+                                % [id, ~] = PredictID(coef, tr_dat, trls, class_num);
                                 ID      =   [ID id];
                                 e = cputime-t;
                                 fprintf([num2str(TestSeg(set+1)) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
                                 save(existID, 'ID');
                             end
                             %% compute accuracy
-                            cornum      =   sum(ID==ttls);
+                            ttlsTop = repmat(ttls, [Top 1]);
+                            cornum      =   sum(sum(ID==ttlsTop, 1));
                             accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
                             fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
                             eval(['delete ' existID]);

@@ -42,6 +42,9 @@ if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
 %-------------------------------------------------------------------------
+%% Top-k accuracy
+Top = 5;
+%-------------------------------------------------------------------------
 %% PCA dimension
 for nDim = nDimArray
     Par.nDim = nDim;
@@ -57,7 +60,6 @@ for nDim = nDimArray
                     Par.lambda = lambda;
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
-                        existID  = ['TempID_' dataset '_' ClassificationMethod '_D' num2str(Par.nDim) '_s' num2str(Par.s) '_mIte' num2str(Par.maxIter) '_r' num2str(Par.rho) '_l' num2str(Par.lambda)  '_' num2str(nExperiment) '.mat'];
                         %-------------------------------------------------------------------------
                         %% data loading
                         load([directory dataset]);
@@ -104,7 +106,6 @@ for nDim = nDimArray
                             tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [Par.nDim,1]) );
                             tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
                         end
-                        
                         %-------------------------------------------------------------------------
                         %% testing
                         class_num = max(trls);
@@ -142,7 +143,7 @@ for nDim = nDimArray
                         elseif strcmp(ClassificationMethod, 'NNLSR') == 1
                             coef = NNLS( tt_dat, tr_dat, XTXinv, Par );
                             %  coef = NNLSR( tt_dat, tr_dat, Par );
-                            [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
+                            [ID, ~] = PredictIDTop(coef, tr_dat, trls, class_num, Top);
                         elseif strcmp(ClassificationMethod, 'NPLSR') == 1
                             coef = NPLSR( tt_dat, tr_dat, XTXinv, Par );
                             %  coef = NNLSR( tt_dat, tr_dat, Par );
@@ -162,6 +163,7 @@ for nDim = nDimArray
                         else
                             % -------------------------------------------------------------------------
                             %% load finished IDs
+                            existID  = ['TempID_' dataset '_' ClassificationMethod '_D' num2str(Par.nDim) '_s' num2str(Par.s) '_mIte' num2str(Par.maxIter) '_r' num2str(Par.rho) '_l' num2str(Par.lambda)  '_' num2str(nExperiment) '.mat'];
                             if exist(existID)==2
                                 eval(['load ' existID]);
                             else
@@ -193,13 +195,14 @@ for nDim = nDimArray
                                     fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
                                     save(existID, 'ID');
                                 end
-                                cornum      =   sum(ID==ttls);
-                                accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
-                                fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
-                                eval(['delete ' existID]);
-                                pause(3);
                             end
+                            eval(['delete ' existID]);
+                            pause(3);
                         end
+                        ttlsTop = repmat(ttls, [Top 1]);
+                        cornum      =   sum(sum(ID==ttlsTop, 1));
+                        accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
+                        fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
                     end
                     % -------------------------------------------------------------------------
                     %% save the results
