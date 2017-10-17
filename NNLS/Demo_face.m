@@ -1,7 +1,8 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'YaleBCrop025';
+directory = 'C:/Users/csjunxu/Desktop/Classification/Dataset/';
+dataset = 'AR_DAT';
 % AR_DAT
 % YaleBCrop025
 % GTfaceCrop
@@ -40,7 +41,6 @@ writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
-existID  = ['TempID_' dataset '.mat'];
 %-------------------------------------------------------------------------
 %% PCA dimension
 for nDim = nDimArray
@@ -49,20 +49,22 @@ for nDim = nDimArray
     %% tuning the parameters
     for s = [1]
         Par.s = s;
-        for maxIter = [9:-1:6]
+        for maxIter = [1]
             Par.maxIter  = maxIter;
-            for rho = [.2:.1:.4]
+            for rho = [1]
                 Par.rho = rho;
                 for lambda = [0]
                     Par.lambda = lambda;
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
-                        %--------------------------------------------------------------------------
+                        existID  = ['TempID_' dataset '_' ClassificationMethod '_D' num2str(Par.nDim) '_s' num2str(Par.s) '_mIte' num2str(Par.maxIter) '_r' num2str(Par.rho) '_l' num2str(Par.lambda)  '_' num2str(nExperiment) '.mat'];
+                        %-------------------------------------------------------------------------
                         %% data loading
+                        load([directory dataset]);
+                        %-------------------------------------------------------------------------
+                        %% pre-processing
                         if strcmp(dataset, 'AR_DAT') == 1
-                            load(['C:/Users/csjunxu/Desktop/Classification/Dataset/AR_DAT']);
                             nClass        =   max(trainlabels); % the number of classes in the subset of AR database
-                            % Par.nDim = 54 120 300  the eigenfaces dimension
                             Tr_DAT   =   double(NewTrain_DAT(:,trainlabels<=nClass));
                             trls     =   trainlabels(trainlabels<=nClass);
                             Tt_DAT   =   double(NewTest_DAT(:,testlabels<=nClass));
@@ -71,8 +73,6 @@ for nDim = nDimArray
                         elseif strcmp(dataset, 'YaleBCrop025') == 1 ...
                                 || strcmp(dataset, 'GTfaceCrop') == 1 ...
                                 || strcmp(dataset, 'ORLfaceCrop') == 1
-                            % Par.nDim = 84 150 300 the eigenfaces dimension
-                            load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
                             % randomly select half of the samples as training data;
                             [dim, nSample, nClass] = size(Y);
                             % nClass is the number of classes in the subset of AR database
@@ -114,8 +114,14 @@ for nDim = nDimArray
                         else
                             XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
                         end
-                        
-                        if strcmp(ClassificationMethod, 'CROC') == 1
+                        t = cputime;
+                        if strcmp(ClassificationMethod, 'CRC') == 1
+                            Par.lambda = .001 * size(Tr_DAT,2)/700;
+                            % projection matrix computing
+                            Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
+                            coef         =  Proj_M*tt_dat(:,indTest);
+                            [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
+                        elseif strcmp(ClassificationMethod, 'CROC') == 1
                             weight = Par.rho;
                             ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
                             % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, Par.lambda, weight);
@@ -133,66 +139,64 @@ for nDim = nDimArray
                             %                                 params.class_num         =      max(trls);
                             coef = ProCRC(data, params);
                             [ID, ~] = ProMax(coef, data, params);
-                        else
+                        elseif strcmp(ClassificationMethod, 'NNLSR') == 1
+                            coef = NNLS( tt_dat, tr_dat, XTXinv, Par );
+                            %  coef = NNLSR( tt_dat, tr_dat, Par );
+                            [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
+                        elseif strcmp(ClassificationMethod, 'NPLSR') == 1
+                            coef = NPLSR( tt_dat, tr_dat, XTXinv, Par );
+                            %  coef = NNLSR( tt_dat, tr_dat, Par );
+                            [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
+                        elseif strcmp(ClassificationMethod, 'DANNLSR') == 1 % affine, non-negative, sum to a scalar s
+                            coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                            [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
+                        elseif strcmp(ClassificationMethod, 'DANPLSR') == 1 % affine, non-positive, sum to a scalar -s
+                            coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                            [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
+                        elseif strcmp(ClassificationMethod, 'ADANNLSR') == 1 % affine, non-negative, sum to a scalar s
+                            coef = ADANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                            [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
+                        elseif strcmp(ClassificationMethod, 'ADANPLSR') == 1 % affine, non-positive, sum to a scalar -s
+                            coef = ADANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                            [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
+                        elseif strcmp(ClassificationMethod, 'SRC') == 1
+                            % -------------------------------------------------------------------------
                             %% load finished IDs
-                           if exist(existID)==2
+                            if exist(existID)==2
                                 eval(['load ' existID]);
                             else
                                 ID = [];
                             end
                             for indTest = size(ID)+1:size(tt_dat,2)
                                 t = cputime;
-                                switch ClassificationMethod
-                                    case 'SRC'
-                                        rel_tol = 0.01;     % relative target duality gap
-                                        [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
-                                    case 'CRC'
-                                        Par.lambda = .001 * size(Tr_DAT,2)/700;
-                                        % projection matrix computing
-                                        Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
-                                        coef         =  Proj_M*tt_dat(:,indTest);
-                                    case 'NNLSR'                   % non-negative
-                                        coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
-                                    case 'NPLSR'               % non-positive
-                                        coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
-                                    case 'ANNLSR'                 % affine, non-negative, sum to 1
-                                        coef = ANNLSR( tt_dat(:,indTest), tr_dat, Par );
-                                    case 'ANPLSR'             % affine, non-negative, sum to -1
-                                        coef = ANPLSR( tt_dat(:,indTest), tr_dat, Par );
-                                    case 'DANNLSR'                 % affine, non-negative, sum to a scalar s
-                                        coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );
-                                    case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
-                                        coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
-                                    case 'ADANNLSR'                 % affine, non-negative, sum to a scalar s
-                                        coef = ADANNLSR( tt_dat(:,indTest), tr_dat, Par );
-                                    case 'ADANPLSR'             % affine, non-positive, sum to a scalar -s
-                                        coef = ADANPLSR( tt_dat(:,indTest), tr_dat, Par );
-                                end
-                                % -------------------------------------------------------------------------
-                                %% assign the class  index
-                                if strcmp(ClassificationMethod, 'NSC') == 1
-                                    for ci = 1:class_num
-                                        Xc = tr_dat(:, trls==ci);
-                                        Aci = Xc/(Xc'*Xc+Par.lambda*eye(size(Xc, 2)))*Xc';
-                                        coef_c = Aci*tt_dat(:,indTest);
-                                        error(ci) = norm(tt_dat(:,indTest)-coef_c,2)^2/sum(coef_c.*coef_c);
-                                    end
-                                    index      =  find(error==min(error));
-                                    id         =  index(1);
-                                    ID      =   [ID id];
-                                else
-                                    [id, ~] = PredictID(coef, tr_dat, trls, class_num);
-                                    ID      =   [ID id];
-                                end
-                                e = cputime-t;
-                                fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
-                                save(existID, 'ID');
+                                rel_tol = 0.01;     % relative target duality gap
+                                [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
                             end
                         end
+                        % -------------------------------------------------------------------------
+                        %% assign the class  index
+                        if strcmp(ClassificationMethod, 'NSC') == 1
+                            for ci = 1:class_num
+                                Xc = tr_dat(:, trls==ci);
+                                Aci = Xc/(Xc'*Xc+Par.lambda*eye(size(Xc, 2)))*Xc';
+                                coef_c = Aci*tt_dat(:,indTest);
+                                error(ci) = norm(tt_dat(:,indTest)-coef_c,2)^2/sum(coef_c.*coef_c);
+                            end
+                            index      =  find(error==min(error));
+                            id         =  index(1);
+                            ID      =   [ID id];
+                        else
+                            [id, ~] = PredictID(coef, tr_dat, trls, class_num);
+                            ID      =   [ID id];
+                        end
+                        fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) '\n']);
+                        save(existID, 'ID');
+                        e = cputime-t;
+                        fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
                         cornum      =   sum(ID==ttls);
                         accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
                         fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
-                        eval(['delete ' existID]);  
+                        eval(['delete ' existID]);
                         pause(3);
                     end
                     % -------------------------------------------------------------------------

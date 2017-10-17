@@ -1,9 +1,6 @@
 clear
-
 warning off;
-
 addpath('.\invChol');
-
 dataDir = fullfile('C:\Users\csjunxu\Desktop\Classification\Dataset','imagenet12-feat-caffe-alex') ;
 % dataDir = fullfile('C:\Users\csjunxu\Desktop\Classification\Dataset','imagenet12-sbow-split') ;
 
