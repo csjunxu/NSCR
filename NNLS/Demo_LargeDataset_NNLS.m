@@ -61,7 +61,6 @@ ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'ADANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'ADANPLSR' ; % deformable, affine and non-positive LSR
 %-------------------------------------------------------------------------
-existID  = ['TempID_' dataset '_' ClassificationMethod '.mat'];
 %% PCA dimension
 for nDim = nDimArray
     Par.nDim = nDim;
@@ -78,6 +77,7 @@ for nDim = nDimArray
                         Par.lambda = lambda;
                         accuracy = zeros(nExperiment, 1) ;
                         for n = 1:nExperiment
+                            existID  = ['TempID_' dataset '_' ClassificationMethod '_D' num2str(Par.nDim) '_s' num2str(Par.s) '_mIte' num2str(Par.maxIter) '_r' num2str(Par.rho) '_l' num2str(Par.lambda)  '_' num2str(nExperiment) '.mat'];
                             %--------------------------------------------------------------------------
                             %% data loading
                             if strcmp(dataset, 'Caltech-256_VGG') == 1
