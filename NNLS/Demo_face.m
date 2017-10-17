@@ -159,7 +159,7 @@ for nDim = nDimArray
                             %                         elseif strcmp(ClassificationMethod, 'ADANPLSR') == 1 % affine, non-positive, sum to a scalar -s
                             %                             coef = ADANPLSR( tt_dat, tr_dat, XTXinv, Par );
                             %                             [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
-                        elseif strcmp(ClassificationMethod, 'SRC') == 1
+                        else
                             % -------------------------------------------------------------------------
                             %% load finished IDs
                             if exist(existID)==2
@@ -167,36 +167,39 @@ for nDim = nDimArray
                             else
                                 ID = [];
                             end
-                            for indTest = size(ID)+1:size(tt_dat,2)
-                                t = cputime;
-                                rel_tol = 0.01;     % relative target duality gap
-                                [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
-                                [id, ~] = PredictID(coef, tr_dat, trls, class_num);
-                                ID      =   [ID id];
-                                e = cputime-t;
-                                fprintf([num2str(TestSeg(set+1)) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
-                                save(existID, 'ID');
+                            if strcmp(ClassificationMethod, 'SRC') == 1
+                                for indTest = size(ID)+1:size(tt_dat,2)
+                                    t = cputime;
+                                    rel_tol = 0.01;     % relative target duality gap
+                                    [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
+                                    [id, ~] = PredictID(coef, tr_dat, trls, class_num);
+                                    ID      =   [ID id];
+                                    e = cputime-t;
+                                    fprintf([num2str(TestSeg(set+1)) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
+                                    save(existID, 'ID');
+                                end
+                            elseif strcmp(ClassificationMethod, 'NSC') == 1
+                                for indTest = size(ID)+1:size(tt_dat,2)
+                                    for ci = 1:class_num
+                                        Xc = tr_dat(:, trls==ci);
+                                        Aci = Xc/(Xc'*Xc+Par.lambda*eye(size(Xc, 2)))*Xc';
+                                        coef_c = Aci*tt_dat(:,indTest);
+                                        error(ci) = norm(tt_dat(:,indTest)-coef_c,2)^2/sum(coef_c.*coef_c);
+                                    end
+                                    index      =  find(error==min(error));
+                                    id         =  index(1);
+                                    ID      =   [ID id];
+                                    e = cputime-t;
+                                    fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
+                                    save(existID, 'ID');
+                                end
+                                cornum      =   sum(ID==ttls);
+                                accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
+                                fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
+                                eval(['delete ' existID]);
+                                pause(3);
                             end
-                        elseif strcmp(ClassificationMethod, 'NSC') == 1
-                            for ci = 1:class_num
-                                Xc = tr_dat(:, trls==ci);
-                                Aci = Xc/(Xc'*Xc+Par.lambda*eye(size(Xc, 2)))*Xc';
-                                coef_c = Aci*tt_dat(:,indTest);
-                                error(ci) = norm(tt_dat(:,indTest)-coef_c,2)^2/sum(coef_c.*coef_c);
-                            end
-                            index      =  find(error==min(error));
-                            id         =  index(1);
-                            ID      =   [ID id];
                         end
-                        fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) '\n']);
-                        save(existID, 'ID');
-                        e = cputime-t;
-                        fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
-                        cornum      =   sum(ID==ttls);
-                        accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
-                        fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
-                        eval(['delete ' existID]);
-                        pause(3);
                     end
                     % -------------------------------------------------------------------------
                     %% save the results
