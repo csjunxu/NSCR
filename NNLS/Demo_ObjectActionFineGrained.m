@@ -211,15 +211,15 @@ for nDim = nDimArray
                                     t = cputime;
                                     switch ClassificationMethod
                                         case 'SRC'
-                                            rel_tol = 0.01;     % relative target duality gap
+                                            rel_tol = 0.01;         % relative target duality gap
                                             [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
                                         case 'NPLSR'               % non-positive
                                             coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
-                                        case 'ANNLSR'                 % affine, non-negative, sum to 1
+                                        case 'ANNLSR'            % affine, non-negative, sum to 1
                                             coef = ANNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'ANPLSR'             % affine, non-negative, sum to -1
                                             coef = ANPLSR( tt_dat(:,indTest), tr_dat, Par );
-                                        case 'DANNLSR'                 % affine, non-negative, sum to a scalar s
+                                        case 'DANNLSR'          % affine, non-negative, sum to a scalar s
                                             coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
                                             coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
