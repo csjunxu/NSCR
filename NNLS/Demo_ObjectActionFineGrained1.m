@@ -49,9 +49,9 @@ end
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
-% ClassificationMethod = 'CRC';
+ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
-ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
+% ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
@@ -175,7 +175,13 @@ for nDim = nDimArray
                             else
                                 XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
                             end
-                            if strcmp(ClassificationMethod, 'CROC') == 1
+                            if strcmp(ClassificationMethod, 'CRC') == 1
+                                Par.lambda = .001 * size(Tr_DAT,2)/700;
+                                % projection matrix computing
+                                Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
+                                coef         =  Proj_M*tt_dat;
+                                [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
+                            elseif strcmp(ClassificationMethod, 'CROC') == 1
                                 weight = Par.rho;
                                 ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
                                 % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, Par.lambda, weight);
@@ -193,6 +199,13 @@ for nDim = nDimArray
                                 params.class_num = class_num;
                                 coef = ProCRC(data, params);
                                 [ID, ~] = ProMax(coef, data, params);
+                            elseif strcmp(ClassificationMethod, 'NNLSR') == 1
+                                t = cputime;
+                                coef = NNLS( tt_dat, tr_dat, XTXinv, Par );
+                                e = cputime-t;
+                                fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
+                                %  coef = NNLSR( tt_dat, tr_dat, Par );
+                                [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
                             else
                                 ID = [];
                                 for indTest = 1:size(tt_dat,2)
@@ -201,14 +214,6 @@ for nDim = nDimArray
                                         case 'SRC'
                                             rel_tol = 0.01;     % relative target duality gap
                                             [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
-                                        case 'CRC'
-                                            Par.lambda = .001 * size(Tr_DAT,2)/700;
-                                            % projection matrix computing
-                                            Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
-                                            coef         =  Proj_M*tt_dat(:,indTest);
-                                        case 'NNLSR'                   % non-negative
-                                            coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
-                                            %                                             coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'NPLSR'               % non-positive
                                             coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'ANNLSR'                 % affine, non-negative, sum to 1
