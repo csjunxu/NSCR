@@ -1,5 +1,5 @@
 clear
-% maxNumCompThreads(1);
+
 warning off;
 
 addpath('.\invChol');
@@ -18,7 +18,7 @@ nDimArray = [4096];
 SampleArray = 0;
 normalization.flag = 1;
 normalization.type = 1;
-existID  = ['TempID_' dataset '1.mat'];
+
 % -------------------------------------------------------------------------
 %% directory to save the results
 writefilepath  = [dataset];
@@ -38,7 +38,7 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [1:1:5]
+            for maxIter = [2:2:10]
                 Par.maxIter  = maxIter;
                 for rho = [.3:.2:.9]
                     Par.rho = rho;
@@ -54,27 +54,15 @@ for nDim = nDimArray
                             end
                             %% testing
                             class_num = max(trls);
-                            %% load finished IDs
-                            if exist(existID)==2
-                                eval(['load ' existID]);
-                            else
-                                ID = [];
-                            end
-                            for indTest = length(ID)+1:size(tt_dat,2) 
-                                t = cputime;
-                                coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
-                                %% assign the class  index
-                                [id, ~] = PredictID(coef, tr_dat, trls, class_num);
-                                ID      =   [ID id];
-                                e = cputime-t;
-                                fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
-                                save(existID, 'ID');
-                            end
+                            t = cputime;
+                            coef = NNLS( tt_dat, tr_dat, XTXinv, Par );
+                            %% assign the class  index
+                            [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
+                            e = cputime-t;
+                            fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
                             cornum      =   sum(ID==ttls);
                             accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
                             fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
-                            eval(['delete ' existID]);
-                            pause(3);
                         end
                         %% save the results
                         avgacc = mean(accuracy);

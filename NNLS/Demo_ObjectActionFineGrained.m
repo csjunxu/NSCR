@@ -49,10 +49,10 @@ end
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
-ClassificationMethod = 'CRC';
+% ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-% ClassificationMethod = 'NNLSR' ; % non-negative LSR
+ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
@@ -69,9 +69,9 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [1]
+            for maxIter = [5]
                 Par.maxIter  = maxIter;
-                for rho = [1]
+                for rho = [.8]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
@@ -198,6 +198,13 @@ for nDim = nDimArray
                                 params.class_num = class_num;
                                 coef = ProCRC(data, params);
                                 [ID, ~] = ProMax(coef, data, params);
+                            elseif strcmp(ClassificationMethod, 'NNLSR') == 1
+                                t = cputime;
+                                coef = NNLS( tt_dat, tr_dat, XTXinv, Par );
+                                e = cputime-t;
+                                fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
+                                %  coef = NNLSR( tt_dat, tr_dat, Par );
+                                [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
                             else
                                 ID = [];
                                 for indTest = 1:size(tt_dat,2)
@@ -206,9 +213,6 @@ for nDim = nDimArray
                                         case 'SRC'
                                             rel_tol = 0.01;     % relative target duality gap
                                             [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
-                                        case 'NNLSR'           % non-negative
-                                            coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
-                                            %  coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'NPLSR'               % non-positive
                                             coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'ANNLSR'                 % affine, non-negative, sum to 1
