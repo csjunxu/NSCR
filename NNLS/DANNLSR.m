@@ -1,20 +1,20 @@
- function c = DANNLSR( y, X , Par )
+function C = DANNLSR( Y , X, XTXinv, Par )
 
 % Input
-% y          input test data point
+% Y          input test data point
 % X          Data matrix, dim * num
 % Par        parameters
 
 % Objective function:
-%      min_{A}  ||y - X * a||_{2}^{2} + lambda * ||a||_{2}^{2}
-%      s.t.  1'*a = s', a>=0
+%      min_{A}  ||Y - X * A||_{F}^{2} + lambda * ||A||_{2}^{2}
+%      s.t.  1'*A = s*1', A>=0
 
 % Notation: L
-% y ... (D x 1) input data vector, where D is the dimension of the features
+% Y ... (D x M) input data vector, where D is the dimension of the features
 %
 % X ... (D x N) data matrix, where L is the dimension of features, and
 %           N is the number of samples.
-% a ... (N x 1) is a column vector used to select
+% A ... (N x M) is a column vector used to select
 %           the most representive and informative samples
 % s ... a non-negative scale, default s=1
 % Par ...  structure of the regularization parameters
@@ -23,15 +23,15 @@ if ~isfield(Par, 's')
     Par.s = 1;
 end
 
-[D , N] = size (X);
+[~, M] = size(Y);
+[~, N] = size(X);
 
 %% initialization
-
-% A       = eye (N);
+% A   = eye (N);
 % A   = rand (N);
-a       = zeros (N, 1);
-c       = a;
-Delta = c - a;
+A       = zeros (N, M); % satisfy NN constraint
+C       = A;
+Delta = C - A;
 
 %%
 tol   = 1e-4;
@@ -39,31 +39,25 @@ iter    = 1;
 % objErr = zeros(Par.maxIter, 1);
 err1(1) = inf; err2(1) = inf;
 terminate = false;
-if N < D
-    XTXinv = (X' * X + Par.rho/2 * eye(N))\eye(N);
-else
-    XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * X' / (2/Par.rho * (X * X') + eye(D)) * X );
-end
 while  ( ~terminate )
     %% update A the coefficient matrix
-    a = XTXinv * (X' * y + Par.rho/2 * c + 0.5 * Delta);
+    A = XTXinv * (X' * Y + Par.rho/2 * C + 0.5 * Delta);
     
     %% update C the data term matrix
-    q = (Par.rho*a - Delta)/( (2*Par.lambda+Par.rho)*Par.s );
-    c  = Par.s*solver_BCLS_closedForm(q);
-    
-    q1 = (Par.rho*a - Delta)/(2*Par.lambda+Par.rho);
-    c1  = solver_BCLS_closedForm(q1);
+    Q = (Par.rho*A - Delta)/( (2*Par.lambda+Par.rho)*Par.s );
+    C  = Par.s*solver_BCLS_closedForm(Q);
+%     Q1 = (Par.rho*A - Delta)/(2*Par.lambda+Par.rho);
+%     C1  = solver_BCLS_closedForm(Q1);
     
     %% update Deltas the lagrange multiplier matrix
-    Delta = Delta + Par.rho * ( c - a);
+    Delta = Delta + Par.rho * ( C - A);
     
     %     %% update rho the penalty parameter scalar
     %     Par.rho = min(1e4, Par.mu * Par.rho);
     
     %% computing errors
-    err1(iter+1) = errorCoef(c, a);
-    err2(iter+1) = errorLinSys(y, X, a);
+    err1(iter+1) = errorCoef(C, A);
+    err2(iter+1) = errorLinSys(Y, X, A);
     if (  (err1(iter+1) <=tol && err2(iter+1)<=tol) ||  iter >= Par.maxIter  )
         terminate = true;
         fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
@@ -86,6 +80,6 @@ while  ( ~terminate )
     %% next iteration number
     iter = iter + 1;
 end
-a = Par.s*a;
-c = Par.s*c;
+A = Par.s*A;
+C = Par.s*C;
 end
