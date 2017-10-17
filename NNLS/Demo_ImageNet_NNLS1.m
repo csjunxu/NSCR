@@ -25,6 +25,7 @@ writefilepath  = [dataset];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
+existID  = ['TempID_' dataset '1.mat'];
 
 ClassificationMethod = 'NNLS' ;
 
@@ -54,20 +55,36 @@ for nDim = nDimArray
                             end
                             %% testing
                             class_num = max(trls);
+                            %% load finished IDs
+                            if exist(existID)==2
+                                eval(['load ' existID]);
+                            else
+                                ID = [];
+                            end
                             t = cputime;
-                            coef = NNLS( tt_dat, tr_dat, XTXinv, Par );
-                            %% assign the class  index
-                            [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
-                            e = cputime-t;
-                            fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
+                            TestSeg = length(ID):5000:size(tt_dat,2);
+                            TestSeg = [TestSeg size(tt_dat,2)];
+                            for set  = 1:length(TestSeg)
+                                indTest = TestSeg(set)+1:TestSeg(set+1);
+                                coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
+                                %% assign the class  index
+                                [id, ~] = PredictID(coef, tr_dat, trls, class_num);
+                                ID      =   [ID id];
+                                e = cputime-t;
+                                fprintf([num2str(TestSeg(set+1)) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
+                                save(existID, 'ID');
+                            end
+                            %% compute accuracy
                             cornum      =   sum(ID==ttls);
                             accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
                             fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
+                            eval(['delete ' existID]);
+                            pause(3);
                         end
                         %% save the results
                         avgacc = mean(accuracy);
                         fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                        matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
+                        matname = sprintf([writefilepath '/' dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
                         save(matname,'accuracy', 'avgacc');
                     end
                 end
