@@ -49,8 +49,8 @@ end
 %% choosing classification methods
 % ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
-ClassificationMethod = 'CRC';
-% ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
+% ClassificationMethod = 'CRC';
+ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
@@ -71,9 +71,9 @@ for nDim = nDimArray
             Par.s = s;
             for maxIter = [1]
                 Par.maxIter  = maxIter;
-                for rho = [.5]
+                for rho = [.2:.2:1]
                     Par.rho = rho;
-                    for lambda = [0]
+                    for lambda = [1 1e-1 1e-2 1e-3]
                         Par.lambda = lambda;
                         accuracy = zeros(nExperiment, 1) ;
                         for n = 1:nExperiment
