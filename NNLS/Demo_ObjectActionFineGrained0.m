@@ -2,7 +2,7 @@ clear;
 %maxNumCompThreads(1);
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'cars';
+dataset = 'Caltech-256_VGG';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % aircraft
@@ -71,7 +71,7 @@ for nDim = nDimArray
             Par.s = s;
             for maxIter = [1:1:5]
                 Par.maxIter  = maxIter;
-                for rho = [ .9 1.1 1.2]
+                for rho = [ 1]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
