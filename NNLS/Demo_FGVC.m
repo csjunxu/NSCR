@@ -55,7 +55,7 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [1 10]
+            for maxIter = [10]
                 Par.maxIter  = maxIter;
                 for rho = [.8:.1:1.2]
                     Par.rho = rho;
@@ -169,7 +169,7 @@ for nDim = nDimArray
                             t = cputime;
                             TestSeg = length(ID):3000:size(tt_dat,2);
                             TestSeg = [TestSeg size(tt_dat,2)];
-                            for set  = 1:length(TestSeg)
+                            for set  = 1:length(TestSeg)-1
                                 indTest = TestSeg(set)+1:TestSeg(set+1);
                                 coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 %% assign the class  index
