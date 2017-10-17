@@ -191,7 +191,7 @@ for nDim = nDimArray
                                 [id, ~] = PredictID(coef, tr_dat, trls, class_num);
                                 ID      =   [ID id];
                                 e = cputime-t;
-                                fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
+                                fprintf([num2str(TestSeg(set+1)) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
                                 save(existID, 'ID');
                             end
                             cornum      =   sum(ID==ttls);
