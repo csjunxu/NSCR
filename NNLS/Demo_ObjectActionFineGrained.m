@@ -175,7 +175,13 @@ for nDim = nDimArray
                             else
                                 XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
                             end
-                            if strcmp(ClassificationMethod, 'CROC') == 1
+                            if strcmp(ClassificationMethod, 'CRC') == 1
+                                Par.lambda = .001 * size(Tr_DAT,2)/700;
+                                % projection matrix computing
+                                Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
+                                coef         =  Proj_M*tt_dat;
+                                [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
+                            elseif strcmp(ClassificationMethod, 'CROC') == 1
                                 weight = Par.rho;
                                 ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
                                 % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, Par.lambda, weight);
@@ -200,11 +206,6 @@ for nDim = nDimArray
                                         case 'SRC'
                                             rel_tol = 0.01;     % relative target duality gap
                                             [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
-                                        case 'CRC'
-                                            Par.lambda = .001 * size(Tr_DAT,2)/700;
-                                            % projection matrix computing
-                                            Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
-                                            coef         =  Proj_M*tt_dat(:,indTest);
                                         case 'NNLSR'           % non-negative
                                             coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                             %  coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );

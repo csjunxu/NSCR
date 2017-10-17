@@ -1,7 +1,8 @@
 function [pred_ttls, pred_matrix] = PredictID(coefs, tr_dat, trls, class_num)
 
 %% perform prediction class-by-class
-pred_matrix      =   zeros(class_num, 1);
+tt_num     =  size(coefs, 2);
+pred_matrix      =   zeros(class_num, tt_num);
 recon_tr_descr  =   tr_dat * coefs;
 
 for ci = 1:class_num
