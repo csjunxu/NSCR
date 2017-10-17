@@ -55,11 +55,11 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [10]
+            for maxIter = [5]
                 Par.maxIter  = maxIter;
-                for rho = [.8:.1:1.2]
+                for rho = [.2:.2:1]
                     Par.rho = rho;
-                    for lambda = [0]
+                    for lambda = [1]
                         Par.lambda = lambda;
                         accuracy = zeros(nExperiment, 1) ;
                         for n = 1:nExperiment

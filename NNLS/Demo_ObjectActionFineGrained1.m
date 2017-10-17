@@ -51,8 +51,8 @@ end
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
-% ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-ClassificationMethod = 'NNLSR' ; % non-negative LSR
+ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
+% ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
@@ -69,9 +69,9 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [1:1:3]
+            for maxIter = [1]
                 Par.maxIter  = maxIter;
-                for rho = [.5:.5:3]
+                for rho = [.5]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
@@ -181,11 +181,11 @@ for nDim = nDimArray
                                 % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, Par.lambda, weight);
                             elseif strcmp(ClassificationMethod, 'ProCRC') == 1
                                 global params
-                                set_params(dataset);
-                                %                                 params.model_type        =      'ProCRC';
-                                %                                 params.gamma             =     Par.rho; % [1e-2];
-                                %                                 params.lambda            =      Par.lambda; % [1e-0];
-                                %                                 params.class_num         =      max(trls);
+                                %                                 set_params(dataset);
+                                params.model_type        =      'ProCRC';
+                                params.gamma             =      [1e-2];
+                                params.lambda            =       [1e-0];
+                                params.class_num         =      max(trls);
                                 data.tr_descr = tr_dat;
                                 data.tt_descr = tt_dat;
                                 data.tr_label = trls;
