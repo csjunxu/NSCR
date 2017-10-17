@@ -148,16 +148,16 @@ for nDim = nDimArray
                             %  coef = NNLSR( tt_dat, tr_dat, Par );
                             [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
                         elseif strcmp(ClassificationMethod, 'DANNLSR') == 1 % affine, non-negative, sum to a scalar s
-                            coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                            coef = DANNLSR( tt_dat, tr_dat, XTXinv, Par );
                             [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
                         elseif strcmp(ClassificationMethod, 'DANPLSR') == 1 % affine, non-positive, sum to a scalar -s
-                            coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                            coef = DANPLSR( tt_dat, tr_dat, XTXinv, Par );
                             [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
                         elseif strcmp(ClassificationMethod, 'ADANNLSR') == 1 % affine, non-negative, sum to a scalar s
-                            coef = ADANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                            coef = ADANNLSR( tt_dat, tr_dat, XTXinv, Par );
                             [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
                         elseif strcmp(ClassificationMethod, 'ADANPLSR') == 1 % affine, non-positive, sum to a scalar -s
-                            coef = ADANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                            coef = ADANPLSR( tt_dat, tr_dat, XTXinv, Par );
                             [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
                         elseif strcmp(ClassificationMethod, 'SRC') == 1
                             % -------------------------------------------------------------------------
