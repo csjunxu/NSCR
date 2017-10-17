@@ -153,12 +153,12 @@ for nDim = nDimArray
                         elseif strcmp(ClassificationMethod, 'DANPLSR') == 1 % affine, non-positive, sum to a scalar -s
                             coef = DANPLSR( tt_dat, tr_dat, XTXinv, Par );
                             [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
-                        elseif strcmp(ClassificationMethod, 'ADANNLSR') == 1 % affine, non-negative, sum to a scalar s
-                            coef = ADANNLSR( tt_dat, tr_dat, XTXinv, Par );
-                            [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
-                        elseif strcmp(ClassificationMethod, 'ADANPLSR') == 1 % affine, non-positive, sum to a scalar -s
-                            coef = ADANPLSR( tt_dat, tr_dat, XTXinv, Par );
-                            [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
+                            %                         elseif strcmp(ClassificationMethod, 'ADANNLSR') == 1 % affine, non-negative, sum to a scalar s
+                            %                             coef = ADANNLSR( tt_dat, tr_dat, XTXinv, Par );
+                            %                             [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
+                            %                         elseif strcmp(ClassificationMethod, 'ADANPLSR') == 1 % affine, non-positive, sum to a scalar -s
+                            %                             coef = ADANPLSR( tt_dat, tr_dat, XTXinv, Par );
+                            %                             [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
                         elseif strcmp(ClassificationMethod, 'SRC') == 1
                             % -------------------------------------------------------------------------
                             %% load finished IDs
@@ -171,11 +171,13 @@ for nDim = nDimArray
                                 t = cputime;
                                 rel_tol = 0.01;     % relative target duality gap
                                 [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
+                                [id, ~] = PredictID(coef, tr_dat, trls, class_num);
+                                ID      =   [ID id];
+                                e = cputime-t;
+                                fprintf([num2str(TestSeg(set+1)) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
+                                save(existID, 'ID');
                             end
-                        end
-                        % -------------------------------------------------------------------------
-                        %% assign the class  index
-                        if strcmp(ClassificationMethod, 'NSC') == 1
+                        elseif strcmp(ClassificationMethod, 'NSC') == 1
                             for ci = 1:class_num
                                 Xc = tr_dat(:, trls==ci);
                                 Aci = Xc/(Xc'*Xc+Par.lambda*eye(size(Xc, 2)))*Xc';
@@ -184,9 +186,6 @@ for nDim = nDimArray
                             end
                             index      =  find(error==min(error));
                             id         =  index(1);
-                            ID      =   [ID id];
-                        else
-                            [id, ~] = PredictID(coef, tr_dat, trls, class_num);
                             ID      =   [ID id];
                         end
                         fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) '\n']);
