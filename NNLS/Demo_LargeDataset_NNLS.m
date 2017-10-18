@@ -2,7 +2,7 @@ clear;
 %maxNumCompThreads(1);
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Caltech-256_VGG';
+dataset = 'Caltech-256_sift';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % aircraft
