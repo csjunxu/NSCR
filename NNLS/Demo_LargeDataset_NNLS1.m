@@ -2,7 +2,7 @@ clear;
 %maxNumCompThreads(1);
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Caltech-256_sift';
+dataset = 'cars';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % aircraft
@@ -69,9 +69,9 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [4 5 6]
+            for maxIter = [2:1:6]
                 Par.maxIter  = maxIter;
-                for rho = [7.1:.1:10]
+                for rho = [2:.2:10]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
