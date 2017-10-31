@@ -1,8 +1,7 @@
 clear;
-%maxNumCompThreads(1);
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'cars';
+dataset = 'CUB-200-2011_sift';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % aircraft
@@ -41,7 +40,7 @@ elseif strcmp(dataset, 'Caltech-256_sift') == 1
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
-writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
+writefilepath  = ['C:/Users/csjunxu/Desktop/CVPR2018 Classification/Results/' dataset '/'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
@@ -50,9 +49,9 @@ end
 % ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
-ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
+% ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-% ClassificationMethod = 'NNLSR' ; % non-negative LSR
+ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
@@ -69,18 +68,19 @@ for nDim = nDimArray
         %% tuning the parameters
         for s = [1]
             Par.s = s;
-            for maxIter = [1]
+            for maxIter = [3:1:6]
                 Par.maxIter  = maxIter;
-                for rho = [.5]
+                for rho = [2:.2:5]
                     Par.rho = rho;
-                    for lambda = [1 1e-1]
+                    for lambda = [0]
                         Par.lambda = lambda;
                         accuracy = zeros(nExperiment, 1) ;
                         for n = 1:nExperiment
+                            existID  = ['TempID_' dataset '_' ClassificationMethod '_D' num2str(Par.nDim) '_s' num2str(Par.s) '_mIte' num2str(Par.maxIter) '_r' num2str(Par.rho) '_l' num2str(Par.lambda)  '_' num2str(nExperiment) '.mat'];
                             %--------------------------------------------------------------------------
                             %% data loading
                             if strcmp(dataset, 'Caltech-256_VGG') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                load(['C:/Users/csjunxu/Desktop/CVPR2018 Classification/Dataset/' dataset]);
                                 % randomly select half of the samples as training data;
                                 [dim, N] = size(descr);
                                 nClass = length(unique(label));
@@ -101,7 +101,7 @@ for nDim = nDimArray
                                 end
                                 clear descr label descri RpNi Ni
                             elseif strcmp(dataset, 'Caltech-256_sift') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                load(['C:/Users/csjunxu/Desktop/CVPR2018 Classification/Dataset/' dataset]);
                                 % randomly select half of the samples as training data;
                                 [dim, N] = size(Data);
                                 nClass = length(unique(Label));
@@ -124,7 +124,7 @@ for nDim = nDimArray
                             elseif strcmp(dataset, 'Standford-40_VGG') == 1 ...
                                     || strcmp(dataset, 'Flower-102_VGG') == 1 ...
                                     || strcmp(dataset, 'CUB-200-2011_VGG') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                load(['C:/Users/csjunxu/Desktop/CVPR2018 Classification/Dataset/' dataset]);
                                 [dim, N] = size(tr_descr);
                                 nClass        =   max(tr_label);
                                 Tr_DAT   =   double(tr_descr);
@@ -135,7 +135,7 @@ for nDim = nDimArray
                             elseif strcmp(dataset, 'Standford-40_sift') == 1 ...
                                     || strcmp(dataset, 'Flower-102_sift') == 1 ...
                                     || strcmp(dataset, 'CUB-200-2011_sift') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                load(['C:/Users/csjunxu/Desktop/CVPR2018 Classification/Dataset/' dataset]);
                                 [dim, N] = size(TrData);
                                 nClass        =   max(TrLabel);
                                 Tr_DAT   =   double(TrData);
@@ -145,7 +145,7 @@ for nDim = nDimArray
                                 clear TrData TtData TrLabel TtLabel
                             elseif strcmp(dataset, 'aircraft') == 1 ...
                                     || strcmp(dataset, 'cars') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                load(['C:/Users/csjunxu/Desktop/CVPR2018 Classification/Dataset/' dataset]);
                                 [dim, N] = size(trainFV);
                                 nClass        =   max(trainY);
                                 Tr_DAT   =   double(trainFV);
@@ -175,100 +175,36 @@ for nDim = nDimArray
                             else
                                 XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
                             end
-                            if strcmp(ClassificationMethod, 'CRC') == 1
-                                Par.lambda = .001 * size(Tr_DAT,2)/700;
-                                % projection matrix computing
-                                Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
-                                coef         =  Proj_M*tt_dat;
-                                [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
-                            elseif strcmp(ClassificationMethod, 'CROC') == 1
-                                weight = Par.rho;
-                                ID = croc_cvpr12(tt_dat, tr_dat, trls, Par.lambda, weight);
-                                % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, Par.lambda, weight);
-                            elseif strcmp(ClassificationMethod, 'ProCRC') == 1
-                                global params
-                                %                                 set_params(dataset);
-                                params.model_type        =      'ProCRC';
-                                params.gamma             =      [1e-2];
-                                params.lambda            =       [1e-0];
-                                params.class_num         =      max(trls);
-                                data.tr_descr = tr_dat;
-                                data.tt_descr = tt_dat;
-                                data.tr_label = trls;
-                                data.tt_label = ttls;
-                                params.class_num = class_num;
-                                coef = ProCRC(data, params);
-                                [ID, ~] = ProMax(coef, data, params);
-                            elseif strcmp(ClassificationMethod, 'NNLSR') == 1
-                                t = cputime;
-                                coef = NNLS( tt_dat, tr_dat, XTXinv, Par );
-                                e = cputime-t;
-                                fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
-                                %  coef = NNLSR( tt_dat, tr_dat, Par );
-                                [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
+                            %% load finished IDs
+                            if exist(existID)==2
+                                eval(['load ' existID]);
                             else
                                 ID = [];
-                                for indTest = 1:size(tt_dat,2)
-                                    t = cputime;
-                                    switch ClassificationMethod
-                                        case 'SRC'
-                                            rel_tol = 0.01;     % relative target duality gap
-                                            [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
-                                        case 'NPLSR'               % non-positive
-                                            coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
-                                        case 'ANNLSR'                 % affine, non-negative, sum to 1
-                                            coef = ANNLSR( tt_dat(:,indTest), tr_dat, Par );
-                                        case 'ANPLSR'             % affine, non-negative, sum to -1
-                                            coef = ANPLSR( tt_dat(:,indTest), tr_dat, Par );
-                                        case 'DANNLSR'                 % affine, non-negative, sum to a scalar s
-                                            coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );
-                                        case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
-                                            coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
-                                        case 'ADANNLSR'                 % affine, non-negative, sum to a scalar s
-                                            coef = ADANNLSR( tt_dat(:,indTest), tr_dat, Par );
-                                        case 'ADANPLSR'             % affine, non-positive, sum to a scalar -s
-                                            coef = ADANPLSR( tt_dat(:,indTest), tr_dat, Par );
-                                    end
-                                    % -------------------------------------------------------------------------
-                                    %% assign the class  index
-                                    if strcmp(ClassificationMethod, 'NSC') == 1
-                                        for ci = 1:class_num
-                                            Xc = tr_dat(:, trls==ci);
-                                            Aci = Xc/(Xc'*Xc+Par.lambda*eye(size(Xc, 2)))*Xc';
-                                            coef_c = Aci*tt_dat(:,indTest);
-                                            error(ci) = norm(tt_dat(:,indTest)-coef_c,2)^2/sum(coef_c.*coef_c);
-                                        end
-                                        index      =  find(error==min(error));
-                                        id         =  index(1);
-                                        ID      =   [ID id];
-                                    else
-                                        [id, ~] = PredictID(coef, tr_dat, trls, class_num);
-                                        ID      =   [ID id];
-                                        e = cputime-t;
-                                        fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
-                                    end
-                                end
+                            end
+                            t = cputime;
+                            TestSeg = length(ID):3000:size(tt_dat,2);
+                            TestSeg = [TestSeg size(tt_dat,2)];
+                            for set  = 1:length(TestSeg)-1
+                                indTest = TestSeg(set)+1:TestSeg(set+1);
+                                coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
+                                [id, ~] = PredictID(coef, tr_dat, trls, class_num);
+                                ID      =   [ID id];
+                                e = cputime-t;
+                                fprintf([num2str(TestSeg(set+1)) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
+                                save(existID, 'ID');
                             end
                             cornum      =   sum(ID==ttls);
                             accuracy(n, 1)         =   [cornum/length(ttls)]; % recognition rate
                             fprintf(['Accuracy is ' num2str(accuracy(n, 1)) '.\n']);
+                            eval(['delete ' existID]);
+                            pause(3);
                         end
                         % -------------------------------------------------------------------------
                         %% save the results
                         avgacc = mean(accuracy);
                         fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                        if strcmp(ClassificationMethod, 'SRC') == 1 ...
-                                || strcmp(ClassificationMethod, 'CRC') == 1 ...
-                                || strcmp(ClassificationMethod, 'NSC') == 1
-                            matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '.mat']);
-                            save(matname, 'accuracy', 'avgacc');
-                        elseif strcmp(ClassificationMethod, 'ProCRC') == 1 || strcmp(ClassificationMethod, 'CROC') == 1
-                            matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '_weight' num2str(Par.rho) '.mat']);
-                            save(matname, 'accuracy', 'avgacc');
-                        elseif strcmp(ClassificationMethod, 'NNLSR') == 1 || strcmp(ClassificationMethod, 'DANNLSR') == 1
-                            matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
-                            save(matname,'accuracy', 'avgacc');
-                        end
+                        matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
+                        save(matname,'accuracy', 'avgacc');
                     end
                 end
             end
