@@ -41,7 +41,7 @@ elseif strcmp(dataset, 'Caltech-256_sift') == 1
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
-writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
+writefilepath  = ['C:/Users/csjunxu/Desktop/CVPR2018 Classification/Results/' dataset '/'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
@@ -81,7 +81,7 @@ for nDim = nDimArray
                             %--------------------------------------------------------------------------
                             %% data loading
                             if strcmp(dataset, 'Caltech-256_VGG') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                load(['C:/Users/csjunxu/Desktop/CVPR2018 Classification/Dataset/' dataset]);
                                 % randomly select half of the samples as training data;
                                 [dim, N] = size(descr);
                                 nClass = length(unique(label));
@@ -102,7 +102,7 @@ for nDim = nDimArray
                                 end
                                 clear descr label descri RpNi Ni
                             elseif strcmp(dataset, 'Caltech-256_sift') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                load(['C:/Users/csjunxu/Desktop/CVPR2018 Classification/Dataset/' dataset]);
                                 % randomly select half of the samples as training data;
                                 [dim, N] = size(Data);
                                 nClass = length(unique(Label));
@@ -125,7 +125,7 @@ for nDim = nDimArray
                             elseif strcmp(dataset, 'Standford-40_VGG') == 1 ...
                                     || strcmp(dataset, 'Flower-102_VGG') == 1 ...
                                     || strcmp(dataset, 'CUB-200-2011_VGG') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                load(['C:/Users/csjunxu/Desktop/CVPR2018 Classification/Dataset/' dataset]);
                                 [dim, N] = size(tr_descr);
                                 nClass        =   max(tr_label);
                                 Tr_DAT   =   double(tr_descr);
@@ -136,7 +136,7 @@ for nDim = nDimArray
                             elseif strcmp(dataset, 'Standford-40_sift') == 1 ...
                                     || strcmp(dataset, 'Flower-102_sift') == 1 ...
                                     || strcmp(dataset, 'CUB-200-2011_sift') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                load(['C:/Users/csjunxu/Desktop/CVPR2018 Classification/Dataset/' dataset]);
                                 [dim, N] = size(TrData);
                                 nClass        =   max(TrLabel);
                                 Tr_DAT   =   double(TrData);
@@ -146,7 +146,7 @@ for nDim = nDimArray
                                 clear TrData TtData TrLabel TtLabel
                             elseif strcmp(dataset, 'aircraft') == 1 ...
                                     || strcmp(dataset, 'cars') == 1
-                                load(['C:/Users/csjunxu/Desktop/Classification/Dataset/' dataset]);
+                                load(['C:/Users/csjunxu/Desktop/CVPR2018 Classification/Dataset/' dataset]);
                                 [dim, N] = size(trainFV);
                                 nClass        =   max(trainY);
                                 Tr_DAT   =   double(trainFV);
