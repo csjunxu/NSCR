@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'Standford-40_sift';
+dataset = 'Flower-102_VGG';
 % Flower-102_VGG
 % CUB-200-2011_VGG
 % aircraft
@@ -70,7 +70,7 @@ for nDim = nDimArray
             Par.s = s;
             for maxIter = [3:1:6]
                 Par.maxIter  = maxIter;
-                for rho = [10.2:.2:20]
+                for rho = [.2:.2:10]
                     Par.rho = rho;
                     for lambda = [0]
                         Par.lambda = lambda;
