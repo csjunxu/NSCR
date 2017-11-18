@@ -2,17 +2,17 @@ clear
 % maxNumCompThreads(1);
 warning off;
 
-addpath('C:\Users\csjunxu\Desktop\Classification\Dataset');
+addpath('C:\Users\csjunxu\Desktop\CVPR2018 Classification\Dataset');
 addpath('.\invChol');
 
-dataDir = fullfile('C:\Users\csjunxu\Desktop\Classification\Dataset','imagenet12-feat-caffe-alex') ;
+dataDir = fullfile('C:\Users\csjunxu\Desktop\CVPR2018 Classification\Dataset','imagenet12-feat-caffe-alex') ;
 % dataDir = fullfile('C:\Users\csjunxu\Desktop\Classification\Dataset','imagenet12-sbow-split') ;
 
 dirTrain=dir(fullfile(dataDir,'train_category_*.mat'));
 TrainfileNames={dirTrain.name}';
 dirTest=dir(fullfile(dataDir,'valid_category_*.mat'));
 TestfileNames={dirTest.name}';
-    
+
 dataset = 'ImageNet';
 nExperiment = 1;
 nDimArray = [4096];
@@ -21,9 +21,9 @@ normalization.flag = 1;
 normalization.type = 1;
 % -------------------------------------------------------------------------
 %% directory to save the results
-writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
+writefilepath  = ['C:/Users/csjunxu/Desktop/CVPR2018 Classification/Results/' dataset '/'];
 if ~isdir(writefilepath)
-mkdir(writefilepath);
+    mkdir(writefilepath);
 end
 % -------------------------------------------------------------------------
 %% choosing classification methods
@@ -31,8 +31,8 @@ end
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
-% ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-ClassificationMethod = 'NNLSR' ; % non-negative LSR
+ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\CVPR2018 Classification\ProCRC'));
+% ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
@@ -56,12 +56,12 @@ ClassificationMethod = 'NNLSR' ; % non-negative LSR
 %     %tr_dat_ci.descrs = tr_dat_ci.descrs(:,1:300);
 %     tr_dat_ci_descrs = double(tr_dat_ci.descrs');
 %     tr_dat_ci_labels = tr_dat_ci.labels';
-%     
+%
 %     tt_dat_ci = load(fullfile(dataDir,TestfileNames{ci}));
 %     %tt_dat_ci.descrs = tt_dat_ci.descrs(:,1:300);
 %     tt_dat_ci_descrs = double(tt_dat_ci.descrs');
 %     tt_dat_ci_labels = tt_dat_ci.labels';
-%     
+%
 %     if normalization.flag
 %         if normalization.type == 1
 %             tr_dat_ci_descrs = tr_dat_ci_descrs./( repmat(sqrt(sum(tr_dat_ci_descrs.*tr_dat_ci_descrs)+eps), [size(tr_dat_ci_descrs,1),1]) );
@@ -73,7 +73,7 @@ ClassificationMethod = 'NNLSR' ; % non-negative LSR
 %     iind2 = 1-isnan(tt_dat_ci_descrs);
 %     tt_dat_ci_labels = tt_dat_ci_labels(logical(iind2(1,:)));
 %     tt_dat_ci_descrs = tt_dat_ci_descrs(:,logical(iind2(1,:)));
-%     
+%
 %     %     %tr_dat_ci           =    tr_dat(:,trls==ci);
 %     %     [Dini_ci,~,mean_ci] =    Eigenface_f(tr_dat_ci_descrs,num_atom_ci-1);
 %     %     Dini_ci             =    [Dini_ci mean_ci./norm(mean_ci)];
@@ -84,21 +84,21 @@ ClassificationMethod = 'NNLSR' ; % non-negative LSR
 %     %D_ci                =     tr_dat_ci_descrs;
 %     D                   =    [D D_ci];
 %     labelD              =    [labelD ci*ones(1,size(D_ci,2))];
-%     
+%
 %     tt_dat              =    [tt_dat tt_dat_ci_descrs];
 %     ttls                =    [ttls tt_dat_ci_labels];
 %     elapsed_time        =    toc;
 %     fprintf(['Sub-dictionary for category_',num2str(ci),' is finished in ', num2str(elapsed_time),'s','\n'])
 % end
-% 
+%
 % tr_dat = D;
 % trls = labelD;
 % save C:\Users\csjunxu\Desktop\Classification\Dataset\trdata.mat tr_dat trls;
 % save C:\Users\csjunxu\Desktop\Classification\Dataset\ttdata.mat tt_dat ttls;
 % clear D labelD;
 
-load 'C:\Users\csjunxu\Desktop\Classification\Dataset\imagenet_trdata.mat';
-load 'C:\Users\csjunxu\Desktop\Classification\Dataset\imagenet_ttdata.mat';
+load 'C:\Users\csjunxu\Desktop\CVPR2018 Classification\Dataset\imagenet_trdata.mat';
+load 'C:\Users\csjunxu\Desktop\CVPR2018 Classification\Dataset\imagenet_ttdata.mat';
 
 %-------------------------------------------------------------------------
 %% PCA dimension
@@ -120,18 +120,24 @@ for nDim = nDimArray
                             %--------------------------------------------------------------------------
                             %% data loading
                             [dim, N] = size(tr_dat);
-%                             %--------------------------------------------------------------------------
-%                             %% eigenface extracting
-%                             if Par.nDim == 0 || Par.nDim == dim
-%                                 tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [size(tr_dat,1), 1]) );
-%                                 tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [size(tt_dat,1), 1]) );
-%                             else
-%                                 [disc_set,disc_value,Mean_Image]  =  Eigenface_f(Tr_DAT,Par.nDim);
-%                                 tr_dat  =  disc_set'*tr_dat;
-%                                 tt_dat  =  disc_set'*tt_dat;
-%                                 tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [Par.nDim,1]) );
-%                                 tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
-%                             end
+                            [D, N] = size(tr_dat);
+                            if N < D
+                                XTXinv = (tr_dat' * tr_dat + Par.rho/2 * eye(N))\eye(N);
+                            else
+                                XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
+                            end
+                            %                             %--------------------------------------------------------------------------
+                            %                             %% eigenface extracting
+                            %                             if Par.nDim == 0 || Par.nDim == dim
+                            %                                 tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [size(tr_dat,1), 1]) );
+                            %                                 tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [size(tt_dat,1), 1]) );
+                            %                             else
+                            %                                 [disc_set,disc_value,Mean_Image]  =  Eigenface_f(Tr_DAT,Par.nDim);
+                            %                                 tr_dat  =  disc_set'*tr_dat;
+                            %                                 tt_dat  =  disc_set'*tt_dat;
+                            %                                 tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [Par.nDim,1]) );
+                            %                                 tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
+                            %                             end
                             %-------------------------------------------------------------------------
                             %% testing
                             class_num = max(trls);
@@ -167,7 +173,7 @@ for nDim = nDimArray
                                             Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
                                             coef         =  Proj_M*tt_dat(:,indTest);
                                         case 'NNLSR'                   % non-negative
-                                            coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                            coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                         case 'NPLSR'               % non-positive
                                             coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
                                         case 'ANNLSR'                 % affine, non-negative, sum to 1
