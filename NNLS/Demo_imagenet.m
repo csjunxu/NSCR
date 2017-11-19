@@ -147,11 +147,11 @@ for nDim = nDimArray
                                 % ID = croc_cvpr12_v0(tt_dat, tr_dat, trls, Par.lambda, weight);
                             elseif strcmp(ClassificationMethod, 'ProCRC') == 1
                                 global params
-                                set_params(dataset);
-                                %                                 params.model_type        =      'ProCRC';
-                                %                                 params.gamma             =     Par.rho; % [1e-2];
-                                %                                 params.lambda            =      Par.lambda; % [1e-0];
-                                %                                 params.class_num         =      max(trls);
+                                % set_params(dataset);
+                                params.model_type        =      'ProCRC';
+                                params.gamma             =     Par.rho; % [1e-2];
+                                params.lambda            =      Par.lambda; % [1e-0];
+                                params.class_num         =      max(trls);
                                 data.tr_descr = tr_dat;
                                 data.tt_descr = tt_dat;
                                 data.tr_label = trls;
