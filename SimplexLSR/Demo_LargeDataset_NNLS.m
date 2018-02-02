@@ -52,11 +52,11 @@ end
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-ClassificationMethod = 'NNLSR' ; % non-negative LSR
+% ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
-% ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
+ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 % ClassificationMethod = 'ADANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'ADANPLSR' ; % deformable, affine and non-positive LSR
@@ -67,14 +67,14 @@ for nDim = nDimArray
     for nSample = SampleArray
         %-------------------------------------------------------------------------
         %% tuning the parameters
-        for s = [1]
+        for s = [1:-.1:.1]
             Par.s = s;
-            for maxIter = [1:1:20]
-                Par.maxIter  = maxIter;
-                for rho = [10.2:.2:15]
-                    Par.rho = rho;
-                    for lambda = [0]
-                        Par.lambda = lambda;
+            for rho = [.2:.2:10]
+                Par.rho = rho;
+                for lambda = [0:.1:1]
+                    Par.lambda = lambda;
+                    for maxIter = [1:1:20]
+                        Par.maxIter  = maxIter;
                         accuracy = zeros(nExperiment, 1) ;
                         for n = 1:nExperiment
                             existID  = ['TempID_' dataset '_' ClassificationMethod '_D' num2str(Par.nDim) '_s' num2str(Par.s) '_mIte' num2str(Par.maxIter) '_r' num2str(Par.rho) '_l' num2str(Par.lambda)  '_' num2str(nExperiment) '.mat'];
