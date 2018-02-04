@@ -5,7 +5,7 @@ addpath('C:\Users\csjunxu\Desktop\CVPR2018 SC\Datasets\MNISThelpcode');
 addpath('C:\Users\csjunxu\Desktop\CVPR2018 SC\2016 CVPR SSCOMP\scatnet-0.2');
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'USPS';
+dataset = 'MNIST';
 % MNIST
 % USPS
 % -------------------------------------------------------------------------

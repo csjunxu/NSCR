@@ -9,7 +9,7 @@ if NN<=Train_NUM % not small sample size case
    Mean_Image=mean(Train_SET,2);  
    Train_SET=Train_SET-Mean_Image*ones(1,Train_NUM);
    R=Train_SET*Train_SET'/(Train_NUM-1);
-   
+    
    [V,S]=Find_K_Max_Eigen(R,Eigen_NUM);
    disc_value=S;
    disc_set=V;
@@ -34,7 +34,7 @@ else % for small sample size case
   end
 
 end
-
+ 
 function [Eigen_Vector,Eigen_Value]=Find_K_Max_Eigen(Matrix,Eigen_NUM)
 
 [NN,NN]=size(Matrix);
