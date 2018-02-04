@@ -27,7 +27,7 @@ ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 if strcmp(dataset, 'YaleBCrop025') == 1 ...
         || strcmp(dataset, 'GTfaceCrop') == 1
     nExperiment = 10;
-    nDimArray = [84 150 300];
+    nDimArray = 300; %[84 150 300];
 elseif strcmp(dataset, 'ORLfaceCrop') == 1
     nExperiment = 10;
     nDimArray = [84 150 200];
@@ -50,11 +50,11 @@ for nDim = nDimArray
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1:-.1:.1]
+    for s = [2:-.2:.2]
         Par.s = s;
-        for rho = [.1:.1:1]
+        for rho = [.5:.5:10]
             Par.rho = rho;
-            for lambda = [0:.1:1]
+            for lambda = [.5:.5:10]
                 Par.lambda = lambda;
                 for maxIter = [1:1:10]
                     Par.maxIter  = maxIter;
