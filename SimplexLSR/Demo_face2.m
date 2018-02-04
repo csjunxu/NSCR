@@ -27,7 +27,7 @@ ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 if strcmp(dataset, 'YaleBCrop025') == 1 ...
         || strcmp(dataset, 'GTfaceCrop') == 1
     nExperiment = 10;
-    nDimArray = 300; %[84 150 300];
+    nDimArray = [84 150 300];
 elseif strcmp(dataset, 'ORLfaceCrop') == 1
     nExperiment = 10;
     nDimArray = [84 150 200];
