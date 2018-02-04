@@ -1,5 +1,5 @@
 clear
-dataset = 'AR_DAT';
+dataset = 'YaleBCrop025';
 % AR_DAT
 % YaleBCrop025
 %% directory to save the results
@@ -13,8 +13,8 @@ Acc = [];
 for i = 1:im_num
     result = fullfile(Original_image_dir, im_dir(i).name);
     eval(['load ' num2str(result)]);
-    Acc = [Acc accuracy];
+    Acc = [Acc avgacc];
 end
-maxAcc = max(Acc);
- fprintf('%s : maxAcc = %2.4f: ', im_dir(i).name, maxAcc);
+[maxAcc, index] = max(Acc);
+ fprintf('%s : \n maxAcc = %2.4f: ', im_dir(index).name, maxAcc);
                              
