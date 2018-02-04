@@ -117,15 +117,6 @@ for nDim = nDimArray
                         Par.lambda = lambda;
                         accuracy = zeros(nExperiment, 1) ;
                         for n = 1:nExperiment
-                            %--------------------------------------------------------------------------
-                            %% data loading
-                            [dim, N] = size(tr_dat);
-                            [D, N] = size(tr_dat);
-                            if N < D
-                                XTXinv = (tr_dat' * tr_dat + Par.rho/2 * eye(N))\eye(N);
-                            else
-                                XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
-                            end
                             %                             %--------------------------------------------------------------------------
                             %                             %% eigenface extracting
                             %                             if Par.nDim == 0 || Par.nDim == dim
@@ -138,6 +129,15 @@ for nDim = nDimArray
                             %                                 tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [Par.nDim,1]) );
                             %                                 tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
                             %                             end
+                            %--------------------------------------------------------------------------
+                            %% data loading
+                            [dim, N] = size(tr_dat);
+                            [D, N] = size(tr_dat);
+                            if N < D
+                                XTXinv = (tr_dat' * tr_dat + Par.rho/2 * eye(N))\eye(N);
+                            else
+                                XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
+                            end
                             %-------------------------------------------------------------------------
                             %% testing
                             class_num = max(trls);
