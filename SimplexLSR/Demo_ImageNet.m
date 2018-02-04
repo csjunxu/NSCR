@@ -1,5 +1,5 @@
 clear
-% maxNumCompThreads(1);
+maxNumCompThreads(1);
 warning off;
 
 addpath('C:\Users\csjunxu\Desktop\CVPR2018 Classification\Dataset');
@@ -31,12 +31,12 @@ end
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
-ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\CVPR2018 Classification\ProCRC'));
+% ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\CVPR2018 Classification\ProCRC'));
 % ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
-% ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
+ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 % ClassificationMethod = 'ADANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'ADANPLSR' ; % deformable, affine and non-positive LSR
@@ -107,13 +107,13 @@ for nDim = nDimArray
     for nSample = SampleArray
         %-------------------------------------------------------------------------
         %% tuning the parameters
-        for s = [1]
+        for s = [.7:.1:1.5]
             Par.s = s;
-            for maxIter = [3:1:5]
+            for maxIter = [1:1:10]
                 Par.maxIter  = maxIter;
-                for rho = [.2:.2:.8]
+                for rho = [.2:.2:1]
                     Par.rho = rho;
-                    for lambda = [0]
+                    for lambda = [0:.1:1]
                         Par.lambda = lambda;
                         accuracy = zeros(nExperiment, 1) ;
                         for n = 1:nExperiment
@@ -175,19 +175,19 @@ for nDim = nDimArray
                                         case 'NNLSR'                   % non-negative
                                             coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                         case 'NPLSR'               % non-positive
-                                            coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                            coef = NPLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                         case 'ANNLSR'                 % affine, non-negative, sum to 1
-                                            coef = ANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                            coef = ANNLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                         case 'ANPLSR'             % affine, non-negative, sum to -1
-                                            coef = ANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                            coef = ANPLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                         case 'DANNLSR'                 % affine, non-negative, sum to a scalar s
-                                            coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                            coef = DANNLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                         case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
-                                            coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                            coef = DANPLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                         case 'ADANNLSR'                 % affine, non-negative, sum to a scalar s
-                                            coef = ADANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                            coef = ADANNLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                         case 'ADANPLSR'             % affine, non-positive, sum to a scalar -s
-                                            coef = ADANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                            coef = ADANPLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                     end
                                     % -------------------------------------------------------------------------
                                     %% assign the class  index
