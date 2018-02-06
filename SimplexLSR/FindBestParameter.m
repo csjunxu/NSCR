@@ -1,5 +1,5 @@
 clear
-dataset = 'YaleBCrop025';
+dataset = 'AR_DAT';
 % AR_DAT
 % YaleBCrop025
 %% directory to save the results
