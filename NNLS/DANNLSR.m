@@ -55,17 +55,17 @@ while  ( ~terminate )
     %     %% update rho the penalty parameter scalar
     %     Par.rho = min(1e4, Par.mu * Par.rho);
     
-%     %% computing errors
-%     err1(iter+1) = errorCoef(C, A);
-%     err2(iter+1) = errorLinSys(Y, X, A);
-%     if (  (err1(iter+1) <=tol && err2(iter+1)<=tol) ||  iter >= Par.maxIter  )
-%         terminate = true;
-%         fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
-%     else
-%         if (mod(iter, Par.maxIter)==0)
-%             fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
-%         end
-%     end
+    %% computing errors
+    err1(iter+1) = errorCoef(C, A);
+    err2(iter+1) = errorLinSys(Y, X, A);
+    if (  (err1(iter+1) <=tol && err2(iter+1)<=tol) ||  iter >= Par.maxIter  )
+        terminate = true;
+        fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
+    else
+        if (mod(iter, Par.maxIter)==0)
+            fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
+        end
+    end
     
     %         %% convergence conditions
     %     objErr(iter) = norm( X - X*C, 'fro' ) + Par.lambda * norm(C, Par.p);
