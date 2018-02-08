@@ -1,4 +1,6 @@
 clear;
+maxNumCompThreads(1);
+warning off;
 addpath('C:\Users\csjunxu\Desktop\SC\Datasets\MNISThelpcode');
 addpath('C:\Users\csjunxu\Desktop\SC\SSCOMP_Code\scatnet-0.2');
 % -------------------------------------------------------------------------
@@ -7,55 +9,51 @@ dataset = 'MNIST';
 % MNIST
 % USPS
 % -------------------------------------------------------------------------
-%% number of repeations
-if  strcmp(dataset, 'MNIST') == 1
-    nExperiment = 10;
-elseif strcmp(dataset, 'USPS') == 1
-    nExperiment = 10;
-end
-% -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
-ClassificationMethod = 'NNLSR' ; % non-negative LSR
+% ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
-% ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
+ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 % -------------------------------------------------------------------------
 %% directory to save the results
-writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
+writefilepath  = ['C:/Users/csjunxu/Desktop/DANNLSR/Results/' dataset '/'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
 
 %% Settings
-Par.nDim = 500;
 if strcmp(dataset, 'MNIST') == 1
-    SampleArray = 600; %[50 100 300 600];
+    SampleArray = [50 100 300];
+    Par.nDim = 500;
+     nExperiment = 10;
 elseif strcmp(dataset, 'USPS') == 1
     SampleArray = [50 100 200 300];
+    Par.nDim = 100;
+     nExperiment = 10;
 end
 
 for nSample = SampleArray % number of images for each digit
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1]
+    for s = [.8:.1:1.2]
         Par.s = s;
-        for maxIter = [5:-1:1]
+        for maxIter = [1:1:10]
             Par.maxIter  = maxIter;
-            for rho = [1:1:10]
+            for rho = [1:1:8]
                 Par.rho = rho*10^(-1);
-                for lambda = [0]
-                    Par.lambda = lambda*10^(-2);
+                for lambda = [0:.1:1]
+                    Par.lambda = lambda; %*10^(-2);
                     accuracy = zeros(nExperiment, 1) ;
                     for i = 1:nExperiment
                         %--------------------------------------------------------------------------
                         %% data loading
                         if strcmp(dataset, 'MNIST') == 1
                             %% Load data
-                            addpath('C:\Users\csjunxu\Desktop\SC\Datasets\MNIST\')
+                            addpath('C:\Users\csjunxu\Desktop\CVPR2018 SC\Datasets\MNIST\')
                             if ~exist('tr_MNIST_DATA', 'var') || ~exist('tt_MNIST_DATA', 'var')
                                 try
                                     % MNIST_SC_DATA is a D by N matrix. Each column contains a feature
@@ -69,12 +67,12 @@ for nSample = SampleArray % number of images for each digit
                                     tr_MNIST_DATA = loadMNISTImages('train-images.idx3-ubyte');
                                     tr_MNIST_LABEL = loadMNISTLabels('train-labels.idx1-ubyte');
                                     tr_MNIST_C_DATA = SCofDigits(tr_MNIST_DATA);
-                                    save C:\Users\csjunxu\Desktop\SC\Datasets\MNIST\tr_MNIST_C.mat tr_MNIST_C_DATA tr_MNIST_LABEL;
+                                    save C:\Users\csjunxu\Desktop\CVPR2018 SC\Datasets\MNIST\tr_MNIST_C.mat tr_MNIST_C_DATA tr_MNIST_LABEL;
                                     % testing data
                                     tt_MNIST_DATA = loadMNISTImages('t10k-images.idx3-ubyte');
                                     tt_MNIST_LABEL = loadMNISTLabels('t10k-labels.idx1-ubyte');
                                     tt_MNIST_C_DATA = SCofDigits(tt_MNIST_DATA);
-                                    save C:\Users\csjunxu\Desktop\SC\Datasets\MNIST\tt_MNIST_C.mat tt_MNIST_C_DATA tt_MNIST_LABEL;
+                                    save C:\Users\csjunxu\Desktop\CVPR2018 SC\Datasets\MNIST\tt_MNIST_C.mat tt_MNIST_C_DATA tt_MNIST_LABEL;
                                 end
                                 tr_MNIST_DATA = tr_MNIST_C_DATA;
                                 tt_MNIST_DATA = tt_MNIST_C_DATA;
@@ -149,15 +147,15 @@ for nSample = SampleArray % number of images for each digit
                                     coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
 %                                     coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                 case 'NPLSR'               % non-positive
-                                    coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    coef = NPLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 case 'ANNLSR'                 % affine, non-negative, sum to 1
-                                    coef = ANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    coef = ANNLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 case 'ANPLSR'             % affine, non-negative, sum to -1
-                                    coef = ANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    coef = ANPLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 case 'DANNLSR'                 % affine, non-negative, sum to a scalar s
-                                    coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    coef = DANNLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
-                                    coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    coef = DANPLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                             end
                             % -------------------------------------------------------------------------
                             %% assign the class  index
@@ -187,7 +185,7 @@ for nSample = SampleArray % number of images for each digit
                         matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
                         save(matname,'accuracy', 'avgacc');
                     elseif strcmp(ClassificationMethod, 'DANNLSR') == 1 || strcmp(ClassificationMethod, 'DANPLSR') == 1
-                        matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
+                        matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_s' num2str(Par.s) '_Ite' num2str(Par.maxIter) '_r' num2str(Par.rho) '_l' num2str(Par.lambda) '.mat']);
                         save(matname,'accuracy', 'avgacc');
                     end
                 end
