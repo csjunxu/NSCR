@@ -1,8 +1,8 @@
 clear;
 maxNumCompThreads(1);
 warning off;
-addpath('C:\Users\csjunxu\Desktop\SC\Datasets\MNISThelpcode');
-addpath('C:\Users\csjunxu\Desktop\SC\SSCOMP_Code\scatnet-0.2');
+addpath('C:\Users\csjunxu\Desktop\CVPR2018 SC\Datasets\MNISThelpcode');
+addpath('C:\Users\csjunxu\Desktop\CVPR2018 SC\SSCOMP_Code\scatnet-0.2');
 % -------------------------------------------------------------------------
 %% choosing the dataset
 dataset = 'MNIST';

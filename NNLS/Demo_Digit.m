@@ -1,54 +1,50 @@
 clear;
-addpath('C:\Users\csjunxu\Desktop\SC\Datasets\MNISThelpcode');
-addpath('C:\Users\csjunxu\Desktop\SC\SSCOMP_Code\scatnet-0.2');
+addpath('C:\Users\csjunxu\Desktop\CVPR2018 SC\Datasets\MNISThelpcode');
+addpath('C:\Users\csjunxu\Desktop\CVPR2018 SC\SSCOMP_Code\scatnet-0.2');
 % -------------------------------------------------------------------------
 %% choosing the dataset
 dataset = 'USPS';
 % MNIST
 % USPS
 % -------------------------------------------------------------------------
-%% number of repeations
-if  strcmp(dataset, 'MNIST') == 1
-    nExperiment = 10;
-elseif strcmp(dataset, 'USPS') == 1
-    nExperiment = 10;
-end
-% -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
-ClassificationMethod = 'NNLSR' ; % non-negative LSR
+% ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
-% ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
+ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
 % -------------------------------------------------------------------------
 %% directory to save the results
-writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
+writefilepath  = ['C:/Users/csjunxu/Desktop/DANNLSR/Results/' dataset '/'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
 
 %% Settings
-Par.nDim = 500;
 if strcmp(dataset, 'MNIST') == 1
     SampleArray = 600; %[50 100 300 600];
+        Par.nDim = 500;
+     nExperiment = 10;
 elseif strcmp(dataset, 'USPS') == 1
     SampleArray = [50 100 200 300];
+        Par.nDim = 100;
+     nExperiment = 10;
 end
 
 for nSample = SampleArray % number of images for each digit
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [1]
+    for s = [.8:.1:1.2]
         Par.s = s;
-        for maxIter = [5:-1:1]
+        for maxIter = [1:1:10]
             Par.maxIter  = maxIter;
-            for rho = [1:1:10]
+            for rho = [1:1:6]
                 Par.rho = rho*10^(-1);
-                for lambda = [0]
-                    Par.lambda = lambda*10^(-2);
+                for lambda = [0:.1:1]
+                    Par.lambda = lambda; %*10^(-2);
                     accuracy = zeros(nExperiment, 1) ;
                     for i = 1:nExperiment
                         %--------------------------------------------------------------------------
@@ -149,15 +145,15 @@ for nSample = SampleArray % number of images for each digit
                                     coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
 %                                     coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
                                 case 'NPLSR'               % non-positive
-                                    coef = NPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    coef = NPLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 case 'ANNLSR'                 % affine, non-negative, sum to 1
-                                    coef = ANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    coef = ANNLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 case 'ANPLSR'             % affine, non-negative, sum to -1
-                                    coef = ANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    coef = ANPLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 case 'DANNLSR'                 % affine, non-negative, sum to a scalar s
-                                    coef = DANNLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    coef = DANNLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
-                                    coef = DANPLSR( tt_dat(:,indTest), tr_dat, Par );
+                                    coef = DANPLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                             end
                             % -------------------------------------------------------------------------
                             %% assign the class  index
