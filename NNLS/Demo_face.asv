@@ -1,7 +1,7 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-directory = 'C:/Users/csjunxu/Desktop/CVPR2018 Classification/Dataset/';
+directory = 'C:/Users/csjunxu/Desktop/Classification/Dataset/';
 dataset = 'AR_DAT';
 % AR_DAT
 % YaleBCrop025
@@ -37,7 +37,7 @@ elseif strcmp(dataset, 'AR_DAT') == 1
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
-writefilepath  = ['C:/Users/csjunxu/Desktop/CVPR2018 Classification/Results/' dataset '/'];
+writefilepath  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
@@ -54,10 +54,10 @@ for nDim = nDimArray
         Par.s = s;
         for maxIter = [1:1:10]
             Par.maxIter  = maxIter;
-            for rho = [6:-1:-1]
+            for rho = [6:1:4]
                 Par.rho = 10^(-rho);
-                for lambda = [6:-1:-1]
-                    Par.lambda = 10^(-lambda);
+                for lambda = [0]
+                    Par.lambda = lambda;
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
                         %-------------------------------------------------------------------------
