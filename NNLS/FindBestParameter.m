@@ -6,7 +6,7 @@ dataset = 'AR_DAT';
 %% directory to save the results
 Original_image_dir  = ['C:/Users/csjunxu/Desktop/Classification/Results/' dataset '/'];
 Sdir = regexp(Original_image_dir, '/', 'split');
-fpath = fullfile(Original_image_dir, '*.mat');
+fpath = fullfile(Original_image_dir, 'AR_DAT_DANNLSR_DR300*.mat');
 im_dir  = dir(fpath);
 im_num = length(im_dir);
 
