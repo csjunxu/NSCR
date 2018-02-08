@@ -3,7 +3,7 @@ addpath('C:\Users\csjunxu\Desktop\SC\Datasets\MNISThelpcode');
 addpath('C:\Users\csjunxu\Desktop\SC\SSCOMP_Code\scatnet-0.2');
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'MNIST';
+dataset = 'USPS';
 % MNIST
 % USPS
 % -------------------------------------------------------------------------
