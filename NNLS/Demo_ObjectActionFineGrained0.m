@@ -202,7 +202,6 @@ for nDim = nDimArray
                                 t = cputime;
                                 coef = NNLS( tt_dat, tr_dat, XTXinv, Par );
                                 e = cputime-t;
-                                fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
                                 %  coef = NNLSR( tt_dat, tr_dat, Par );
                                 [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
                             else
