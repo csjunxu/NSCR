@@ -1,8 +1,8 @@
 clear;
 % -------------------------------------------------------------------------
 %% choosing the dataset
-directory = 'C:/Users/csjunxu/Desktop/CVPR2018 Classification/Dataset/';
-dataset = 'AR_DAT';
+directory = '';
+dataset = 'YaleBCrop025';
 % AR_DAT
 % YaleBCrop025
 % GTfaceCrop
@@ -14,14 +14,10 @@ dataset = 'AR_DAT';
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
 % ClassificationMethod = 'ProCRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\ProCRC'));
-% ClassificationMethod = 'NNLSR' ; % non-negative LSR
-% ClassificationMethod = 'NPLSR' ; % non-positive LSR
+ClassificationMethod = 'NNLSR' ; % non-negative LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
-% ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
-ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
-% ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
+% ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'ADANNLSR' ; % deformable, affine and non-negative LSR
-% ClassificationMethod = 'ADANPLSR' ; % deformable, affine and non-positive LSR
 % -------------------------------------------------------------------------
 %% number of repeations
 if strcmp(dataset, 'YaleBCrop025') == 1 ...
@@ -37,7 +33,7 @@ elseif strcmp(dataset, 'AR_DAT') == 1
 end
 % -------------------------------------------------------------------------
 %% directory to save the results
-writefilepath  = ['C:/Users/csjunxu/Desktop/CVPR2018 Classification/Results/' dataset '/'];
+writefilepath  = [ dataset '/'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
@@ -50,14 +46,14 @@ for nDim = nDimArray
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [.8:.1:1.2]
+    for s = [0]
         Par.s = s;
-        for maxIter = [1:1:10]
+        for maxIter = [200]
             Par.maxIter  = maxIter;
-            for rho = [6:-1:-1]
+            for rho = [0]
                 Par.rho = 10^(-rho);
-                for lambda = [6:-1:-1]
-                    Par.lambda = 10^(-lambda);
+                for lambda = [0]
+                    Par.lambda = lambda;
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
                         %-------------------------------------------------------------------------
@@ -83,7 +79,7 @@ for nDim = nDimArray
                             trls = [];
                             ttls = [];
                             for i=1:nClass
-                                rng(n);
+                                %rng(n);
                                 RanCi = randperm(nSample);
                                 nTr = floor(length(RanCi)/2);
                                 nTt = length(RanCi) - nTr;
@@ -144,22 +140,9 @@ for nDim = nDimArray
                             coef = NNLS( tt_dat, tr_dat, XTXinv, Par );
                             %  coef = NNLSR( tt_dat, tr_dat, Par );
                             [ID, ~] = PredictIDTop(coef, tr_dat, trls, class_num, Top);
-                        elseif strcmp(ClassificationMethod, 'NPLSR') == 1
-                            coef = NPLSR( tt_dat, tr_dat, XTXinv, Par );
-                            %  coef = NNLSR( tt_dat, tr_dat, Par );
-                            [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
                         elseif strcmp(ClassificationMethod, 'DANNLSR') == 1 % affine, non-negative, sum to a scalar s
                             coef = DANNLSR( tt_dat, tr_dat, XTXinv, Par );
                             [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
-                        elseif strcmp(ClassificationMethod, 'DANPLSR') == 1 % affine, non-positive, sum to a scalar -s
-                            coef = DANPLSR( tt_dat, tr_dat, XTXinv, Par );
-                            [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
-                            %                         elseif strcmp(ClassificationMethod, 'ADANNLSR') == 1 % affine, non-negative, sum to a scalar s
-                            %                             coef = ADANNLSR( tt_dat, tr_dat, XTXinv, Par );
-                            %                             [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
-                            %                         elseif strcmp(ClassificationMethod, 'ADANPLSR') == 1 % affine, non-positive, sum to a scalar -s
-                            %                             coef = ADANPLSR( tt_dat, tr_dat, XTXinv, Par );
-                            %                             [ID, ~] = PredictID(coef, tr_dat, trls, class_num);
                         else
                             % -------------------------------------------------------------------------
                             %% load finished IDs

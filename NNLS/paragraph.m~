@@ -1,0 +1,24 @@
+load ca.mat;
+para = 1:1:50;
+CZ = stopCA(para, 1);
+C = stopA(para, 1);
+Z = stopA(para, 1);
+% set(gca, 'YScale', 'log')
+plot(para,CZ,'--s','LineWidth',1.5,...
+    'MarkerFaceColor','k',...
+    'MarkerSize',3);
+hold all;
+plot(para,C,'-.s','LineWidth',1.5,...
+    'MarkerFaceColor','k',...
+    'MarkerSize',3);
+plot(para,Z,'-s','LineWidth',1.5,...
+    'MarkerFaceColor','k',...
+    'MarkerSize',3);
+axis([1 50 0 0.8e0]);
+legend('|C_{k+1}-Z_{k+1}|','|C_{k+1}-C_{k}|','|Z_{k+1}-Z_{k}|');
+xlabel({'Iteration k'});
+ylabel('Maximal Value');
+grid on;
+% set(gca, 'YScale', 'log')
+
+

@@ -25,8 +25,11 @@ function C = NNLS( Y, X, XTXinv, Par )
 A       = zeros (N, M); % satisfy NN constraint
 C       = A;
 Delta = C - A;
-
+Par.display = 1;
 for iter = 1:Par.maxIter
+    
+    Cpre = C;
+    Apre = A;
     %% update A the coefficient matrix
     A = XTXinv * (X' * Y + Par.rho/2 * C + 0.5 * Delta);
     
@@ -34,9 +37,22 @@ for iter = 1:Par.maxIter
     Q = (A - Delta/Par.rho)/(2*Par.lambda/Par.rho+1);
     C = max(0, Q);
     
+    %% check the convergence conditions
+    stopCA(iter) = max(max(abs(C - A)));
+    stopC(iter) = max(max(abs(C - Cpre)));
+    stopA(iter) = max(max(abs(A - Apre)));
+    if Par.display %&& (iter==1 || mod(iter,10)==0 || stopC<tol)
+        disp(['iter ' num2str(iter), ...
+            ', max(||c-z||)=' num2str(stopCA(iter),'%2.3e') ...
+            ', max(||c-cpre||)=' num2str(stopC(iter),'%2.3e') ...
+            ', max(||z-zpre||)=' num2str(stopA(iter),'%2.3e')]);
+    end
+    
     %% update Deltas the lagrange multiplier matrix
     Delta = Delta + Par.rho * ( C - A);
     
     %     %% update rho the penalty parameter scalar
     %     Par.rho = min(1e4, Par.mu * Par.rho);
 end
+
+return;
