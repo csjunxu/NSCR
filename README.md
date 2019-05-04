@@ -1,5 +1,4 @@
-# Classification
-Codes
+## Sparse, Collaborative, or Nonnegative Representation: Which Helps Pattern Classification?
 
 
 Matlab code for the following paper.
