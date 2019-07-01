@@ -1,4 +1,4 @@
-function C = NNLS( Y, X, XTXinv, Par )
+function C = NRC( Y, X, XTXinv, Par )
 
 % Input
 % y           Testing data matrix
