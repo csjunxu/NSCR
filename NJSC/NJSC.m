@@ -1,4 +1,4 @@
-function c = NCR( y, X, XTXinv, Par )
+function c = NJSC( y, X, XTXinv, Par )
 
 % Input
 % y           Testing data vector
@@ -23,9 +23,9 @@ function c = NCR( y, X, XTXinv, Par )
 %% initialization
 % A       = eye (N);    % satisfy ANN consttraint
 % A   = rand (N);
-a       = zeros (N, 1); % satisfy NN constraint
-c       = a;
-Delta = c - a;
+c     = zeros(N, 1); % satisfy NN constraint
+z     = c;
+Delta = z - c;
 
 %%
 tol   = 1e-4;
@@ -34,15 +34,15 @@ iter    = 1;
 err1(1) = inf; err2(1) = inf;
 terminate = false;
 for iter=1:Par.maxIter
-    %% update A the coefficient matrix
-    a = XTXinv * (X' * y + Par.rho/2 * c + 0.5 * Delta);
+    %% update C the coefficient matrix
+    c = XTXinv * (X' * y + Par.rho/2 * z + 0.5 * Delta-Par.beta/2);
     
     %% update C the data term matrix
-    q = (a - Delta/Par.rho)/(2*Par.lambda/Par.rho+1);
-    c = max(0, q);
+    z = (c - Delta/Par.rho);%/(2*Par.lambda/Par.rho+1);
+    z = max(0, z);
     
     %% update Deltas the lagrange multiplier matrix
-    Delta = Delta + Par.rho * ( c - a);
+    Delta = Delta + Par.rho * ( z - c);
     
     %% update rho the penalty parameter scalar
     Par.rho = min(1e4, Par.mu * Par.rho);

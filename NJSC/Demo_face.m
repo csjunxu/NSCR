@@ -17,7 +17,7 @@ dataset = 'AR_DAT';
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'ADANNLSR' ; % deformable, affine and non-negative LSR
-ClassificationMethod = 'NCR' ; % non-negative LSR
+ClassificationMethod = 'NJSC' ; % non-negative joint sparse and collaborative
 % -------------------------------------------------------------------------
 %% number of repeations
 if strcmp(dataset, 'YaleBCrop025') == 1 ...
@@ -46,16 +46,16 @@ for nDim = nDimArray
     Par.nDim = nDim;
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [0]
-        Par.s = s;
+    for mu = 1
+        Par.mu = mu;
         for maxIter = [1:20]
             Par.maxIter  = maxIter;
-            for mu = 1
-                Par.mu = mu;
-                for rho = [0.001:0.001:0.009 0.01:0.01:0.09 .1:0.1:1]
-                    Par.rho = rho;
-                    for lambda = [0]
-                        Par.lambda = lambda;
+            for rho = [0.001:0.001:0.009 0.01:0.01:0.09 .1:0.1:1]
+                Par.rho = rho;
+                for alpha = [0 0.001:0.001:0.009 0.01:0.01:0.09 .1:0.1:1]
+                    Par.alpha = alpha;
+                    for beta = [0 0.001:0.001:0.009 0.01:0.01:0.09 .1:0.1:1]
+                        Par.beta = beta;
                         accuracy = zeros(nExperiment, 1) ;
                         for n = 1:nExperiment
                             %-------------------------------------------------------------------------
@@ -108,7 +108,7 @@ for nDim = nDimArray
                             %% testing
                             % -------------------------------------------------------------------------
                             %% load finished IDs
-                            existID  = ['TempID_' dataset '_' ClassificationMethod '_D' num2str(Par.nDim) '_s' num2str(Par.s) '_mIte' num2str(Par.maxIter) '_r' num2str(Par.rho) '_l' num2str(Par.lambda)  '_' num2str(nExperiment) '.mat'];
+                            existID  = ['TempID_' dataset '_' ClassificationMethod '_D' num2str(Par.nDim) '_mIte' num2str(Par.maxIter) '_r' num2str(Par.rho) '_a' num2str(Par.alpha) '_b' num2str(Par.beta) '_' num2str(nExperiment) '.mat'];
                             if exist(existID)==2
                                 eval(['load ' existID]);
                             else
@@ -117,14 +117,14 @@ for nDim = nDimArray
                             class_num = max(trls);
                             [D, N] = size(tr_dat);
                             if N < D
-                                XTXinv = (tr_dat' * tr_dat + Par.rho/2 * eye(N))\eye(N);
+                                XTXinv = (tr_dat' * tr_dat + (Par.alpha+Par.rho/2) * eye(N))\eye(N);
                             else
-                                XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
+                                XTXinv = (2/(2*Par.alpha+Par.rho) * eye(N) - (2/(2*Par.alpha+Par.rho))^2 * tr_dat' / (2/(2*Par.alpha+Par.rho) * (tr_dat * tr_dat') + eye(D)) * tr_dat );
                             end
                             %for indTest = size(ID)+1:size(tt_dat,2)
                             t = cputime;
                             %coef = NRC( tt_dat, tr_dat, XTXinv, Par );
-                            coef = NCR( tt_dat, tr_dat, XTXinv, Par );
+                            coef = NJSC( tt_dat, tr_dat, XTXinv, Par );
                             [ID, ~] = PredictIDTop(coef, tr_dat, trls, class_num, Top);
                             e = cputime-t;
                             %fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
@@ -141,10 +141,11 @@ for nDim = nDimArray
                         meanacc = mean(accuracy);
                         fprintf(['Mean Accuracy is ' num2str(meanacc) '.\n']);
                         if strcmp(dataset, 'AR_DAT') == 1 && (nDim == nDimArray(1) && meanacc>=0.86) || (nDim == nDimArray(2) && meanacc>=0.91) || (nDim == nDimArray(3) && meanacc>=0.94)
-                            matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_scale' num2str(Par.s) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
+                            matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_alpha' num2str(Par.alpha) '_beta' num2str(Par.beta) '.mat']);
                             save(matname,'accuracy', 'meanacc');
                         end
                     end
+                    
                 end
             end
         end
