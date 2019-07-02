@@ -14,8 +14,9 @@ dataset = 'USPS';
 % ClassificationMethod = 'NPLSR' ; % non-positive LSR
 % ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
 % ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
-ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
+% ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
 % ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
+ClassificationMethod = 'NJSC' ; % non-negative joint sparse and collaborative
 % -------------------------------------------------------------------------
 %% directory to save the results
 writefilepath  = ['C:/Users/csjunxu/Desktop/DANNLSR/Results/' dataset '/'];
