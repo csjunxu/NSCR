@@ -5,7 +5,7 @@ addpath('/home/csjunxu/Github/SubspaceClusteringMethods/2016 CVPR SSCOMP');
 
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'MNIST';
+dataset = 'USPS';
 % MNIST
 % USPS
 % -------------------------------------------------------------------------
@@ -137,7 +137,7 @@ for nSample = SampleArray % number of images for each digit
                                 XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
                             end
                             for indTest = 1:size(tt_dat,2)
-                                t = cputime;
+                                %                                 t = cputime;
                                 %                             switch ClassificationMethod
                                 %                                 case 'SRC'
                                 %                                     rel_tol = 0.01;     % relative target duality gap
@@ -149,7 +149,7 @@ for nSample = SampleArray % number of images for each digit
                                 %                                     coef         =  Proj_M*tt_dat(:,indTest);
                                 %                                 case 'NJSC'                   % non-negative
                                 %                                     coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
-                                coef = NJSC( tt_dat(:,indTest), tr_dat, Par );
+                                coef = NJSC( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                                 %                             end
                                 % -------------------------------------------------------------------------
                                 %% assign the class  index
@@ -161,8 +161,8 @@ for nSample = SampleArray % number of images for each digit
                                 index      =  find(error==min(error));
                                 id         =  index(1);
                                 ID      =   [ID id];
-                                e = cputime-t;
-                                fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
+                                %                                 e = cputime-t;
+                                %                                 fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
                             end
                             cornum      =   sum(ID==ttls);
                             accuracy(i, 1)         =   [cornum/length(ttls)]; % recognition rate
@@ -172,9 +172,9 @@ for nSample = SampleArray % number of images for each digit
                         %% save the results
                         avgacc = mean(accuracy);
                         fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                        if strcmp(dataset, 'MNIST') == 1 && meanacc>=0.978
+                        if (strcmp(dataset, 'MNIST') == 1 && avgacc>=0.978) || (strcmp(dataset, 'USPS') == 1 && avgacc>=0.923)
                             matname = sprintf([writefilepath dataset '_' ClassificationMethod '_DR' num2str(Par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_alpha' num2str(Par.alpha) '_beta' num2str(Par.beta) '.mat']);
-                            save(matname,'accuracy', 'meanacc');
+                            save(matname,'accuracy', 'avgacc');
                         end
                     end
                 end
