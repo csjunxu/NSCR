@@ -203,7 +203,7 @@ for nDim = nDimArray
                             %% save the results
                             avgacc = mean(accuracy);
                             fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                            if davgacc>=0.30
+                            if avgacc>=0.30
                                 matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_a' num2str(Par.alpha) '_b' num2str(Par.beta) '.mat']);
                                 save(matname,'accuracy', 'avgacc');
                             end
