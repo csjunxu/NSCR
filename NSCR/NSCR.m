@@ -21,19 +21,16 @@ function z = NSCR( y, X, XTXinv, Par )
 [D, N] = size (X);
 
 %% initialization
-% A       = eye (N);    % satisfy ANN consttraint
-% A   = rand (N);
+% c       = eye (N);    % satisfy ANN consttraint
+% c   = rand (N);
 c     = zeros(N, 1); % satisfy NN constraint
 z     = c;
 Delta = z - c;
 
 %%
-tol   = 1e-4;
-% objErr = zeros(Par.maxIter, 1);
-err0(1) = inf; err1(1) = inf; err2(1) = inf; err3(1) = inf;
-terminate = false;
-iter    = 1;
-while ~terminate
+%tol   = 1e-4;
+%err0(1) = inf; err1(1) = inf; err2(1) = inf; err3(1) = inf;
+for iter = 1:Par.maxIter
     Prec=c;
     Prez=z;
     %% update C the coefficient matrix
@@ -50,29 +47,17 @@ while ~terminate
     % Par.rho = min(1e4, Par.mu * Par.rho);
     
     %% computing errors
-    err1(iter+1) = errorCoef(c, z);
-    err2(iter+1) = errorCoef(c, Prec);
-    err3(iter+1) = errorCoef(z, Prez);
-    err0(iter+1) = errorLinSys(y, X, z);
-    if (  (err1(iter+1) <= tol && err2(iter+1) <= tol && err32(iter+1) <= tol && err0(iter+1) <= tol) ||  iter >= Par.maxIter  )
-        terminate = true;
-        fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
-    else
-        if (mod(iter, Par.maxIter)==0)
-            fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
-        end
-    end
-    
-    %     %% convergence conditions
-    %     objErr(iter) = norm( y - X*C, 'fro' );
-    %     fprintf('[%d] : objErr: %f \n', iter, objErr(iter));
-    %     if ( iter>=2 && mod(iter, 10) == 0 || stopCC < 1e-4)
-    %         stopCC = max(max(abs(objErr(iter) - objErr(iter-1))));
-    %         disp(['iter ' num2str(iter) ',stopADMM=' num2str(stopCC,'%2.6e')]);
-    %         if stopCC < tol
-    %             break;
+    %     err1(iter+1) = errorCoef(c, z);
+    %     err2(iter+1) = errorCoef(c, Prec);
+    %     err3(iter+1) = errorCoef(z, Prez);
+    %     err0(iter+1) = errorLinSys(y, X, z);
+    %     if (  (err1(iter+1) <= tol && err2(iter+1) <= tol && err32(iter+1) <= tol && err0(iter+1) <= tol) ||  iter >= Par.maxIter  )
+    %         fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
+    %         break;
+    %     else
+    %         if (mod(iter, Par.maxIter)==0)
+    %             fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
     %         end
     %     end
-    iter = iter + 1;
 end
 end

@@ -34,13 +34,13 @@ for nSample = SampleArray % number of images for each digit
     %% tuning the parameters
     %     for mu = 1
     %         Par.mu = mu;
-    for maxIter = [1:20]
+    for maxIter = [100]
         Par.maxIter  = maxIter;
         for rho = [.1 1 10 100]
             Par.rho = rho;
-            for alpha = [0 0.001 0.01 .1 1]
+            for alpha = [.1 1]
                 Par.alpha = alpha;
-                for beta = [0 0.001 0.01 .1 1]
+                for beta = [.1 1]
                     Par.beta = beta;
                     accuracy = zeros(nExperiment, 1) ;
                     for i = 1:nExperiment

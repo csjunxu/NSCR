@@ -37,13 +37,13 @@ for nDim = nDimArray
     %% tuning the parameters
     %     for mu = 1
     %         Par.mu = mu;
-    for maxIter = [100]
+    for maxIter = [7]
         Par.maxIter  = maxIter;
-        for rho = [100]
+        for rho = [0.03]
             Par.rho = rho;
-            for alpha = [1]
+            for alpha = [0 .002 .01 .1 1 10]
                 Par.alpha = alpha;
-                for beta = [1]
+                for beta = [0 .001 .01 .1 1 10]
                     Par.beta = beta;
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
@@ -125,10 +125,9 @@ for nDim = nDimArray
                     %% save the results
                     meanacc = mean(accuracy);
                     fprintf(['Mean Accuracy is ' num2str(meanacc) '.\n']);
-                    if nDim==54 && meanacc>=0.87 || nDim==150 && meanacc>=0.92 || nDim==300 && meanacc>=0.94 
-                        matname = sprintf([writefilepath dataset '_' ClassificationMethod '_z_DR' num2str(Par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_alpha' num2str(Par.alpha) '_beta' num2str(Par.beta) '.mat']);
-                        save(matname,'accuracy', 'meanacc');
-                    end
+                    
+                    matname = sprintf(['../' dataset '_' ClassificationMethod '_z_DR' num2str(Par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_alpha' num2str(Par.alpha) '_beta' num2str(Par.beta) '.mat']);
+                    save(matname,'accuracy', 'meanacc');
                 end
                 
             end

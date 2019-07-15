@@ -41,14 +41,14 @@ for nDim = nDimArray
         %% tuning the parameters
         %         for mu = 1
         %             Par.mu = mu;
-        for maxIter = [1:20]
-            Par.maxIter  = maxIter;
-        for rho = [.1 1 10 100]
+        for rho = [1 10 100]
             Par.rho = rho;
             for alpha = [0 0.001 0.01 .1 1]
                 Par.alpha = alpha;
                 for beta = [0 0.001 0.01 .1 1]
                     Par.beta = beta;
+                    for maxIter = [1:20]
+                        Par.maxIter  = maxIter;
                         accuracy = zeros(nExperiment, 1) ;
                         for n = 1:nExperiment
                             existID  = ['TempID_' dataset '_' ClassificationMethod '_D' num2str(Par.nDim) '_mIte' num2str(Par.maxIter) '_r' num2str(Par.rho) '_a' num2str(Par.alpha) '_b' num2str(Par.beta)  '_' num2str(nExperiment) '.mat'];
