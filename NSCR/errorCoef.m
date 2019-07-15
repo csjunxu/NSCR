@@ -10,5 +10,5 @@
 
 function err = errorCoef(Z,C)
 
-err = max(max( abs(Z-C) ));
-%err = norm(Z-C,'fro');
+% err = max(max( abs(Z-C) ));
+err = norm(Z-C,'fro');

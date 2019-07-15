@@ -30,33 +30,38 @@ Delta = z - c;
 %%
 tol   = 1e-4;
 % objErr = zeros(Par.maxIter, 1);
-err1(1) = inf; err2(1) = inf;
+err0(1) = inf; err1(1) = inf; err2(1) = inf; err3(1) = inf;
 terminate = false;
-for iter=1:Par.maxIter
+iter    = 1;
+while ~terminate
+    Prec=c;
+    Prez=z;
     %% update C the coefficient matrix
     c = XTXinv * (X' * y + Par.rho/2 * z + 0.5 * Delta-Par.beta/2);
     
     %% update C the data term matrix
-    z = (c - Delta/Par.rho);%/(2*Par.lambda/Par.rho+1);
+    z = (c - Delta/Par.rho);
     z = max(0, z);
     
     %% update Deltas the lagrange multiplier matrix
     Delta = Delta + Par.rho * ( z - c);
     
     %% update rho the penalty parameter scalar
-    Par.rho = min(1e4, Par.mu * Par.rho);
+    % Par.rho = min(1e4, Par.mu * Par.rho);
     
     %% computing errors
-    %err1(iter+1) = errorCoef(c, a);
-    %err2(iter+1) = errorLinSys(y, X, a);
-    %if (  (err1(iter+1) <= 1e-4 && err2(iter+1) <= 1e-4) ||  iter >= Par.maxIter  )
-    %    terminate = true;
-    %    fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
-    %else
-    %    if (mod(iter, Par.maxIter)==0)
-    %        fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
-    %    end
-    %end
+    err1(iter+1) = errorCoef(c, z);
+    err2(iter+1) = errorCoef(c, Prec);
+    err3(iter+1) = errorCoef(z, Prez);
+    err0(iter+1) = errorLinSys(y, X, z);
+    if (  (err1(iter+1) <= tol && err2(iter+1) <= tol && err32(iter+1) <= tol && err0(iter+1) <= tol) ||  iter >= Par.maxIter  )
+        terminate = true;
+        fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
+    else
+        if (mod(iter, Par.maxIter)==0)
+            fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
+        end
+    end
     
     %     %% convergence conditions
     %     objErr(iter) = norm( y - X*C, 'fro' );
@@ -68,4 +73,6 @@ for iter=1:Par.maxIter
     %             break;
     %         end
     %     end
+    iter = iter + 1;
+end
 end

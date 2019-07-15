@@ -1,59 +1,50 @@
 clear;
+addpath('/home/csjunxu/Github/SubspaceClusteringMethods/2016 CVPR SSCOMP/MNISThelpcode');
+addpath('/home/csjunxu/Github/SubspaceClusteringMethods/2016 CVPR SSCOMP/scatnet-0.2');
+addpath('/home/csjunxu/Github/SubspaceClusteringMethods/2016 CVPR SSCOMP');
 maxNumCompThreads(1);
-warning off;
-addpath('C:\Users\csjunxu\Desktop\CVPR2018 SC\Datasets\MNISThelpcode');
-addpath('C:\Users\csjunxu\Desktop\CVPR2018 SC\SSCOMP_Code\scatnet-0.2');
 % -------------------------------------------------------------------------
 %% choosing the dataset
-dataset = 'MNIST';
-% MNIST
-% USPS
+dataset = 'USPS';
 % -------------------------------------------------------------------------
 %% choosing classification methods
 % ClassificationMethod = 'SRC'; addpath(genpath('l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
-% ClassificationMethod = 'NNLSR' ; % non-negative LSR
-% ClassificationMethod = 'NPLSR' ; % non-positive LSR
-% ClassificationMethod = 'ANNLSR' ; % affine and non-negative LSR
-% ClassificationMethod = 'ANPLSR' ; % affine and non-positive LSR
-ClassificationMethod = 'DANNLSR' ; % deformable, affine and non-negative LSR
-% ClassificationMethod = 'DANPLSR' ; % deformable, affine and non-positive LSR
+% ClassificationMethod = 'NRC' ; % non-negative collaborative
+ClassificationMethod = 'NSCR' ; % non-negative sparse and collaborative
 % -------------------------------------------------------------------------
 %% directory to save the results
-writefilepath  = ['C:/Users/csjunxu/Desktop/DANNLSR/Results/' dataset '/'];
+writefilepath  = ['../../data/classification/' dataset '/'];
 if ~isdir(writefilepath)
     mkdir(writefilepath);
 end
 
 %% Settings
-if strcmp(dataset, 'MNIST') == 1
-    SampleArray = [50 100 300];
-    Par.nDim = 500;
-     nExperiment = 10;
-elseif strcmp(dataset, 'USPS') == 1
-    SampleArray = [50 100 200 300];
-    Par.nDim = 100;
-     nExperiment = 10;
-end
+SampleArray = [50 100 200 300];
+Par.nDim = 100;
+nExperiment = 10;
 
 for nSample = SampleArray % number of images for each digit
     %-------------------------------------------------------------------------
     %% tuning the parameters
-    for s = [.8:.1:1.2]
-        Par.s = s;
-        for maxIter = [1:1:10]
-            Par.maxIter  = maxIter;
-            for rho = [1:1:8]
-                Par.rho = rho*10^(-1);
-                for lambda = [0:.1:1]
-                    Par.lambda = lambda; %*10^(-2);
+    %     for mu = 1
+    %         Par.mu = mu;
+    for maxIter = [1:20]
+        Par.maxIter  = maxIter;
+        for rho = [1 10 100]
+            Par.rho = rho;
+            for alpha = [0 0.001 0.01 .1 1]
+                Par.alpha = alpha;
+                for beta = [0 0.001 0.01 .1 1]
+                    Par.beta = beta;
                     accuracy = zeros(nExperiment, 1) ;
+                    
                     for i = 1:nExperiment
                         %--------------------------------------------------------------------------
                         %% data loading
                         if strcmp(dataset, 'MNIST') == 1
                             %% Load data
-                            addpath('C:\Users\csjunxu\Desktop\CVPR2018 SC\Datasets\MNIST\')
+                            addpath('../../data/classification/MNIST/')
                             if ~exist('tr_MNIST_DATA', 'var') || ~exist('tt_MNIST_DATA', 'var')
                                 try
                                     % MNIST_SC_DATA is a D by N matrix. Each column contains a feature
@@ -67,12 +58,12 @@ for nSample = SampleArray % number of images for each digit
                                     tr_MNIST_DATA = loadMNISTImages('train-images.idx3-ubyte');
                                     tr_MNIST_LABEL = loadMNISTLabels('train-labels.idx1-ubyte');
                                     tr_MNIST_C_DATA = SCofDigits(tr_MNIST_DATA);
-                                    save C:\Users\csjunxu\Desktop\CVPR2018 SC\Datasets\MNIST\tr_MNIST_C.mat tr_MNIST_C_DATA tr_MNIST_LABEL;
+                                    save ../../data/classification/MNIST/tr_MNIST_C.mat tr_MNIST_C_DATA tr_MNIST_LABEL;
                                     % testing data
                                     tt_MNIST_DATA = loadMNISTImages('t10k-images.idx3-ubyte');
                                     tt_MNIST_LABEL = loadMNISTLabels('t10k-labels.idx1-ubyte');
                                     tt_MNIST_C_DATA = SCofDigits(tt_MNIST_DATA);
-                                    save C:\Users\csjunxu\Desktop\CVPR2018 SC\Datasets\MNIST\tt_MNIST_C.mat tt_MNIST_C_DATA tt_MNIST_LABEL;
+                                    save ../../data/classification/MNIST/tt_MNIST_C.mat tt_MNIST_C_DATA tt_MNIST_LABEL;
                                 end
                                 tr_MNIST_DATA = tr_MNIST_C_DATA;
                                 tt_MNIST_DATA = tt_MNIST_C_DATA;
@@ -82,7 +73,7 @@ for nSample = SampleArray % number of images for each digit
                             tt_DATA = tt_MNIST_DATA;
                             tt_LABEL = tt_MNIST_LABEL'+1;
                         elseif strcmp(dataset, 'USPS')==1
-                            load('C:\Users\csjunxu\Desktop\CVPR2018 SC\Datasets\USPS');
+                            load('../../data/classification/USPS');
                             tr_DATA = double(fea(1:7291, :)');
                             tr_LABEL = gnd(1:7291)';
                             tt_DATA = double(fea(7292:end, :)');
@@ -126,37 +117,27 @@ for nSample = SampleArray % number of images for each digit
                         %-------------------------------------------------------------------------
                         %% testing
                         ID = [];
-                         [D, N] = size(tr_dat);
-                            if N < D
-                                XTXinv = (tr_dat' * tr_dat + Par.rho/2 * eye(N))\eye(N);
-                            else
-                                XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
-                            end
+                        [D, N] = size(tr_dat);
+                        if N < D
+                            XTXinv = (tr_dat' * tr_dat + Par.rho/2 * eye(N))\eye(N);
+                        else
+                            XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
+                        end
                         for indTest = 1:size(tt_dat,2)
-                            t = cputime;
-                            switch ClassificationMethod
-                                case 'SRC'
-                                    rel_tol = 0.01;     % relative target duality gap
-                                    [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
-                                case 'CRC'
-                                    Par.lambda = .001 * size(Tr_DAT,2)/700;
-                                    %projection matrix computing
-                                    Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
-                                    coef         =  Proj_M*tt_dat(:,indTest);
-                                case 'NNLSR'                   % non-negative
-                                    coef = NNLS( tt_dat(:,indTest), tr_dat, XTXinv, Par );
-%                                     coef = NNLSR( tt_dat(:,indTest), tr_dat, Par );
-                                case 'NPLSR'               % non-positive
-                                    coef = NPLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
-                                case 'ANNLSR'                 % affine, non-negative, sum to 1
-                                    coef = ANNLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
-                                case 'ANPLSR'             % affine, non-negative, sum to -1
-                                    coef = ANPLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
-                                case 'DANNLSR'                 % affine, non-negative, sum to a scalar s
-                                    coef = DANNLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
-                                case 'DANPLSR'             % affine, non-positive, sum to a scalar -s
-                                    coef = DANPLSR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
-                            end
+                            % t = cputime;
+                            % switch ClassificationMethod
+                            % case 'SRC'
+                            %     rel_tol = 0.01;     % relative target duality gap
+                            %     [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
+                            % case 'CRC'
+                            %     Par.lambda = .001 * size(Tr_DAT,2)/700;
+                            %     %projection matrix computing
+                            %     Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
+                            %     coef         =  Proj_M*tt_dat(:,indTest);
+                            % case 'NRC'                   % non-negative
+                            % coef = NRC( tt_dat(:,indTest), tr_dat, XTXinv, Par );
+                            coef = NSCR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
+                            % end
                             % -------------------------------------------------------------------------
                             %% assign the class  index
                             for ci = 1:max(trls)
@@ -167,8 +148,8 @@ for nSample = SampleArray % number of images for each digit
                             index      =  find(error==min(error));
                             id         =  index(1);
                             ID      =   [ID id];
-                            e = cputime-t;
-                            fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
+                            %                                 e = cputime-t;
+                            %                                 fprintf([num2str(indTest) '/' num2str(size(tt_dat,2)) ': ' num2str(e) '\n']);
                         end
                         cornum      =   sum(ID==ttls);
                         accuracy(i, 1)         =   [cornum/length(ttls)]; % recognition rate
@@ -178,14 +159,8 @@ for nSample = SampleArray % number of images for each digit
                     %% save the results
                     avgacc = mean(accuracy);
                     fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
-                    if strcmp(ClassificationMethod, 'SRC') == 1 || strcmp(ClassificationMethod, 'CRC') == 1
-                        matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_lambda' num2str(Par.lambda) '.mat']);
-                        save(matname, 'accuracy', 'avgacc');
-                    elseif strcmp(ClassificationMethod, 'NNLSR') == 1 || strcmp(ClassificationMethod, 'NPLSR') == 1 || strcmp(ClassificationMethod, 'ANNLSR') == 1 || strcmp(ClassificationMethod, 'ANPLSR') == 1
-                        matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_lambda' num2str(Par.lambda) '.mat']);
-                        save(matname,'accuracy', 'avgacc');
-                    elseif strcmp(ClassificationMethod, 'DANNLSR') == 1 || strcmp(ClassificationMethod, 'DANPLSR') == 1
-                        matname = sprintf([writefilepath dataset '_' num2str(nSample(1)) '_' num2str(nExperiment) '_' ClassificationMethod '_DR' num2str(Par.nDim) '_s' num2str(Par.s) '_Ite' num2str(Par.maxIter) '_r' num2str(Par.rho) '_l' num2str(Par.lambda) '.mat']);
+                    if  avgacc>=0.923
+                        matname = sprintf([writefilepath dataset '_' ClassificationMethod '_z_DR' num2str(Par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_alpha' num2str(Par.alpha) '_beta' num2str(Par.beta) '.mat']);
                         save(matname,'accuracy', 'avgacc');
                     end
                 end
@@ -193,6 +168,6 @@ for nSample = SampleArray % number of images for each digit
         end
     end
 end
-
+% end
 
 

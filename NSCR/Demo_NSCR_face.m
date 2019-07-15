@@ -1,11 +1,13 @@
 clear;
-maxNumCompThreads(1);
 %% choosing the dataset
 directory = '../../data/classification/';
-dataset = 'YaleBCrop025';
+dataset = 'AR_DAT';
 % AR_DAT
 % YaleBCrop025
+% GTfaceCrop
+% ORLfaceCrop
 %% choosing classification methods
+% ClassificationMethod = 'NSC';
 % ClassificationMethod = 'SRC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\l1_ls_matlab'));
 % ClassificationMethod = 'CRC';
 % ClassificationMethod = 'CROC'; addpath(genpath('C:\Users\csjunxu\Desktop\Classification\CROC CVPR2012'));
@@ -16,13 +18,13 @@ ClassificationMethod = 'NSCR' ; % non-negative sparse and collaborative
 if strcmp(dataset, 'YaleBCrop025') == 1 ...
         || strcmp(dataset, 'GTfaceCrop') == 1
     nExperiment = 10;
-    nDimArray = 300; %[84 150 300];
+    nDimArray = 84; %[84 150 300];
 elseif strcmp(dataset, 'ORLfaceCrop') == 1
     nExperiment = 10;
     nDimArray = [84 150 200];
 elseif strcmp(dataset, 'AR_DAT') == 1
     nExperiment = 1;
-    nDimArray = 300;%[54 120 300];
+    nDimArray = [54 120 300];
 end
 %% directory to save the results
 writefilepath  = [ directory dataset '_results/'];
@@ -34,21 +36,23 @@ Top = 1;
 %% PCA dimension
 for nDim = nDimArray
     Par.nDim = nDim;
-    %% tuning the parameters
+     %% tuning the parameters
     %     for mu = 1
     %         Par.mu = mu;
-    for maxIter = [100]
+    for maxIter = [1:20]
         Par.maxIter  = maxIter;
-        for rho = [100]
+        for rho = [.1 1 10 100]
             Par.rho = rho;
-            for alpha = [1]
+            for alpha = [0 0.001 0.01 .1 1]
                 Par.alpha = alpha;
-                for beta = [1]
+                for beta = [0 0.001 0.01 .1 1]
                     Par.beta = beta;
                     accuracy = zeros(nExperiment, 1) ;
                     for n = 1:nExperiment
+                        %-------------------------------------------------------------------------
                         %% data loading
                         load([directory dataset]);
+                        %-------------------------------------------------------------------------
                         %% pre-processing
                         if strcmp(dataset, 'AR_DAT') == 1
                             nClass        =   max(trainlabels); % the number of classes in the subset of AR database
@@ -79,6 +83,7 @@ for nDim = nDimArray
                             end
                             clear Y I Ind s
                         end
+                        %--------------------------------------------------------------------------
                         %% eigenface extracting
                         if Par.nDim == 0
                             tr_dat  =  Tr_DAT./( repmat(sqrt(sum(Tr_DAT.*Tr_DAT)), [size(Tr_DAT,1), 1]) );
@@ -90,6 +95,7 @@ for nDim = nDimArray
                             tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [Par.nDim,1]) );
                             tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
                         end
+                        %-------------------------------------------------------------------------
                         %% testing
                         % -------------------------------------------------------------------------
                         %% load finished IDs
