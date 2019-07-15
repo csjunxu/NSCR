@@ -1,4 +1,4 @@
-function c = NJSC( y, X, XTXinv, Par )
+function z = NSCR( y, X, XTXinv, Par )
 
 % Input
 % y           Testing data vector
