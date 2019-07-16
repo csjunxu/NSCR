@@ -36,11 +36,11 @@ for nSample = SampleArray % number of images for each digit
     %         Par.mu = mu;
     for maxIter = [100]
         Par.maxIter  = maxIter;
-        for rho = [.1 1 10 100]
+        for rho = [10 100]
             Par.rho = rho;
-            for alpha = [.1 1]
+            for alpha = [.1]
                 Par.alpha = alpha;
-                for beta = [.1 1]
+                for beta = [.1]
                     Par.beta = beta;
                     accuracy = zeros(nExperiment, 1) ;
                     for i = 1:nExperiment
@@ -118,29 +118,32 @@ for nSample = SampleArray % number of images for each digit
                         tt_dat  =  disc_set'*Tt_DAT;
                         tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [Par.nDim,1]) );
                         tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
+                        save figure1.mat tr_dat tt_dat trls ttls
                         %-------------------------------------------------------------------------
                         %% testing
                         ID = [];
                         [D, N] = size(tr_dat);
                         if N < D
-                            XTXinv = (tr_dat' * tr_dat + Par.rho/2 * eye(N))\eye(N);
+                            XTXinv = (tr_dat' * tr_dat + (Par.alpha+Par.rho/2) * eye(N))\eye(N);
                         else
-                            XTXinv = (2/Par.rho * eye(N) - (2/Par.rho)^2 * tr_dat' / (2/Par.rho * (tr_dat * tr_dat') + eye(D)) * tr_dat );
+                            XTXinv = (2/(2*Par.alpha+Par.rho) * eye(N) - (2/(2*Par.alpha+Par.rho))^2 * tr_dat' / (2/(2*Par.alpha+Par.rho) * (tr_dat * tr_dat') + eye(D)) * tr_dat );
                         end
                         for indTest = 1:size(tt_dat,2)
                             % t = cputime;
                             % switch ClassificationMethod
                             % case 'SRC'
-                            %     rel_tol = 0.01;     % relative target duality gap
-                            %     [coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.lambda, rel_tol);
+                            %addpath(genpath('../l1_ls_matlab'));
+                            %rel_tol = 0.01;     % relative target duality gap
+                            %[coef, status]=l1_ls(tr_dat, tt_dat(:,indTest), Par.alpha, rel_tol);
                             % case 'CRC'
-                            %     Par.lambda = .001 * size(Tr_DAT,2)/700;
-                            %     %projection matrix computing
-                            %     Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
-                            %     coef         =  Proj_M*tt_dat(:,indTest);
-                            % case 'NRC'                   % non-negative
-                            % coef = NRC( tt_dat(:,indTest), tr_dat, XTXinv, Par );
-                            coef = NSCR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
+                            % Par.lambda = .001 * size(Tr_DAT,2)/700;
+                            %projection matrix computing
+                            % Proj_M = (tr_dat'*tr_dat+Par.lambda*eye(size(tr_dat,2)))\tr_dat';
+                            % coef         =  Proj_M*tt_dat(:,indTest);
+                            %% case 'NRC'
+                            coef = NRC( tt_dat(:,indTest), tr_dat, XTXinv, Par );
+                            %% case 'NSCR'
+                            % coef = NSCR( tt_dat(:,indTest), tr_dat, XTXinv, Par );
                             % end
                             % -------------------------------------------------------------------------
                             %% assign the class  index

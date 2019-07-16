@@ -1,4 +1,4 @@
-function C = NRC( Y, X, XTXinv, Par )
+function z = NRC( y, X, XTXinv, Par )
 
 % Input
 % y           Testing data matrix
@@ -9,7 +9,7 @@ function C = NRC( Y, X, XTXinv, Par )
 % Objective function:
 %      min_{A}  ||Y - X * A||_{F}^{2}  s.t.  A>=0
 
-% Notation: 
+% Notation:
 % y ... (D x 1) the testing data vector where D is the dimension of input
 % data
 % X ... (D x N) the training data matrix, where D is the dimension of features, and
@@ -18,38 +18,41 @@ function C = NRC( Y, X, XTXinv, Par )
 %           the most representive and informative samples to represent the
 %           input sample y
 % Par ...  struture of regularization parameters
-[~, M] = size(Y);
+[~, M] = size(y);
 [~, N] = size(X);
 
 %% initialization
-A       = zeros (N, M); % satisfy NN constraint
-C       = A;
-Delta = C - A;
+c       = zeros (N, M); % satisfy NN constraint
+z       = c;
+Delta = z - c;
 Par.display = 1;
 for iter = 1:Par.maxIter
     
-    Cpre = C;
-    Apre = A;
+    Prec=c;
+    Prez=z;
     %% update A the coefficient matrix
-    A = XTXinv * (X' * Y + Par.rho/2 * C + 0.5 * Delta);
+    c = XTXinv * (X' * y + Par.rho/2 * z + 0.5 * Delta);
     
     %% update C the data term matrix
-    Q = (A - Delta/Par.rho)/(2*Par.lambda/Par.rho+1);
-    C = max(0, Q);
+    Q = (c - Delta/Par.rho)/(2*Par.alpha/Par.rho+1);
+    z = max(0, Q);
     
-    %% check the convergence conditions
-    stopCA(iter) = max(max(abs(C - A)));
-    stopC(iter) = max(max(abs(C - Cpre)));
-    stopA(iter) = max(max(abs(A - Apre)));
-    if Par.display %&& (iter==1 || mod(iter,10)==0 || stopC<tol)
-        disp(['iter ' num2str(iter), ...
-            ', max(||c-z||)=' num2str(stopCA(iter),'%2.3e') ...
-            ', max(||c-cpre||)=' num2str(stopC(iter),'%2.3e') ...
-            ', max(||z-zpre||)=' num2str(stopA(iter),'%2.3e')]);
-    end
+    %% computing errors
+    %     err1(iter+1) = errorCoef(c, z);
+    %     err2(iter+1) = errorCoef(c, Prec);
+    %     err3(iter+1) = errorCoef(z, Prez);
+    %     err0(iter+1) = errorLinSys(y, X, z);
+    %     if (  (err1(iter+1) <= tol && err2(iter+1) <= tol && err32(iter+1) <= tol && err0(iter+1) <= tol) ||  iter >= Par.maxIter  )
+    %         fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
+    %         break;
+    %     else
+    %         if (mod(iter, Par.maxIter)==0)
+    %             fprintf('err1: %2.4f, err2: %2.4f, iter: %3.0f \n',err1(end), err2(end), iter);
+    %         end
+    %     end
     
     %% update Deltas the lagrange multiplier matrix
-    Delta = Delta + Par.rho * ( C - A);
+    Delta = Delta + Par.rho * ( z - c);
     
     %     %% update rho the penalty parameter scalar
     %     Par.rho = min(1e4, Par.mu * Par.rho);
