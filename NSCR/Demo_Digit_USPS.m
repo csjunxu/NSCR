@@ -29,14 +29,14 @@ for nSample = SampleArray % number of images for each digit
     %% tuning the parameters
     %     for mu = 1
     %         Par.mu = mu;
-    for maxIter = [1:20]
-        Par.maxIter  = maxIter;
-        for rho = [1 10 100]
-            Par.rho = rho;
-            for alpha = [0 0.001 0.01 .1 1]
-                Par.alpha = alpha;
-                for beta = [0 0.001 0.01 .1 1]
-                    Par.beta = beta;
+    for rho = [.1 .5 1 2]
+        Par.rho = rho;
+        for alpha = [0 0.001 0.005 0.01 0.05 .1 .5 1 5 10]
+            Par.alpha = alpha;
+            for beta = [0 0.001 0.005 0.01 0.05 .1 .5 1 5 10]
+                Par.beta = beta;
+                for maxIter = [5:5:100]
+                    Par.maxIter  = maxIter;
                     accuracy = zeros(nExperiment, 1) ;
                     
                     for i = 1:nExperiment
@@ -160,7 +160,7 @@ for nSample = SampleArray % number of images for each digit
                     avgacc = mean(accuracy);
                     fprintf(['Mean Accuracy is ' num2str(avgacc) '.\n']);
                     if  avgacc>=0.923
-                        matname = sprintf([writefilepath dataset '_' ClassificationMethod '_z_DR' num2str(Par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_alpha' num2str(Par.alpha) '_beta' num2str(Par.beta) '.mat']);
+                        matname = sprintf([writefilepath dataset '_' ClassificationMethod '_z_nS' num2str(nSample) '_DR' num2str(Par.nDim) '_maxIter' num2str(Par.maxIter) '_rho' num2str(Par.rho) '_alpha' num2str(Par.alpha) '_beta' num2str(Par.beta) '.mat']);
                         save(matname,'accuracy', 'avgacc');
                     end
                 end

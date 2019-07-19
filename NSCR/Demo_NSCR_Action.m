@@ -41,13 +41,13 @@ for nDim = nDimArray
         %% tuning the parameters
         %         for mu = 1
         %             Par.mu = mu;
-        for rho = [1 10 100]
+        for rho = [1 2 .5]
             Par.rho = rho;
-            for alpha = [0 0.001 0.01 .1 1]
+            for alpha = [0 0.001 0.005 0.01 0.05 .1 .5 1 5 10]
                 Par.alpha = alpha;
-                for beta = [0 0.001 0.01 .1 1]
+                for beta = [0 0.001 0.005 0.01 0.05 .1 .5 1 5 10]
                     Par.beta = beta;
-                    for maxIter = [1:20]
+                    for maxIter = [20:10:100]
                         Par.maxIter  = maxIter;
                         accuracy = zeros(nExperiment, 1) ;
                         for n = 1:nExperiment
