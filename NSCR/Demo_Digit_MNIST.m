@@ -118,7 +118,6 @@ for nSample = SampleArray % number of images for each digit
                         tt_dat  =  disc_set'*Tt_DAT;
                         tr_dat  =  tr_dat./( repmat(sqrt(sum(tr_dat.*tr_dat)), [Par.nDim,1]) );
                         tt_dat  =  tt_dat./( repmat(sqrt(sum(tt_dat.*tt_dat)), [Par.nDim,1]) );
-                        save figure1.mat tr_dat tt_dat trls ttls
                         %-------------------------------------------------------------------------
                         %% testing
                         ID = [];
